@@ -1,0 +1,578 @@
+<?php
+
+namespace App\Http\Livewire;
+
+use App\Models\Category;
+use App\Models\Denomination;
+use App\Models\Payroll;
+use App\Models\Product;
+use App\Models\Sale;
+use App\Models\SaleDetails;
+use App\Models\SaleStatus;
+use App\Models\Client;
+use Livewire\Component;
+use Darryldecode\Cart\Facades\CartFacade as Cart;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Redirect;
+use Illuminate\Http\Request;
+use Exception;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Session;
+
+
+class PosController extends Component
+{
+    public
+        $total,
+        $itemsQuantity,
+        $cash,
+        $change,
+        $selected_Product,
+        $clarifications,
+        $compositions = [],
+        $category_selected,
+        $client,
+        $selected_client = 0,
+        $address,
+        $payinhouse,
+        $discount = 0,
+        $deliveryTime,
+        $saleSelected,
+        $payWithHandy,
+        $clients = [],
+        $searched_client,
+        $kg_unit = 'grs',
+        $kgs_quantity,
+        $units_quantity = 1,
+        $quantity,
+        $cart_total,
+        $debt = 0,
+        $payment_method,
+        $rounding = 0.0,
+        $total_result = 0.0,
+        $search,
+        $searched_products = [],
+        $cash_to_gr,
+        $cart_local = [];
+
+
+    public function mount(Request $request)
+    {
+        if ($request->saleId) {
+            $sale = Sale::find($request->saleId);
+            $this->saleSelected = $sale->id;
+            foreach ($sale->details as $product) {
+                $productDB = Product::find($product->product_id);
+                array_push($this->cart_local, [
+                    'product_id' => $productDB->id,
+                    'product_barcode' => $productDB->barcode,
+                    'product_name' => $productDB->name,
+                    'product_price' => $productDB->price,
+                    'unit' => $productDB->unitSale->unit,
+                    'quantity' => $product->quantity,
+                    'total' => $product->quantity * $productDB->price,
+                ]);
+            }
+            $this->clarifications = $sale->clarifications;
+            $this->client = $sale->client->name;
+            $this->address = $sale->address;
+            $this->payinhouse = $sale->payinhouse;
+            $this->discount = $sale->discount;
+            $this->deliveryTime = $sale->deliveryTime;
+            $this->cash = $sale->cash;
+            $this->change = $sale->change;
+            $this->payWithHandy = $sale->payWithHandy;
+        } else {
+            $this->payment_method = 'cash';
+            $this->cash = 0;
+            $this->discount = 0;
+            $this->change = 0;
+            $this->compositions = [];
+            $this->clarifications = "";
+            $this->client = "";
+            $this->address = "";
+            $this->payinhouse = 0;
+            $this->payWithHandy = 0;
+            $this->discount = 0;
+            $this->deliveryTime = '';
+        }
+        $this->category_selected = 2;
+        $this->total = $this->refreshTotal();
+    }
+
+    public function render()
+    {
+        if (strlen($this->searched_client) > 0) {
+            $this->clients = Client::where(function ($query) {
+                $query->where('name', 'LIKE', '%' . $this->searched_client . '%')
+                    ->orWhere('telephone', 'LIKE', '%' . $this->searched_client . '%');
+            })->where('disabled', 0)->get();
+        }
+        if (strlen($this->search) > 0) {
+            $this->searched_products = Product::where('name', 'LIKE', '%' . $this->search . '%')->get();
+        }
+        if ($this->discount == '') $this->discount = 0;
+        if ($this->cash == '') $this->cash = 0;
+        $products = [];
+        if ($this->category_selected) {
+            $products = Product::where('category_id', '=', $this->category_selected)->where('desactivated', 0)->orderBy('name', 'asc')->get();
+        } else {
+            $products = Product::all()->orderBy('name', 'asc');
+        }
+        $categoriesProducts = Category::all();
+
+        return view(
+            'livewire.pos.component',
+            [
+                'products' => $products,
+                'categoriesProducts' => $categoriesProducts,
+                'cart' => Cart::getContent()->sortBy('name')
+            ]
+        )->extends('layouts.theme.app')
+            ->section('content');
+    }
+
+    public function selectClient(Client $client)
+    {
+        if (isset($client)) {
+            $this->selected_client = $client->id;
+            $this->client = $client->name;
+            $this->address = $client->default_address;
+            $this->searched_client = '';
+            $this->emit('noty', 'Cliente seleccionado');
+        }
+    }
+
+    public function refreshTotal()
+    {
+        if ($this->discount == '') $this->discount = 0;
+        $total = 0.0;
+        if (count($this->cart_local) > 0) {
+            foreach ($this->cart_local as $item) {
+                $total += floatval($item['quantity']) * floatval($item['product_price']);
+            }
+        }
+        $this->cart_total = $total;
+        $this->rounding =  round(round($total) - $total, 2);
+        $this->total_result = round($this->cart_total + $this->rounding);
+        $this->change = (round(($this->cash + $this->discount) - $this->total_result));
+    }
+
+    public function ACash($value)
+    {
+        $this->cash = ($value == 0 ? $this->total_result : $value);
+        $this->change = ($this->cash - $this->total_result);
+    }
+
+    public function ClearChangeCash()
+    {
+        $this->cash = 0;
+        $this->change = $this->cash - $this->total_result;
+    }
+    protected $listeners = [
+        'scan-code' => 'ScanCode',
+        'removeItem' => 'removeItem',
+        'clearCart' => 'clearCart',
+        'saveSale' => 'saveSale',
+        'refreshProducts' => 'refreshProducts',
+        'selectClient' => 'selectClient',
+        'select_product' => 'select_product'
+    ];
+
+    public function InCart($productId)
+    {
+        $exist = Cart::get($productId);
+        $exist == true ? true : false;
+    }
+
+    public function increaseQty($productId, $cant = 1)
+    {
+        $title = '';
+        $product = Product::find($productId);
+        $exist = Cart::get($productId);
+
+        $title = $exist == true ? 'Cantidad actualizada.' : 'Producto agregado.';
+
+        if ($exist) {
+            if ($product->stock < ($cant + $exist->quantity)) {
+                $this->emit('no-stock', 'Stock insuficiente');
+                return;
+            }
+        }
+        $product = Cart::add($product->id, $product->name, $product->price, $cant, $product->imagen);
+        $this->total = $this->refreshTotal();
+        $this->itemsQuantity = Cart::getTotalQuantity();
+
+        $this->emit('scan-ok', $title);
+    }
+
+    public function updateQty($productId, $cant = 1)
+    {
+        $title = '';
+        $product = Product::find($productId);
+        $exist = Cart::get($productId);
+        $title = $exist == true ? 'Cantidad actualizada.' : 'Producto agregado.';
+        if ($exist) {
+            if ($product->stock < ($cant + $exist->quantity)) {
+                $this->emit('no-stock', 'Stock insuficiente');
+                return;
+            }
+        }
+
+        $this->removeItem($productId);
+
+        if ($cant > 0) {
+            Cart::add($product->id, $product->name, $product->price, $cant, $product->image);
+            $this->total = $this->refreshTotal();
+            $this->itemsQuantity = Cart::getTotalQuantity();
+            $this->emit('scan-ok', $title);
+        }
+    }
+    public function removeItem($productId)
+    {
+        Cart::remove($productId);
+        $this->total = $this->refreshTotal();
+        $this->itemsQuantity = Cart::getTotalQuantity();
+        $this->emit('scan-ok', 'Producto eliminado.');
+    }
+
+    public function decreaseQty($product_position, $cant = 1)
+    {
+        if ($this->cart_local[$product_position]['unit'] == "Kg") {
+            unset($this->cart_local[$product_position]);
+        } else {
+            if ($this->cart_local[$product_position]['quantity'] - $cant > 0) {
+                $this->cart_local[$product_position]['quantity'] -= $cant;
+            } else {
+                unset($this->cart_local[$product_position]);
+            }
+        }
+        $this->total = $this->refreshTotal();
+        $this->itemsQuantity = count($this->cart_local);
+        $this->emit('scan-ok', 'Cantidad actualizada.');
+    }
+
+    public function clearCart()
+    {
+        Cart::clear();
+        $this->cash = 0;
+        $this->change = 0;
+        $this->total = $this->refreshTotal();
+        $this->itemsQuantity = Cart::getTotalQuantity();
+
+        $this->emit('scan-ok', 'Carrito vacio.');
+    }
+
+    public function saveSale()
+    {
+        $payroll = Payroll::with('sales')->where('isClosed', 0)->first();
+        $rules = [
+            'client' => 'required',
+        ];
+
+        $messages = [
+            'client.required' => 'Se debe ingresar el cliente',
+        ];
+
+        $this->validate($rules, $messages);
+
+        if ($this->total_result <= 0) {
+            $this->emit('sale-error', 'Agrega productos a la venta.');
+            return;
+        }
+        if ($this->cash <= 0 && $this->payment_method == 'cash') {
+            $this->emit('sale-error', 'Ingresa el efectivo.');
+            return;
+        }
+        if ($this->cash < $this->total) {
+            $this->emit('sale-error', 'El efectivo debe ser mayor o  igual al total.');
+            return;
+        }
+
+        DB::beginTransaction();
+
+        try {
+            if ($payroll) {
+                if ($this->payment_method == 'debt') $this->debt = 1;
+                if ($this->payment_method == 'card') $this->payWithHandy = 1;
+                $sale = Sale::create([
+                    'total' => $this->total_result,
+                    'subtotal' => $this->cart_total + $this->discount,
+                    'items' => count($this->cart_local),
+                    'cash' => $this->cash,
+                    'change' => $this->change,
+                    'user_id' => Auth()->user()->id,
+                    'clarifications' => $this->clarifications,
+                    'status' => SaleStatus::ENESPERA,
+                    'client_id' => $this->selected_client,
+                    'address' => $this->address,
+                    'payinhouse' => $this->payinhouse,
+                    'payWithHandy' => $this->payWithHandy,
+                    'payroll_id' => $payroll->id,
+                    'discount' => $this->discount,
+                    'deliveryTime' => $this->deliveryTime,
+                    'dayid' => $payroll->sales->count(),
+                    'debt' => $this->debt,
+                    'rounding' => $this->rounding
+                ]);
+                if ($sale) {
+                    //si la compra va a cuenta, se setea la deuda en el total - la entrega.
+                    if ($sale->debt == 1) {
+                        $sale->remaining = $sale->total - $sale->cash;
+                        $sale->save();
+                    }
+                    if ($this->deliveryTime == null) {
+                        //Si no decide hora de entrega, automaticamente se le suman 30 minutos a la hora de llegada
+                        $deliveryTime = strtotime("+30 minutes", strtotime(date('G:i')));
+                        $sale->deliveryTime = date('G:i:s', $deliveryTime);
+                        $sale->save();
+                    }
+                    $items = $this->cart_local;
+                    foreach ($items as $item) {
+                        $saledetail = SaleDetails::create([
+                            'price' => $item['product_price'],
+                            'quantity' => $item['quantity'],
+                            'product_id' => $item['product_id'],
+                            'sale_id' => $sale['id'],
+                        ]);
+                        if ($saledetail && $item['quantity'] > 0) {
+                            $saledetail->price = number_format($item['product_price'] * $item['quantity'], 2);
+                            $saledetail->quantity = $item['quantity'];
+                            $saledetail->save();
+                        };
+                        //update stock
+                        $product = Product::find($item['product_id']);
+                        $product->stock = $product->stock - $item['quantity'];
+                        $product->save();
+                    }
+                }
+                DB::commit();
+                $this->resetUI();
+                $this->emit('sale-ok', 'Venta registrada con éxito');
+                $this->emit('print-ticket', $sale->id);
+            } else {
+                $this->emit('sale-error', 'No se encuentra planilla abierta.');
+            }
+        } catch (Exception $e) {
+            DB::rollback();
+            $this->emit('sale-error', $e->getMessage());
+        }
+    }
+
+
+    public function updateSale()
+    {
+        $rules = [
+            'client' => 'required',
+            'address' => 'required'
+        ];
+
+        $messages = [
+            'client.required' => 'Se debe ingresar el cliente',
+            'address.required' => 'Se necesita dirección.',
+
+        ];
+
+        $this->validate($rules, $messages);
+
+        if ($this->cart_total <= 0) {
+            $this->emit('sale-error', 'Agrega productos a la venta.');
+            return;
+        }
+        if ($this->cash <= 0) {
+            $this->emit('sale-error', 'Ingresa el efectivo.');
+            return;
+        }
+        if ($this->cash < $this->cart_total) {
+            $this->emit('sale-error', 'El efectivo debe ser mayor o  igual al total.');
+            return;
+        }
+
+        try {
+            $sale = Sale::find($this->saleSelected);
+            foreach ($sale->details as $detail) {
+                $product = Product::find($detail->product_id);
+                $product->stock = $product->stock + $detail->quantity;
+                $product->save();
+                $saleDetail = SaleDetails::find($detail->id);
+                $saleDetail->delete();
+            }
+
+            $sale->update([
+                'total' => Cart::getTotal() - $this->discount,
+                'subtotal' => Cart::getTotal(),
+                'items' => $this->itemsQuantity,
+                'cash' => $this->cash,
+                'change' => $this->change,
+                'user_id' => Auth()->user()->id,
+                'clarifications' => $this->clarifications,
+                'status' => SaleStatus::ENESPERA,
+                'client' => $this->client,
+                'address' => $this->address,
+                'payinhouse' => $this->payinhouse,
+                'discount' => $this->discount,
+                'deliveryTime' => $this->deliveryTime,
+                'payWithHandy' => $this->payWithHandy
+            ]);
+
+            $items = Cart::getContent();
+            foreach ($items as $item) {
+                SaleDetails::create([
+                    'price' => $item->price,
+                    'quantity' => $item->quantity,
+                    'product_id' => $item->id,
+                    'sale_id' => $sale->id,
+                ]);
+                //update stock
+                $product = Product::find($item->id);
+                $product->stock = $product->stock - $item->quantity;
+                $product->save();
+            }
+            $sale->payroll->calculateTotal();
+            $sale->payroll->save();
+            Cart::clear();
+            $this->efectivo = 0;
+            $this->change = 0;
+            $this->total = $this->refreshTotal();
+            $this->discount = 0;
+            $this->itemsQuantity = Cart::getTotalQuantity();
+            $this->deliveryTime = '';
+            $this->resetUI();
+            $this->emit('sale-ok', 'Pedido editado con éxito');
+            $this->emit('print-ticket', $sale->id);
+        } catch (Exception $e) {
+            dd($e);
+            $this->emit('sale-error', $e->getMessage());
+        }
+    }
+
+    public function printTicket($sale)
+    {
+        return Redirect::to("print:://$sale->id");
+    }
+
+    public function seeProduct($id)
+    {
+        $product = Product::with('compositions')->find($id);
+        $this->sProductName = $product->name;
+        $this->sProductDescription = $product->name;
+        $this->sProductBarCode = $product->barcode;
+        $this->compositions = $product->compositions()->get();
+        $this->sProductImage = $product->image;
+        $this->selected_Product = $product;
+        $this->emit('show-modal', 'show modal');
+    }
+
+    public function resetUI()
+    {
+        $this->cash = 0;
+        $this->change = 0;
+        $this->total = 0;
+        $this->compositions = [];
+        $this->clarifications = "";
+        $this->category_selected = 2;
+        $this->client = "";
+        $this->address = "";
+        $this->payinhouse = 0;
+        $this->deliveryTime =   "";
+        $this->saleSelected = "";
+        $this->payWithHandy = 0;
+        $this->debt = 0;
+        $this->cart_total = 0;
+        $this->total_result = 0;
+        $this->rounding = 0;
+        $this->units_quantity = 1;
+        $this->kgs_quantity = 0;
+        $this->cart_local = [];
+    }
+
+    public function select_product($id)
+    {
+        $product = Product::where('barcode', $id)->get()->first();
+        if ($product) {
+            $this->selected_Product = $product;
+            if ($product->unit_sale == 1) {
+                $this->emit('set_units');
+            } else if ($product->unit_sale == 2) {
+                $this->emit('set_kg');
+            } else {
+                $this->ScanCode($product->barcode);
+            }
+        }
+    }
+
+    public function addProduct()
+    {
+        //se chequea en que unidad se ingreso la cantidad
+        if ($this->selected_Product) {
+            if ($this->kgs_quantity > 0) {
+                if ($this->kg_unit == 'kgs')
+                    //si es kgs se pasa el valor entero
+                    $this->ScanCode($this->selected_Product->barcode, $this->kgs_quantity);
+                //si es money transformar a peso
+                else if ($this->kg_unit == 'money') {
+                    //plata dividirla entre precio
+                    $result = $this->kgs_quantity / $this->selected_Product->price;
+                    $this->ScanCode($this->selected_Product->barcode, $result);
+                } else
+                    //si es grs
+                    $this->ScanCode($this->selected_Product->barcode, ($this->kgs_quantity / 1000));
+            } else {
+                $this->ScanCode($this->selected_Product->barcode, $this->units_quantity);
+            }
+        } else {
+            dd('error');
+        }
+    }
+
+    public function ScanCode($barcode, $cant = 1)
+    {
+        $count = 0;
+        $product = Product::where('barcode', $barcode)->firstOrFail();
+        if ($product) {
+            $founded = false;
+            while (!$founded && $count < count($this->cart_local)) {
+                if ($this->cart_local[$count]['product_barcode'] == $product->barcode) {
+                    $founded = true;
+                    if ($this->cart_local[$count]['unit'] == "Kg") {
+                        array_push($this->cart_local, [
+                            'product_id' => $product->id,
+                            'product_barcode' => $product->barcode,
+                            'product_name' => $product->name,
+                            'product_price' => $product->price,
+                            'unit' => $product->unitSale->unit,
+                            'quantity' => $cant,
+                            'total' => $cant * $product->price,
+                        ]);
+                        $this->refreshTotal();
+                        $this->emit('scan-ok', 'Producto agregado');
+                    } else {
+                        $this->cart_local[$count]['quantity'] += $cant;
+                        $this->cart_local[$count]['total'] = $this->cart_local[$count]['quantity'] * $this->cart_local[$count]['product_price'];
+                        $this->refreshTotal();
+                        $this->emit('scan-ok', 'Producto agregado');
+                    }
+                } else {
+                    $count++;
+                }
+            }
+            if (!$founded) {
+                array_push($this->cart_local, [
+                    'product_id' => $product->id,
+                    'product_barcode' => $product->barcode,
+                    'product_name' => $product->name,
+                    'product_price' => $product->price,
+                    'unit' => $product->unitSale->unit,
+                    'quantity' => $cant
+                ]);
+                $this->refreshTotal();
+                $this->emit('scan-ok', 'Producto agregado');
+            }
+        } else {
+            $this->emit('scan-notfound', 'El producto no está registrado');
+        }
+        $this->kgs_quantity = 0;
+    }
+}
