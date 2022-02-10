@@ -10,6 +10,7 @@ use App\Models\Sale;
 use App\Models\SaleDetails;
 use App\Models\SaleStatus;
 use App\Models\Client;
+use App\Models\Beeper;
 use Livewire\Component;
 use Darryldecode\Cart\Facades\CartFacade as Cart;
 use Illuminate\Support\Facades\DB;
@@ -34,7 +35,7 @@ class PosController extends Component
         $compositions = [],
         $category_selected,
         $client,
-        $selected_client = 0,
+        $selected_client = 1,
         $address,
         $payinhouse,
         $discount = 0,
@@ -55,7 +56,8 @@ class PosController extends Component
         $search,
         $searched_products = [],
         $cash_to_gr,
-        $cart_local = [];
+        $cart_local = [],
+        $beeper;
 
 
     public function mount(Request $request)
@@ -122,13 +124,14 @@ class PosController extends Component
             $products = Product::all()->orderBy('name', 'asc');
         }
         $categoriesProducts = Category::all();
-
+        $beepers = Beeper::where('inUse', 0)->get();
         return view(
             'livewire.pos.component',
             [
                 'products' => $products,
                 'categoriesProducts' => $categoriesProducts,
-                'cart' => Cart::getContent()->sortBy('name')
+                'cart' => Cart::getContent()->sortBy('name'),
+                'beepers' => $beepers
             ]
         )->extends('layouts.theme.app')
             ->section('content');
@@ -267,16 +270,16 @@ class PosController extends Component
 
     public function saveSale()
     {
-        $payroll = Payroll::with('sales')->where('isClosed', 0)->first();
-        $rules = [
-            'client' => 'required',
-        ];
-
-        $messages = [
-            'client.required' => 'Se debe ingresar el cliente',
-        ];
-
-        $this->validate($rules, $messages);
+        $payroll = Payroll::with('sales')->where('isClosed', 0)
+            ->where('responsible', auth()->user()->id)
+            ->first();
+        // $rules = [
+        //     'client' => 'required',
+        // ];
+        // $messages = [
+        //     'client.required' => 'Se debe ingresar el cliente',
+        // ];
+        // $this->validate($rules, $messages);
 
         if ($this->total_result <= 0) {
             $this->emit('sale-error', 'Agrega productos a la venta.');
@@ -315,7 +318,8 @@ class PosController extends Component
                     'deliveryTime' => $this->deliveryTime,
                     'dayid' => $payroll->sales->count(),
                     'debt' => $this->debt,
-                    'rounding' => $this->rounding
+                    'rounding' => $this->rounding,
+                    'beeper' => $this->beeper
                 ]);
                 if ($sale) {
                     //si la compra va a cuenta, se setea la deuda en el total - la entrega.
@@ -346,6 +350,11 @@ class PosController extends Component
                         $product = Product::find($item['product_id']);
                         $product->stock = $product->stock - $item['quantity'];
                         $product->save();
+                    }
+                    if ($sale->beeper) {
+                        $beeper = Beeper::find($sale->beeper);
+                        $beeper->inUse = 1;
+                        $beeper->save();
                     }
                 }
                 DB::commit();

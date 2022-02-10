@@ -32,21 +32,20 @@
 
                                         <div class="widget-content">
                                             <div class="invoice-box">
-
-                                                <div class="acc-total-info">
-                                                    <h5>TOTAL</h5>
-                                                    <p class="acc-amount">${{$payroll_selected->total}}</p>
-                                                </div>
-
                                                 <div class="inv-detail">
                                                     <div class="info-detail-1">
+                                                        <p>Total en efectivo:</p>
+                                                        <p>$ {{$payroll_selected->total}}</p>
+                                                    </div>
+                                                    <div class="info-detail-1">
+
                                                         <p>Total a cuenta:</p>
-                                                        <p>$ {{$totalDebts}}</p>
+                                                        <p>$ {{$payroll_selected->total_debts['total_sum_of_sales']}}</p>
                                                     </div>
                                                     <div class="info-detail-3 info-sub">
                                                         <div class="info-detail">
                                                             <p>Total pago con Handy</p>
-                                                            <p>$ {{$totalHandy}}</p>
+                                                            <p>$ {{$payroll_selected->payments_with_handy['total_sum_of_sales']}}</p>
                                                         </div>
                                                     </div>
 
@@ -64,6 +63,25 @@
                                                     <h5>PEDIDOS</h5>
                                                     <p class="acc-amount">{{$totalSales}}</p>
                                                 </div>
+                                                <div class="inv-detail">
+                                                    <div class="info-detail-1">
+                                                        <p>Sin entregar:</p>
+                                                        <p>{{$payroll_selected->undelivered_orders['total_orders']}}
+                                                        </p>
+                                                    </div>
+                                                    <div class="info-detail-1">
+                                                        <p>A cuenta:</p>
+                                                        <p>{{$payroll_selected->total_debts['total_orders']}}
+                                                        </p>
+                                                    </div>
+                                                    <div class="info-detail-3 info-sub">
+                                                        <div class="info-detail">
+                                                            <p>Con Handy:</p>
+                                                            <p>{{$payroll_selected->payments_with_handy['total_orders']}}</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
                                             </div>
                                         </div>
                                     </div>
@@ -76,7 +94,8 @@
                                             <div class="invoice-box">
                                                 <div class="acc-total-info">
                                                     <h5>Deliverys</h5>
-                                                    <p class="acc-amount">{{$payroll_selected->totalSales}}</p>
+                                                    <p class="acc-amount">{{$payroll_selected->total_orders_delivered}}
+                                                    </p>
                                                     <div class="table-responsive">
                                                         <table class="table table-bordered mb-4">
                                                             <thead>

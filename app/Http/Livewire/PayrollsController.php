@@ -5,6 +5,8 @@ namespace App\Http\Livewire;
 use App\Models\Delivery;
 use App\Models\Payroll;
 use App\Models\Sale;
+use App\Models\ProcessingArea;
+use App\Models\User;
 use Livewire\Component;
 use Illuminate\Support\Facades\DB;
 use Livewire\WithPagination;
@@ -16,7 +18,18 @@ class PayrollsController extends Component
     {
         return 'vendor.livewire.bootstrap';
     }
-    public $payroll_selected, $totalCashInHouse, $totalCash, $totalSales, $series, $labels, $deliveriesWorked, $totalHandy, $totalDebts;
+    public $payroll_selected,
+        $totalCashInHouse,
+        $totalCash,
+        $totalSales,
+        $series,
+        $labels,
+        $deliveriesWorked,
+        $totalHandy,
+        $totalDebts,
+        $cashier,
+        $zone,
+        $initialCash;
 
     protected $listeners = [
         'confirmClosed' => 'confirmClosed',
@@ -30,10 +43,41 @@ class PayrollsController extends Component
     public function render()
     {
         $payrolls = Payroll::orderBy('created_at', 'desc')->paginate(10);
+        $this->cashiers = User::whereHas("roles", function ($q) {
+            $q->where("name", "Caja")->orWhere("name", 'Admin');
+        })->get();
+        $this->zones = ProcessingArea::all();
         return view('livewire.payrolls.component', [
             'payrolls' => $payrolls
         ])->extends('layouts.theme.app')
             ->section('content');
+    }
+
+    public function createPayroll()
+    {
+        $this->cashiers = User::whereHas("roles", function ($q) {
+            $q->where("name", "Caja");
+        })->get();
+        $this->zones = ProcessingArea::all();
+        $this->emit('openCreatePayrollModal');
+    }
+
+
+    public function initPayroll()
+    {
+        if ($this->cashier > 0 && $this->zone > 0) {
+            $payroll_open = Payroll::where('responsible', Auth()->user()->id)->where('isClosed', 0)->get();
+            if ($payroll_open->count() > 0) {
+                $this->emit('payroll-open', 'Existe una planilla sin cerrar, para el usuario seleccionado.');
+            } else {
+                $payroll = Payroll::create([
+                    'responsible' => $this->cashier,
+                    'zone' => $this->zone,
+                    'initialCash' => $this->initialCash
+                ]);
+                $payroll->save();
+            }
+        }
     }
 
     public function newPayroll()
@@ -64,17 +108,16 @@ class PayrollsController extends Component
         $xdeliveries = collect([]);
         $deliveriesWorked = DB::table('payrolls')
             ->join('sales', 'payrolls.id', '=', 'sales.payroll_id')
-            ->select('sales.delivery_id')->where('payrolls.id', $payroll->id)->where('status', "!=", 'Cancelado')->distinct()
+            ->select('sales.delivery_id')
+            ->where('payrolls.id', $payroll->id)
+            ->where('status', "=", 'Entregado')->distinct()
+            ->where('delivery_id', "!=", null)
+            ->where('delivery_id', '>', 1)
             ->get();
         foreach ($deliveriesWorked as $delivery) {
             $xDeliery = new DeliveryData();
-            if ($delivery->delivery_id == null) {
-                $xDeliery->deliveryId = 0;
-                $xDeliery->deliveryName = 'Sin entregar';
-            } else {
-                $xDeliery->deliveryId = $delivery->delivery_id;
-                $xDeliery->deliveryName = Delivery::find($delivery->delivery_id)->name;
-            }
+            $xDeliery->deliveryId = $delivery->delivery_id;
+            $xDeliery->deliveryName = Delivery::find($delivery->delivery_id)->name;
             $xDeliery->totalDeliveries = Sale::where('delivery_id', $delivery->delivery_id)
                 ->where('payroll_id', $payroll->id)
                 ->where('status', 'Entregado')
@@ -108,6 +151,10 @@ class PayrollsController extends Component
             $this->payroll_selected = null;
             $this->emit('payroll-closed', 'Planilla cerrada');
         }
+    }
+
+    public function resetUI()
+    {
     }
 }
 

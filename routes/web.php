@@ -19,6 +19,8 @@ use App\Http\Livewire\PermissionController;
 use App\Http\Livewire\UserController;
 use App\Http\Livewire\Menu;
 use App\Http\Livewire\DeliveriesController;
+use App\Http\Livewire\Beepersperson;
+use App\Http\Livewire\BeepersController;
 use App\Models\Address;
 use App\Models\Cliente;
 use App\Models\Client;
@@ -58,6 +60,8 @@ Route::get('usuarios', UserController::class);
 Route::get('deliveries', DeliveriesController::class);
 Route::get('clients', ClientsController::class);
 Route::get('debts', DebtsController::class);
+Route::get('beepers', BeepersController::class);
+Route::get('beepersperson', Beepersperson::class);
 
 // Route::get('/migrar', function () {
 //     $articulos = Articulos::on('bellas')->get();

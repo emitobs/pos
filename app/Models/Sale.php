@@ -30,7 +30,8 @@ class Sale extends Model
         'dayid',
         'debt',
         'remaining',
-        'rounding'
+        'rounding',
+        'beeper'
     ];
 
     public function details()

@@ -25,8 +25,7 @@
         <div class="col-2">
             <div class="form-group">
                 <input type="text" class="form-control" placeholder="Ingresar cliente buscado..."
-                    wire:model='searched_client' wire:keydown.escape="reset" wire:keydown.tab="reset"
-                    wire:keydown.arrow-up="decrementHighlight" wire:keydown.arrow-down="incrementHighlight">
+                    wire:model='searched_client'>
                 @if(strlen($searched_client) > 0)
                 <div wire:loading class="rounded-t-none shadow-lg list-group">
                     <div class="list-item">Buscando...</div>
@@ -34,7 +33,8 @@
 
                 <ul class="list-group">
                     @foreach ($clients as $client)
-                    <li class="list-group-item" style="font-size: 12px" wire:click.prevent="selectClient({{$client->id}})">
+                    <li class="list-group-item" style="font-size: 12px"
+                        wire:click.prevent="selectClient({{$client->id}})">
                         {{$client->name}} | {{$client->telephone}} | {{$client->default_address}}
                     </li>
 

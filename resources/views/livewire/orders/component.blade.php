@@ -60,6 +60,7 @@
                                 <th class="table-th text-white text-center">Total</th>
                                 <th class="table-th text-white text-center">Hora de llegada</th>
                                 <th class="table-th text-white text-center">Hora de entrega</th>
+                                <th class="table-th text-white text-center">Tarjeta</th>
                                 <th class="table-th text-white text-center">Deuda</th>
                                 <th class="table-th text-white text-center">En casa</th>
                                 <th class="table-th text-white text-center">Delivery</th>
@@ -89,6 +90,8 @@
                                 <td class="text-center">$ {{$order->total}}</td>
                                 <td class="text-center">{{date('G:i', strtotime($order->created_at))}}</td>
                                 <td class="text-center">{{date('G:i', strtotime($order->deliveryTime))}}</td>
+                                <td class="text-center"> <input type="checkbox" @if($order->paywithhandy) checked @endif
+                                    readonly onclick="javascript: return false;"></td>
                                 <td class="text-center"> <input type="checkbox" @if($order->debt) checked @endif
                                     readonly onclick="javascript: return false;"></td>
                                 <td class="text-center"> <input type="checkbox" @if($order->payinhouse) checked @endif

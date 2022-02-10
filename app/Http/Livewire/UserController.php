@@ -7,6 +7,7 @@ use Spatie\Permission\Models\Role;
 use Livewire\WithPagination;
 use Livewire\WithFileUploads;
 use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Component
 {
@@ -22,6 +23,7 @@ class UserController extends Component
         $status,
         $image,
         $password,
+        $password_confirmation,
         $selected_id,
         $fileLoaded,
         $role,
@@ -29,12 +31,17 @@ class UserController extends Component
         $componentName,
         $search;
 
-    protected $pagination = 3;
+
+    private $pagination = 8;
 
     public function paginationView()
     {
         return 'vendor.livewire.bootstrap';
     }
+
+    protected $listeners = [
+        'createUser' => 'createUser',
+    ];
 
     public function mount()
     {
@@ -46,15 +53,14 @@ class UserController extends Component
     {
         if (strlen($this->search) > 0) {
             $data = User::where('name', 'like', '%' . $this->search . '%')
-                ->select('*')->orderBy('name', 'asc')->paginate($this->pagintion);
+                ->select('*')->orderBy('name', 'asc')->paginate($this->pagination);
         } else {
-            $data = User::select('*')->orderBy('name', 'asc')->paginate($this->pagintion);
+            $data = User::orderBy('name', 'asc')->paginate($this->pagination);
         }
         return view('livewire.users.component', [
             'data' => $data,
             'roles' => Role::orderBy('name', 'asc')->get(),
-        ])
-            ->extends('layouts.theme.app')
+        ])->extends('layouts.theme.app')
             ->section('content');
     }
 
@@ -81,5 +87,51 @@ class UserController extends Component
         $this->password = '';
 
         $this->emit('show-modal', 'open!');
+    }
+
+    public function createUser()
+    {
+        $this->emit('showForm');
+    }
+
+    public function saveUser()
+    {
+        $rules = [
+            'name' => 'required|max:255|min:6',
+            'email' => 'required|email|max:255|unique:users',
+            'password' => 'required|string|min:8|confirmed',
+            'password_confirmation' => 'required|string|min:8',
+            'role' => 'required'
+        ];
+
+        $messages = [
+            'name.required' => 'Campo requerido',
+            'name.min' => 'Se necesita 6 caracteres',
+            'name.max' => 'Maximo 255 caracteres',
+            'email.required' => 'Se necesita email',
+            'password' => 'Se requiere contraseña.',
+            'password_confirmation.min' => 'La contraseña debe contener al menos 8 caracteres.',
+            'email.required' => 'Se requiere email.',
+            'email.unique' => 'Existe paciente con mismo email.',
+            'role.required' => 'Se debe especificar un role'
+        ];
+
+        $this->validate($rules, $messages);
+
+        if ($this->role > 0) {
+            $role = Role::find($this->role);
+            if ($role) {
+                $user = User::create([
+                    'name' => $this->name,
+                    'email' => $this->email,
+                    'password' => Hash::make($this->password),
+                    'status' => 'ACTIVE'
+                ]);
+                $user->assignRole($role->name);
+                $user->save();
+                $this->resetUI();
+                $this->emit('user_added');
+            }
+        }
     }
 }

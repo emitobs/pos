@@ -7,7 +7,7 @@
                 </h4>
                 <ul class="tabs tab-pills">
                     <li>
-                        <a href="javascript:void(0)" wire:click.prevent="newPayroll()" title="Iniciar planilla">Nueva
+                        <a href="javascript:void(0)" wire:click.prevent="createPayroll()" title="Iniciar planilla">Nueva
                             +</a>
                     </li>
                 </ul>
@@ -70,6 +70,7 @@
     @if($payroll_selected != null)
     @include('livewire.payrolls.seePayrolls')
     @endif
+    @include('livewire.payrolls.form')
 </div>
 
 <script>
@@ -88,6 +89,9 @@
         });
         window.livewire.on('see-payroll', Msg=>{
             $('#theModal').modal('show');
+        });
+        window.livewire.on('openCreatePayrollModal', Msg=>{
+            $('#payrollForm').modal('show');
         });
     });
 

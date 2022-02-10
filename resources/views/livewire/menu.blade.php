@@ -72,11 +72,12 @@
                             @foreach ($category->products as $product)
                             @if($product->desactivated == 0)
                             <div class="media col-lg-4">
-                                <img class="media-object justify-content-center" src="https://picsum.photos/96/96?food"
-                                    alt="">
+                                <img class="media-object justify-content-center" width="96" height="96" src="https://campobar.uy/assets/img/campobar.PNG"
+                                    alt="" style="object-fit: contain;">
                                 <div class="media-body">
                                     <h4 class="media-heading">{{$product->name}}</h4>
                                     <p>{{$product->description}}</p>
+                                    <p>{{$product->price}}</p>
                                 </div>
                             </div>
                             @endif
