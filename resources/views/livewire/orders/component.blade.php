@@ -54,7 +54,7 @@
                         <thead class="text-white" style="background: #3b3f5c;">
                             <tr>
                                 <th class="table-th text-white">Nº</th>
-                                <th class="table-th text-white text-center">Clientea</th>
+                                <th class="table-th text-white text-center">Cliente</th>
                                 <th class="table-th text-white text-center">Dirección</th>
                                 <th class="table-th text-white text-center">Estado</th>
                                 <th class="table-th text-white text-center">Total</th>
@@ -63,7 +63,6 @@
                                 <th class="table-th text-white text-center">Tarjeta</th>
                                 <th class="table-th text-white text-center">Deuda</th>
                                 <th class="table-th text-white text-center">En casa</th>
-                                <th class="table-th text-white text-center">Delivery</th>
                                 <th class="table-th text-white text-center">Acciones</th>
                             </tr>
                         </thead>
@@ -96,12 +95,6 @@
                                     readonly onclick="javascript: return false;"></td>
                                 <td class="text-center"> <input type="checkbox" @if($order->payinhouse) checked @endif
                                     readonly onclick="javascript: return false;"></td>
-
-                                @if($order->status == 'Entregado')
-                                <td class="text-center">{{$order->delivery->name}}</td>
-                                @else
-                                <td class="text-center">Sin entregar</td>
-                                @endif
                                 <td class="text-center">
                                     <a href="javascript:void(0)" wire:click.prevent="seeDetail({{$order->id}})"
                                         class="btn btn-info tabmenu"><i class="far fa-eye"></i> Ver</a>

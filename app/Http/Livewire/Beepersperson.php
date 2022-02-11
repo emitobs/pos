@@ -8,6 +8,9 @@ use Livewire\Component;
 
 class Beepersperson extends Component
 {
+
+    public $sale;
+
     public function render()
     {
         $payrolls = Payroll::where('isClosed', 0)->where('zone', 1)->get();
@@ -15,9 +18,14 @@ class Beepersperson extends Component
             ->section('content');
     }
 
+    public function seeOrder(Sale $sale){
+        $this->sale = $sale;
+        $this->emit('show-modal');
+    }
     public function deliver_order(Sale $sale){
         $sale->status = "Entregado";
         $sale->delivery_id = 1;
         $sale->save();
+        $this->emit('order_delivered');
     }
 }

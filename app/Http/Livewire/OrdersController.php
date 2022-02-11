@@ -49,7 +49,7 @@ class OrdersController extends Component
         if ($this->selectedPayroll != null) {
             $currentPayroll = Payroll::find($this->selectedPayroll);
         } else {
-            $currentPayroll = Payroll::Where('isClosed', 0)->first();
+            $currentPayroll = Payroll::Where('isClosed', 0)->where('responsible',auth()->user()->id)->first();
         }
         if ($currentPayroll != null) {
             if ($this->status_selected == 'Todos') {
@@ -175,7 +175,8 @@ class OrdersController extends Component
         }
     }
 
-    public function reprint(Sale $order){
+    public function reprint(Sale $order)
+    {
         $this->emit('print-ticket', $order->id);
     }
 }

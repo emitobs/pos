@@ -385,6 +385,11 @@ class PosController extends Component
                         $beeper->inUse = 1;
                         $beeper->save();
                     }
+                    if ($payroll->zone == 2) {
+                        $sale->status = "Entregado";
+                        $sale->delivery_id = 1;
+                        $sale->save();
+                    }
                 }
                 DB::commit();
                 $this->resetUI();

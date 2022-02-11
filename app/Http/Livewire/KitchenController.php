@@ -25,7 +25,7 @@ class KitchenController extends Component
     public function render()
     {
         $orders = [];
-        $currentPayroll = Payroll::Where('isClosed', 0)->first();
+        $currentPayroll = Payroll::Where('isClosed', 0)->where('zone',1)->first();
         if ($currentPayroll) {
             if ($this->status_selected == 'Todos' || $this->status_selected == "") {
                 $orders = $currentPayroll->sales()->orderBy('deliveryTime', 'asc')->paginate(7);
