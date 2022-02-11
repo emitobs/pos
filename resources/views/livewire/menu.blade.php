@@ -69,20 +69,65 @@
                             </div>
                         </div>
                         <div class="row">
+                            @if($category->name == "CROQUETAS")
                             @foreach ($category->products as $product)
-                            @if($product->desactivated == 0)
+                            @if($product->price > 0)
                             <div class="media col-lg-4">
-                                <img class="media-object justify-content-center" width="96" height="96" src="https://campobar.uy/assets/img/campobar.PNG"
-                                    alt="" style="object-fit: contain;">
+                                <img class="media-object justify-content-center" width="96" height="96"
+                                    src="https://campobar.uy/assets/img/campobar.PNG" alt=""
+                                    style="object-fit: contain;">
                                 <div class="media-body">
                                     <h4 class="media-heading">{{$product->name}}</h4>
                                     <p>{{$product->description}}</p>
-                                    <p>{{$product->price}}</p>
+                                    <p>${{$product->price}}</p>
                                 </div>
                             </div>
                             @endif
                             @endforeach
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="page-header">
+                                        <div class="page-title">
+                                            <h4>Sabores de nuestras croquetas</h4>
+                                        </div>
+                                    </div>
+                                </div>
+                                @foreach ($category->products as $product)
+                                @if($product->price == 0)
+                                <div class="media col-lg-4">
+                                    <img class="media-object justify-content-center" width="96" height="96"
+                                        src="https://campobar.uy/assets/img/campobar.PNG" alt=""
+                                        style="object-fit: contain;">
+                                    <div class="media-body">
+                                        <h4 class="media-heading">{{$product->name}}</h4>
+                                        <p>{{$product->description}}</p>
+                                    </div>
+                                </div>
+                                @endif
+                                @endforeach
+                            </div>
+
+                            @else
+
+                            @foreach ($category->products as $product)
+                            @if($product->desactivated == 0)
+                            <div class="media col-lg-4">
+                                <img class="media-object justify-content-center" width="96" height="96"
+                                    src="https://campobar.uy/assets/img/campobar.PNG" alt=""
+                                    style="object-fit: contain;">
+                                <div class="media-body">
+                                    <h4 class="media-heading">{{$product->name}}</h4>
+                                    <p>{{$product->description}}</p>
+                                    <p>${{$product->price}}</p>
+                                </div>
+                            </div>
+                            @endif
+                            @endforeach
+
+                            @endif
                         </div>
+
+
                         @endforeach
                     </div>
                 </div>
