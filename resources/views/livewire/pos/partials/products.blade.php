@@ -17,17 +17,17 @@
                                 <div wire:loading class="rounded-t-none shadow-lg list-group">
                                     <div class="list-item">Buscando...</div>
                                 </div>
-
-                                {{$searched_products->count()}}
+                                @if($searched_products->count() > 0)
                                 <ul class="list-group">
-                                    {{-- @foreach ($searched_products as $product)
+                                    @foreach ($searched_products as $product)
                                     <li class="list-group-item"
                                         wire:click.prevent="$emit('select_product', {{$product->barcode}})">
                                         Producto: <b>{{$product->name}}</b> &nbsp; Precio: <b>${{$product->price}}</b>{{$product->unitSale->unit}}
                                     </li>
 
-                                    @endforeach --}}
+                                    @endforeach
                                 </ul>
+                                @endif
 
                                 @endif
                             </div>
