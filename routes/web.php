@@ -38,6 +38,7 @@ use Illuminate\Support\Facades\DB;
 */
 
 Route::get('/', Menu::class);
+Route::get('/menu', Menu::class);
 
 Auth::routes();
 
