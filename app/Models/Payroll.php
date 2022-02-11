@@ -10,6 +10,17 @@ class Payroll extends Model
     use HasFactory;
     public $fillable = ['dateClosed', 'totalCash', 'totalSales', 'responsible', 'processing_area', 'initialCash', 'zone'];
 
+    public function cashier()
+    {
+        return $this->belongsTo(User::class,'responsible');
+    }
+
+    public function processing_area()
+    {
+        return $this->belongsTo(ProcessingArea::class,'zone');
+    }
+
+
     public function sales()
     {
         return $this->hasMany(Sale::class);
@@ -61,5 +72,9 @@ class Payroll extends Model
             'total_orders' => Sale::where('payroll_id', $this->id)->where('delivery_id', null)->count(),
             'total_sum_of_sales' => Sale::where('payroll_id', $this->id)->where('status', SaleStatus::ENTREGADO)->where('debt', 0)->sum('total')
         ]);
+    }
+
+    public function getTotalOrdersAttribute(){
+        return Sale::where('payroll_id', $this->id)->where('status', 'Entregado')->count();
     }
 }

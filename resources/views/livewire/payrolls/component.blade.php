@@ -19,6 +19,7 @@
                         <thead class="text-white" style="background: #3b3f5c;">
                             <tr>
                                 <th class="table-th text-white">Nº</th>
+                                <th class="table-th text-white text-center">Responsable</th>
                                 <th class="table-th text-white text-center">Pedidos</th>
                                 <th class="table-th text-white text-center">Recaudo</th>
                                 <th class="table-th text-white text-center">Se inició</th>
@@ -32,8 +33,11 @@
                                 <td>
                                     <h6>{{$payroll->id}}</h6>
                                 </td>
+                                <td>
+                                    <h6>{{$payroll->cashier->name}}</h6>
+                                </td>
                                 <td class="text-center">
-                                    <h6>{{$payroll->totalSales}}</h6>
+                                    <h6>{{$payroll->total_orders}}</h6>
                                 </td>
                                 <td class="text-center">
                                     <h6>${{$payroll->totalCash}}</h6>

@@ -18,15 +18,17 @@
                                     <div class="list-item">Buscando...</div>
                                 </div>
 
+                                {{$searched_products->count()}}
                                 <ul class="list-group">
-                                    @foreach ($searched_products as $product)
+                                    {{-- @foreach ($searched_products as $product)
                                     <li class="list-group-item"
                                         wire:click.prevent="$emit('select_product', {{$product->barcode}})">
                                         Producto: <b>{{$product->name}}</b> &nbsp; Precio: <b>${{$product->price}}</b>{{$product->unitSale->unit}}
                                     </li>
 
-                                    @endforeach
+                                    @endforeach --}}
                                 </ul>
+
                                 @endif
                             </div>
                         </div>

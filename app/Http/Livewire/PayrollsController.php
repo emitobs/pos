@@ -7,6 +7,7 @@ use App\Models\Payroll;
 use App\Models\Sale;
 use App\Models\ProcessingArea;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Livewire\Component;
 use Illuminate\Support\Facades\DB;
 use Livewire\WithPagination;
@@ -66,7 +67,7 @@ class PayrollsController extends Component
     public function initPayroll()
     {
         if ($this->cashier > 0 && $this->zone > 0) {
-            $payroll_open = Payroll::where('responsible', Auth()->user()->id)->where('isClosed', 0)->get();
+            $payroll_open = Payroll::where('responsible', $this->cashier)->where('isClosed', 0)->get();
             if ($payroll_open->count() > 0) {
                 $this->emit('payroll-open', 'Existe una planilla sin cerrar, para el usuario seleccionado.');
             } else {
@@ -152,6 +153,7 @@ class PayrollsController extends Component
             $this->emit('payroll-closed', 'Planilla cerrada');
         }
     }
+
 
     public function resetUI()
     {

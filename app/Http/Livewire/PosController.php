@@ -57,7 +57,9 @@ class PosController extends Component
         $searched_products = [],
         $cash_to_gr,
         $cart_local = [],
-        $beeper;
+        $beeper,
+        $products,
+        $categoriesProducts;
 
 
     public function mount(Request $request)
@@ -100,36 +102,63 @@ class PosController extends Component
             $this->discount = 0;
             $this->deliveryTime = '';
         }
-        $this->category_selected = 2;
+
         $this->total = $this->refreshTotal();
     }
 
     public function render()
     {
+        $payroll = Payroll::with('sales')->where('isClosed', 0)
+            ->where('responsible', auth()->user()->id)
+            ->first();
+        if ($payroll) {
+            if ($payroll->zone == 1) {
+                $this->categoriesProducts = Category::all();
+            }
+
+            if ($payroll->zone == 2) {
+                $this->categoriesProducts = Category::where('processing_area', $payroll->zone)->get();
+            }
+            $categories = [];
+            foreach ($this->categoriesProducts as $categorie) {
+                array_push($categories, $categorie->id);
+            }
+            //dd($this->categoriesProducts->first()->id);
+            $products = [];
+            if ($this->category_selected) {
+                $this->products = Product::where('category_id', '=', $this->category_selected)->where('desactivated', 0)->orderBy('name', 'asc')->get();
+            } else {
+                $this->category_selected = $this->categoriesProducts->first()->id;
+                $this->products = Product::where('category_id', '=', $this->categoriesProducts->first()->id)->orderBy('name', 'asc')->get();
+            }
+
+            if (strlen($this->search) > 0) {
+
+                $this->searched_products = Product::where('name', 'LIKE', '%' . $this->search . '%')->whereIn('category_id', $categories)->get();
+                //where('name', 'LIKE', '%' . $this->search . '%')->get();
+            }
+        } else {
+            $this->emit('sale-error', 'No se encuentra planilla abierta.');
+        }
+
         if (strlen($this->searched_client) > 0) {
             $this->clients = Client::where(function ($query) {
                 $query->where('name', 'LIKE', '%' . $this->searched_client . '%')
                     ->orWhere('telephone', 'LIKE', '%' . $this->searched_client . '%');
             })->where('disabled', 0)->get();
         }
-        if (strlen($this->search) > 0) {
-            $this->searched_products = Product::where('name', 'LIKE', '%' . $this->search . '%')->get();
-        }
+
         if ($this->discount == '') $this->discount = 0;
         if ($this->cash == '') $this->cash = 0;
-        $products = [];
-        if ($this->category_selected) {
-            $products = Product::where('category_id', '=', $this->category_selected)->where('desactivated', 0)->orderBy('name', 'asc')->get();
-        } else {
-            $products = Product::all()->orderBy('name', 'asc');
-        }
-        $categoriesProducts = Category::all();
+
+
+
         $beepers = Beeper::where('inUse', 0)->get();
         return view(
             'livewire.pos.component',
             [
-                'products' => $products,
-                'categoriesProducts' => $categoriesProducts,
+                'products' => $this->products,
+                'categoriesProducts' => $this->categoriesProducts,
                 'cart' => Cart::getContent()->sortBy('name'),
                 'beepers' => $beepers
             ]
@@ -481,7 +510,6 @@ class PosController extends Component
         $this->total = 0;
         $this->compositions = [];
         $this->clarifications = "";
-        $this->category_selected = 2;
         $this->client = "";
         $this->address = "";
         $this->payinhouse = 0;

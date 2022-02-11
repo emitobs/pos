@@ -122,6 +122,7 @@ class ProductsController extends Component
     public function Edit(Product $product)
     {
         $this->selected_id = $product->id;
+        $this->description = $product->description;
         $this->name = $product->name;
         $this->barcode = $product->barcode;
         $this->cost = $product->cost;
@@ -203,6 +204,7 @@ class ProductsController extends Component
         $this->selected_id = 0;
         $this->selectedComponent = [];
         $this->unit_sale = 'Elegir';
+        $this->description = '';
     }
 
     protected $listeners = ['deleteRow' => 'Destroy'];

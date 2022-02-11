@@ -1,8 +1,6 @@
 <div class="sidebar-wrapper sidebar-theme">
     <nav id="compactSidebar">
         <ul class="menu-categories">
-            @if(auth()->user()->roles()->first()->name == 'Admin')
-            @endif
             <li class="">
                 <a href="/nuevopedido" class="menu-toggle" data-active="false">
                     <div class="base-menu">
@@ -42,6 +40,7 @@
                     </div>
                 </a>
             </li>
+            @if(auth()->user()->roles()->first()->name == 'Admin')
             <li class="">
                 <a href="/products" class="menu-toggle" data-active="false">
                     <div class="base-menu">
@@ -80,7 +79,6 @@
                     </div>
                 </a>
             </li>
-            @if(auth()->user()->roles()->first()->name == 'Admin')
             <li class="">
                 <a href="/reports" class="menu-toggle" data-active="false">
                     <div class="base-menu">
@@ -117,8 +115,6 @@
                     </div>
                 </a>
             </li>
-
-            @endif
             <li class="">
                 <a href="/deliveries" class="menu-toggle" data-active="false">
                     <div class="base-menu">
@@ -148,6 +144,7 @@
                     </div>
                 </a>
             </li>
+            @endif
         </ul>
     </nav>
 
