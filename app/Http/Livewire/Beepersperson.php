@@ -4,6 +4,7 @@ namespace App\Http\Livewire;
 
 use App\Models\Payroll;
 use App\Models\Sale;
+use App\Models\Beeper;
 use Livewire\Component;
 
 class Beepersperson extends Component
@@ -26,6 +27,15 @@ class Beepersperson extends Component
         $sale->status = "Entregado";
         $sale->delivery_id = 1;
         $sale->save();
+        if($sale->beeper){
+            if($sale->beeper > 0){
+                $beeper = Beeper::find($sale->beeper);
+                if($beeper){
+                    $beeper->inUse = 0;
+                    $beeper->save();
+                }
+            }
+        }
         $this->emit('order_delivered');
     }
 }
