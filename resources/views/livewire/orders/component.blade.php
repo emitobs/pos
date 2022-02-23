@@ -147,7 +147,7 @@
         });
 
         window.livewire.on('print-ticket', saleId => {
-            window.open("print://" + saleId, '_self').close();
+            window.open("print://" + saleId, '_self');
         });
     });
 

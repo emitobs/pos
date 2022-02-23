@@ -134,7 +134,7 @@ class ReportsController extends Component
                 }
             }
         }
-        $this->resultado_productos = $resultado_productos;
+        $this->resultado_productos = $resultado_productos->sortBy('quantity');
     }
 
     public function createQuery($year, $month = 0, $day = 0, $category = null)

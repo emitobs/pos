@@ -1,10 +1,10 @@
-@if($debt)
+@if($selected_debt)
 <div class="modal fade" id="debt_modal" tabindex="-1" role="dialog">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header bg-dark">
                 <h5 class="modal-title text-white">
-                    <b>Pedido Nº {{$debt->id}}</b> | Detalles
+                    <b>Pedido Nº {{$selected_debt->id}}</b> | Detalles
                 </h5>
                 <h6 class="text-center text-warning" wire:loading>POR FAVOR ESPERE</h6>
             </div>
@@ -21,7 +21,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($debt->details as $index => $detail)
+                                    @foreach ($selected_debt->details as $index => $detail)
                                     <tr>
                                         <td class="text-center">
                                             @if($detail->product->unit_sale == 1)
@@ -44,7 +44,7 @@
                     <div class="col-md-6">
                         <div class="infobox-1">
                             <h5 class="info-heading">Aclaraciones</h5>
-                            <p class="info-text">{{$debt->clarifications}}.</p>
+                            <p class="info-text">{{$selected_debt->clarifications}}.</p>
                         </div>
                     </div>
                 </div>

@@ -12,7 +12,7 @@ use Carbon\Carbon;
 class DebtsController extends Component
 {
 
-    public $selected_client, $amount, $last_payment = 'Sin entregas',$debt;
+    public $selected_client, $amount, $last_payment = 'Sin entregas',$selected_debt;
     protected $listeners = [
         'save_payment'
     ];
@@ -78,7 +78,7 @@ class DebtsController extends Component
     }
 
     public function seeDetail(Sale $debt){
-        $this->debt = $debt;
+        $this->selected_debt = $debt;
         $this->emit('see_debt_details');
     }
 

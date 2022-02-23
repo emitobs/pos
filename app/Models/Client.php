@@ -19,7 +19,7 @@ class Client extends Model
 
     public function getDebtsAttribute()
     {
-        return $this->orders()->where('debt', 1)->where('payed', 0)->get();
+        return $this->orders()->where('debt', 1)->where('payed', 0)->where('status',"!=",'Cancelado')->get();
     }
     public function defaultAddress()
     {

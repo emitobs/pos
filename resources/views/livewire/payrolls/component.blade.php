@@ -40,7 +40,7 @@
                                     <h6>{{$payroll->total_orders}}</h6>
                                 </td>
                                 <td class="text-center">
-                                    <h6>${{$payroll->totalCash}}</h6>
+                                    <h6>${{$payroll->total}}</h6>
                                 </td>
                                 <td class="text-center">
                                     <h6>{{$payroll->created_at}}</h6>

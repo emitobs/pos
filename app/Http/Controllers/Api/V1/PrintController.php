@@ -40,6 +40,7 @@ class PrintController extends Controller
             'Clarifications' => $sale->clarifications,
             'SaleDetails' => $products,
             'Rounding' => $sale->rounding,
+            'PayWithHandy' => $sale->paywithhandy
         ];
         return response()->json($response);
     }

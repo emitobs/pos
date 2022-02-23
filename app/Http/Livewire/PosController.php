@@ -134,7 +134,7 @@ class PosController extends Component
 
             if (strlen($this->search) > 0) {
 
-                $this->searched_products = Product::where('name', 'LIKE', '%' . $this->search . '%')->whereIn('category_id', $categories)->get();
+                $this->searched_products = Product::where('name', 'LIKE', '%' . $this->search . '%')->whereIn('category_id', $categories)->where('desactivated', 0)->get();
                 //where('name', 'LIKE', '%' . $this->search . '%')->get();
             }
         } else {
@@ -353,6 +353,7 @@ class PosController extends Component
                 if ($sale) {
                     //si la compra va a cuenta, se setea la deuda en el total - la entrega.
                     if ($sale->debt == 1) {
+                        $sale->payed = 0;
                         $sale->remaining = $sale->total - $sale->cash;
                         $sale->save();
                     }

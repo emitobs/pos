@@ -12,12 +12,12 @@ class Payroll extends Model
 
     public function cashier()
     {
-        return $this->belongsTo(User::class,'responsible');
+        return $this->belongsTo(User::class, 'responsible');
     }
 
     public function processing_area()
     {
-        return $this->belongsTo(ProcessingArea::class,'zone');
+        return $this->belongsTo(ProcessingArea::class, 'zone');
     }
 
 
@@ -35,12 +35,12 @@ class Payroll extends Model
 
     public function getTotalAttribute()
     {
-        return Sale::where('payroll_id', $this->id)->where('status', SaleStatus::ENTREGADO)->where('debt', 0)->sum('total');
+        return Sale::where('payroll_id', $this->id)->where('status', SaleStatus::ENTREGADO)->where('debt', 0)->where('paywithhandy', 0)->sum('total');
     }
 
     public function getTotalRaisedAttribute()
     {
-        return Sale::where('payroll_id', $this->id)->where('status', SaleStatus::ENTREGADO)->where('debt', 0)->sum('total');
+        return Sale::where('payroll_id', $this->id)->where('status', SaleStatus::ENTREGADO)->where('debt', 0)->where('paywithhandy', 0)->sum('total');
     }
 
     public function getTotalOrdersDeliveredAttribute()
@@ -52,8 +52,8 @@ class Payroll extends Model
     {
         //return Sale::where('payroll_id', $this->id)->where('debt', 1)->where('payed', 0)->sum('remaining');
         return collect([
-            'total_orders' => Sale::where('payroll_id', $this->id)->where('debt', 1)->where('payed', 0)->count(),
-            'total_sum_of_sales' => Sale::where('payroll_id', $this->id)->where('debt', 1)->where('payed', 0)->sum('remaining')
+            'total_orders' => Sale::where('payroll_id', $this->id)->where('debt', 1)->where('payed', 0)->where('status', 'Entregado')->count(),
+            'total_sum_of_sales' => Sale::where('payroll_id', $this->id)->where('debt', 1)->where('payed', 0)->where('status', 'Entregado')->sum('remaining')
         ]);
     }
 
@@ -61,20 +61,21 @@ class Payroll extends Model
     {
         //return Sale::where('payroll_id', $this->id)->where('paywithhandy', 1)->count();
         return collect([
-            'total_orders' => Sale::where('payroll_id', $this->id)->where('paywithhandy', 1)->count(),
-            'total_sum_of_sales' => Sale::where('payroll_id', $this->id)->where('paywithhandy', 1)->sum('total')
+            'total_orders' => Sale::where('payroll_id', $this->id)->where('paywithhandy', 1)->where('status', 'Entregado')->count(),
+            'total_sum_of_sales' => Sale::where('payroll_id', $this->id)->where('paywithhandy', 1)->where('status', 'Entregado')->sum('total')
         ]);
     }
 
     public function getUndeliveredOrdersAttribute()
     {
         return collect([
-            'total_orders' => Sale::where('payroll_id', $this->id)->where('delivery_id', null)->count(),
+            'total_orders' => Sale::where('payroll_id', $this->id)->where('delivery_id', null)->where('status', "!=", SaleStatus::ENTREGADO)->where('status', "!=", SaleStatus::CANCELADO)->count(),
             'total_sum_of_sales' => Sale::where('payroll_id', $this->id)->where('status', SaleStatus::ENTREGADO)->where('debt', 0)->sum('total')
         ]);
     }
 
-    public function getTotalOrdersAttribute(){
+    public function getTotalOrdersAttribute()
+    {
         return Sale::where('payroll_id', $this->id)->where('status', 'Entregado')->count();
     }
 }
