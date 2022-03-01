@@ -8,7 +8,8 @@
                     </h4>
                     <ul class="tabs tab-pills">
                         <li>
-                            <a href="javascript:void(0)" class="tabmenu bg-dark" wire:click='generatePDF'>Generar PDF</a>
+                            <a href="javascript:void(0)" class="tabmenu bg-dark" wire:click='generatePDF'>Generar
+                                PDF</a>
                             <a href="javascript:void(0)" class="tabmenu bg-dark" data-toggle="modal"
                                 data-target="#theModal">Registrar entrega</a>
                         </li>
@@ -26,90 +27,88 @@
                         </div>
                     </div>
 
-                        <table class="table table-bordered table striped mt-1">
-                            <thead>
-                                <tr>
-                                    <th class="table-th">&nbsp;</th>
-                                    <th class="table-th">Ticket</th>
-                                    <th class="table-th">Fecha</th>
-                                    <th class="table-th">Total</th>
-                                    <th class="table-th">Debe</th>
-                                    <th class="table-th">Haber</th>
-                                    <th class="table-th">Ultimo pago</th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($selected_client->debts as $debt )
-                                {{-- @dd($debt) --}}
-                                <tr>
-                                    <td>
-                                        <input type="checkbox" name="" id="">
-                                    </td>
-                                    <td class="text-center">
-                                        {{$debt->id}}
-                                    </td>
-                                    <td class="text-center">
-                                        {{\Carbon\Carbon::parse($debt->created_at)->format('d/m/Y h:m')}}
-                                    </td>
-                                    <td class="text-center">
-                                        {{$debt->total}}
-                                    </td>
-                                    <td class="text-center">
-                                        {{$debt->remaining}}
-                                    </td>
-                                    <td class="text-center">
-                                        {{$debt->total - $debt->remaining}}
-                                    </td>
-                                    <td class="text-center">
-                                        {{\Carbon\Carbon::parse($debt->created_at)->format('d/m/Y h:m')}}
-                                    </td>
-                                    <td class="text-center">
-                                        <a href="javascript:void(0)" wire:click.prevent="seeDetail({{$debt->id}})"
-                                            class="btn btn-info tabmenu"><i class="far fa-eye"></i> Ver</a>
-                                    </td>
-                                </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-        @include('livewire.debts.seeDetail')
-    </div>
-
-    <div wire:ignore.self class="modal fade" id="theModal" tabindex="-1" role="dialog">
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header bg-dark">
-                    <h5 class="modal-title text-white">
-                        <b>Nueva entrega de:</b> {{$selected_client->name}}
-                    </h5>
-                    <h6 class="text-center text-warning" wire:loading>POR FAVOR ESPERE</h6>
-                </div>
-                <div class="modal-body">
-                    <div class="input-group mb-2">
-                        <div class="input-group-prepend">
-                            <div class="input-group-text" id="amount"><i class="fas fa-dollar-sign"></i></div>
-                        </div>
-                        <input wire:model='amount' type="text" class="form-control" placeholder="1560" aria-label="1560"
-                            aria-describedby="amount">
-
-                    </div>
-                    @error('amount') <span class="text-danger er">{{$message}}</span>@enderror
-                </div>
-                <div class="modal-footer">
-                    <button type="button" wire:click.prevent="confirm_new_payment()"
-                        class="btn btn-dark">Agregar</button>
-                    <button type="button" wire:click.prevent="resetUI()" class="btn btn-dark close-btn text-info"
-                        data-dismiss="modal">Cerrar</button>
+                    <table class="table table-bordered table striped mt-1">
+                        <thead>
+                            <tr>
+                                <th class="table-th">&nbsp;</th>
+                                <th class="table-th">Ticket</th>
+                                <th class="table-th">Fecha</th>
+                                <th class="table-th">Total</th>
+                                <th class="table-th">Debe</th>
+                                <th class="table-th">Haber</th>
+                                <th class="table-th">Ultimo pago</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($selected_client->debts as $xdebt )
+                            <tr>
+                                <td>
+                                    <input type="checkbox" name="" id="">
+                                </td>
+                                <td class="text-center">
+                                    {{$xdebt->id}}
+                                </td>
+                                <td class="text-center">
+                                    {{\Carbon\Carbon::parse($xdebt->created_at)->format('d/m/Y h:m')}}
+                                </td>
+                                <td class="text-center">
+                                    {{$xdebt->total}}
+                                </td>
+                                <td class="text-center">
+                                    {{$xdebt->remaining}}
+                                </td>
+                                <td class="text-center">
+                                    {{$xdebt->total - $xdebt->remaining}}
+                                </td>
+                                <td class="text-center">
+                                    {{\Carbon\Carbon::parse($xdebt->created_at)->format('d/m/Y h:m')}}
+                                </td>
+                                <td class="text-center">
+                                    <a href="javascript:void(0)" wire:click.prevent="seeDetail({{$xdebt->id}})"
+                                        class="btn btn-info tabmenu"><i class="far fa-eye"></i> Ver</a>
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
     </div>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
+    @include('livewire.debts.seeDetail')
+</div>
+
+<div wire:ignore.self class="modal fade" id="theModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-dark">
+                <h5 class="modal-title text-white">
+                    <b>Nueva entrega de:</b> {{$selected_client->name}}
+                </h5>
+                <h6 class="text-center text-warning" wire:loading>POR FAVOR ESPERE</h6>
+            </div>
+            <div class="modal-body">
+                <div class="input-group mb-2">
+                    <div class="input-group-prepend">
+                        <div class="input-group-text" id="amount"><i class="fas fa-dollar-sign"></i></div>
+                    </div>
+                    <input wire:model='amount' type="text" class="form-control" placeholder="1560" aria-label="1560"
+                        aria-describedby="amount">
+
+                </div>
+                @error('amount') <span class="text-danger er">{{$message}}</span>@enderror
+            </div>
+            <div class="modal-footer">
+                <button type="button" wire:click.prevent="confirm_new_payment()" class="btn btn-dark">Agregar</button>
+                <button type="button" wire:click.prevent="resetUI()" class="btn btn-dark close-btn text-info"
+                    data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
             window.livewire.on('confirm_new_payment', data =>{
                 Confirm();
             });
@@ -140,5 +139,5 @@
                 }
             });
 }
-    </script>
+</script>
 </div>
