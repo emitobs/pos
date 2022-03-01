@@ -36,7 +36,6 @@
                                 <th class="table-th">Total</th>
                                 <th class="table-th">Debe</th>
                                 <th class="table-th">Haber</th>
-                                <th class="table-th">Ultimo pago</th>
                                 <th></th>
                             </tr>
                         </thead>
@@ -61,9 +60,7 @@
                                 <td class="text-center">
                                     {{$xdebt->total - $xdebt->remaining}}
                                 </td>
-                                <td class="text-center">
-                                    {{\Carbon\Carbon::parse($xdebt->created_at)->format('d/m/Y h:m')}}
-                                </td>
+
                                 <td class="text-center">
                                     <a href="javascript:void(0)" wire:click.prevent="seeDetail({{$xdebt->id}})"
                                         class="btn btn-info tabmenu"><i class="far fa-eye"></i> Ver</a>
