@@ -25,6 +25,7 @@ use App\Models\Address;
 use App\Models\Cliente;
 use App\Models\Client;
 use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\PdfController;
 
 /*
 |--------------------------------------------------------------------------
@@ -63,6 +64,7 @@ Route::get('clients', ClientsController::class);
 Route::get('debts', DebtsController::class);
 Route::get('beepers', BeepersController::class);
 Route::get('beepersperson', Beepersperson::class);
+Route::get('/generatePDF', [PdfController::class, 'generatePDF'])->name('generatePDF');
 
 // Route::get('/migrar', function () {
 //     $articulos = Articulos::on('bellas')->get();

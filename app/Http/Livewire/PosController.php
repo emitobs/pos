@@ -47,7 +47,7 @@ class PosController extends Component
         $kg_unit = 'grs',
         $kgs_quantity,
         $units_quantity = 1,
-        $quantity,
+        $quantity = 1,
         $cart_total,
         $debt = 0,
         $payment_method,

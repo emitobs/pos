@@ -8,6 +8,7 @@
                     </h4>
                     <ul class="tabs tab-pills">
                         <li>
+                            <a href="javascript:void(0)" class="tabmenu bg-dark" wire:click='generatePDF'>Generar PDF</a>
                             <a href="javascript:void(0)" class="tabmenu bg-dark" data-toggle="modal"
                                 data-target="#theModal">Registrar entrega</a>
                         </li>

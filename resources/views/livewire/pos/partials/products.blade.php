@@ -11,7 +11,14 @@
                 <div class="card-body">
                     <div class="task-header">
                         <div class="row">
-                            <div class="col">
+                            <div class="col-12 mb-2">
+                                <div class="row justify-content-between">
+                                    <div class="col-3">
+                                        <!--<input type="number" wire:model="quantity" placeholder="Cantidad" class="form-control">-->
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12">
                                 @include('common.searchbox')
                                 @if(strlen($search) > 0)
                                 <div wire:loading class="rounded-t-none shadow-lg list-group">
@@ -22,7 +29,8 @@
                                     @foreach ($searched_products as $product)
                                     <li class="list-group-item"
                                         wire:click.prevent="$emit('select_product', {{$product->barcode}})">
-                                        Producto: <b>{{$product->name}}</b> &nbsp; Precio: <b>${{$product->price}}</b>{{$product->unitSale->unit}}
+                                        Producto: <b>{{$product->name}}</b> &nbsp; Precio:
+                                        <b>${{$product->price}}</b>{{$product->unitSale->unit}}
                                     </li>
 
                                     @endforeach

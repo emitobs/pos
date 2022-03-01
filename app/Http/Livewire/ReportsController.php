@@ -16,6 +16,9 @@ class ReportsController extends Component
 {
     public $totalSales,
         $totalCash,
+        $total_handy,
+        $total_cash,
+        $total_debts = 0,
         $groupBy,
         $day,
         $month,
@@ -75,7 +78,7 @@ class ReportsController extends Component
                     if (!empty($this->year)) {
                         //obtengo las ventas del año
                         $sales = Sale::whereYear('created_at', $this->year)->where('status', 'Entregado')->get();
-                        $this->totalCash = $sales->where('status', 'Entregado')->sum('total');
+                        $this->totalCash = $sales->where('status', 'Entregado')->where('debt', 0)->where('paywithhandy', 0)->sum('total');
                         $this->totalSales = $sales->where('status', 'Entregado')->count();
                         $this->products = DB::select($this->createQuery($this->year, 0, $category_query));
                         $this->saleByCategory = DB::select($this->createQueryByCategories($this->year));
@@ -110,6 +113,9 @@ class ReportsController extends Component
 
         $resultado_productos = new Collection();
         foreach ($payrolls as $payroll) {
+            $this->total_debts += $payroll->total_debts['total_sum_of_sales'];
+            $this->total_handy += $payroll->PaymentsWithHandy['total_sum_of_sales'];
+            $this->total_cash += $payroll->total_raised;
             foreach ($payroll->sales as $sale) {
                 $this->totalCash += $sale->total;
                 $this->total_sales++;

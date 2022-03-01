@@ -56,33 +56,36 @@
                         <div class="col-6">
                             <div class="card component-card_1">
                                 <div class="card-body">
-                                    <h5 class="card-title mb-3">Grafica de productos vendidos</h5>
-                                    <ul class="tabs tab-pills">
-                                        <li>
-                                            <div class="n-chk">
-                                                <label class="new-control new-checkbox new-checkbox-rounded">
-                                                    <input wire:model='category_selected' type="radio"
-                                                        class="new-control-input" value="all" name="category_selected">
-                                                    <span class="new-control-indicator"></span>Todos
-                                                </label>
-                                                @foreach ($categories as $category )
-                                                <label class="new-control new-checkbox new-checkbox-rounded">
-                                                    <input wire:model='category_selected' type="radio"
-                                                        class="new-control-input" value="{{$category->name}}"
-                                                        name="category_selected">
-                                                    <span class="new-control-indicator"></span>{{$category->name}}
-                                                </label>
-                                                @endforeach
+                                    <div class="widget widget-account-invoice-one">
+
+                                        <div class="widget-heading">
+                                            <h5 class="">Recaudo</h5>
+                                        </div>
+
+                                        <div class="widget-content">
+                                            <div class="invoice-box">
+                                                <div class="inv-detail">
+                                                    <div class="info-detail-1">
+                                                        <p>Total en efectivo:</p>
+                                                        <p>$ {{$total_cash}}</p>
+                                                    </div>
+                                                    <div class="info-detail-1">
+
+                                                        <p>Total a cuenta:</p>
+                                                        <p>${{$total_debts}}</p>
+                                                    </div>
+                                                    <div class="info-detail-3 info-sub">
+                                                        <div class="info-detail">
+                                                            <p>Total pago con Handy</p>
+                                                            <p>$ {{$total_handy}}</p>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
                                             </div>
-                                        </li>
-                                    </ul>
+                                        </div>
 
-                                    @if($total_sales < 1) <span class="text-danger">{{$msgNoSales}}</span>
-                                        @endif
-
-                                        <div id="donut-chart"></div>
-                                        <div id="donut-chart-byCategories"></div>
-
+                                    </div>
                                 </div>
                             </div>
                         </div>

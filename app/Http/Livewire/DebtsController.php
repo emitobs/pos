@@ -12,7 +12,7 @@ use Carbon\Carbon;
 class DebtsController extends Component
 {
 
-    public $selected_client, $amount, $last_payment = 'Sin entregas',$selected_debt;
+    public $selected_client, $amount, $last_payment = 'Sin entregas', $selected_debt;
     protected $listeners = [
         'save_payment'
     ];
@@ -77,7 +77,8 @@ class DebtsController extends Component
             ->section('content');
     }
 
-    public function seeDetail(Sale $debt){
+    public function seeDetail(Sale $debt)
+    {
         $this->selected_debt = $debt;
         $this->emit('see_debt_details');
     }
@@ -88,10 +89,17 @@ class DebtsController extends Component
             'amount' => 'required|min:1|numeric'
         ];
         $messages = ['amount.required' => 'Ingrese monto a entregar', 'amount.numeric' => 'Ingrese un monto válido', 'amount.min' => 'El monto debese ser igual o mayor a $1'];
-        $this->validate($rules, $messages);
+        dd($this->validate($rules, $messages));
         if ($this->amount)
             $this->emit('confirm_new_payment');
     }
+
+    public function generatePDF()
+    {
+        session(['client_id' => $this->selected_client->id]);
+        return redirect()->route('generatePDF');
+    }
+
     public function resetUI()
     {
     }
