@@ -49,7 +49,7 @@
                                     {{$xdebt->id}}
                                 </td>
                                 <td class="text-center">
-                                    {{\Carbon\Carbon::parse($xdebt->created_at)->format('d/m/Y h:m')}}
+                                    {{$xdebt->created_at}}
                                 </td>
                                 <td class="text-center">
                                     {{$xdebt->total}}
