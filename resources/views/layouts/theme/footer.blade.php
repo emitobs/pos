@@ -1,10 +1,9 @@
 <div class="footer-wrapper">
     <div class="footer-section f-section-1">
-        <p class="">Copyright © <?php echo date('Y'); ?> <a target="_blank" href="https://erizos.dev">Erizos DevOps</a>, All rights
-            reserved.</p>
+        <p class="">Copyright © <?php echo date('Y'); ?> <a target="_blank" href="https://erizos.dev">Erizos DevOps</a>, Todos los derechos reservados.</p>
     </div>
     <div class="footer-section f-section-2">
-        <p class="">Coded with <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+        <p class="">Hecho con <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                 class="feather feather-heart">
                 <path

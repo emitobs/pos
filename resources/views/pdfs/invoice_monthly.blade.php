@@ -9,9 +9,10 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css"
         integrity="sha384-zCbKRCUGaJDkqS1kPbPd7TveP5iyJE0EjAuZQTgFLD2ylzuqKfdKlfG/eSrtxUkn" crossorigin="anonymous">
     <style>
-        h1{
+        h1 {
             font-size: 14px;
         }
+
         .table td,
         .table th {
             padding: 0;
@@ -58,19 +59,40 @@
                     </tr>
                     @foreach ($debt->details as $detail)
                     <tr>
-                        <td scope="row">{{$detail->product->name}}</td>
-                        <td>
+                        <td scope="col">{{$detail->product->name}}</td>
+                        <td scope="col">
                             @if($detail->product->unitSale->unit == 'ud')
                             {{number_format($detail->quantity,0)}}
                             @elseif($detail->product->unitSale->unit == 'Kg')
                             {{number_format($detail->quantity,3,',','.')}}
                             @endif
                             {{$detail->product->unitSale->unit}}</td>
-                        <td>${{number_format($detail->price / $detail->quantity,0)}}</td>
-                        <td>${{number_format($detail->price,0)}}</td>
+                        <td scope="col">${{number_format($detail->price / $detail->quantity,0)}}</td>
+                        <td scope="col">${{number_format($detail->price,0)}}</td>
                     </tr>
                     @endforeach
                     @endforeach
+                    <tr class="bg-dark">
+                        <th class="text-white" scope="col">@if($selected_client->discount > 0) sub-total @else Total
+                            @endif</th>
+                        <th class="text-white" scope="col"></th>
+                        <th class="text-white" scope="col"></th>
+                        <th class="text-white" scope="col">${{$selected_client->debts->sum('total')}}</th>
+                    </tr>
+                    @if($selected_client->discount > 0)
+                    <tr class="bg-dark">
+                        <th class="text-white" scope="col">Descuento</th>
+                        <th class="text-white" scope="col"></th>
+                        <th class="text-white" scope="col"></th>
+                        <th class="text-white" scope="col">%{{$selected_client->discount}}</th>
+                    </tr>
+                    <tr class="bg-dark">
+                        <th class="text-white" scope="col">Total</th>
+                        <th class="text-white" scope="col"></th>
+                        <th class="text-white" scope="col"></th>
+                        <th class="text-white" scope="col">${{$selected_client->debts->sum('total')}}</th>
+                    </tr>
+                    @endif
                 </tbody>
             </table>
         </div>
