@@ -62,7 +62,8 @@
                 <div class="mail-box-container">
                     <div class="mail-overlay"></div>
                     <div class="tab-title">
-                        @foreach ($categories as $category )
+
+                        @foreach ($foods as $category )
                         <div class="page-header">
                             <div class="page-title">
                                 <h4>{{$category->name}}</h4>
@@ -126,8 +127,30 @@
 
                             @endif
                         </div>
+                        @endforeach
 
-
+                        @foreach ($drinks->sortBy('menu_position') as $category )
+                        <div class="page-header">
+                            <div class="page-title">
+                                <h4>{{$category->name}}</h4>
+                            </div>
+                        </div>
+                        <div class="row">
+                            @foreach ($category->products as $product)
+                            @if($product->desactivated == 0)
+                            <div class="media col-lg-4">
+                                <img class="media-object justify-content-center" width="96" height="96"
+                                    src="https://campobar.uy/assets/img/campobar.PNG" alt=""
+                                    style="object-fit: contain;">
+                                <div class="media-body">
+                                    <h4 class="media-heading">{{$product->name}}</h4>
+                                    <p>{{$product->description}}</p>
+                                    <p>${{$product->price}}</p>
+                                </div>
+                            </div>
+                            @endif
+                            @endforeach
+                        </div>
                         @endforeach
                     </div>
                 </div>
