@@ -63,7 +63,7 @@
                     <div class="mail-overlay"></div>
                     <div class="tab-title">
 
-                        @foreach ($foods as $category )
+                        @foreach ($foods->sortBy('menu_position') as $category )
                         <div class="page-header">
                             <div class="page-title">
                                 <h4>{{$category->name}}</h4>
