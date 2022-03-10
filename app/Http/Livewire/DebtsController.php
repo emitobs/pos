@@ -14,7 +14,8 @@ class DebtsController extends Component
 
     public $selected_client, $amount, $last_payment = 'Sin entregas', $selected_debt;
     protected $listeners = [
-        'save_payment'
+        'save_payment',
+        'confirm_new_payment'
     ];
     public function mount(Request $request)
     {
@@ -83,15 +84,15 @@ class DebtsController extends Component
         $this->emit('see_debt_details');
     }
 
+
     public function confirm_new_payment()
     {
         $rules = [
             'amount' => 'required|min:1|numeric'
         ];
         $messages = ['amount.required' => 'Ingrese monto a entregar', 'amount.numeric' => 'Ingrese un monto válido', 'amount.min' => 'El monto debese ser igual o mayor a $1'];
-        dd($this->validate($rules, $messages));
-        if ($this->amount)
-            $this->emit('confirm_new_payment');
+        $this->validate($rules, $messages);
+        $this->emit('xconfirm_new_payment');
     }
 
     public function generatePDF()

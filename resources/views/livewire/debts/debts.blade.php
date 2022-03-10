@@ -75,42 +75,42 @@
         </div>
     </div>
     @include('livewire.debts.seeDetail')
-</div>
 
-<div wire:ignore.self class="modal fade" id="theModal" tabindex="-1" role="dialog">
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header bg-dark">
-                <h5 class="modal-title text-white">
-                    <b>Nueva entrega de:</b> {{$selected_client->name}}
-                </h5>
-                <h6 class="text-center text-warning" wire:loading>POR FAVOR ESPERE</h6>
-            </div>
-            <div class="modal-body">
-                <div class="input-group mb-2">
-                    <div class="input-group-prepend">
-                        <div class="input-group-text" id="amount"><i class="fas fa-dollar-sign"></i></div>
-                    </div>
-                    <input wire:model='amount' type="text" class="form-control" placeholder="1560" aria-label="1560"
-                        aria-describedby="amount">
 
+    <div wire:ignore.self class="modal fade" id="theModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-dark">
+                    <h5 class="modal-title text-white">
+                        <b>Nueva entrega de:</b> {{$selected_client->name}}
+                    </h5>
+                    <h6 class="text-center text-warning" wire:loading>POR FAVOR ESPERE</h6>
                 </div>
-                @error('amount') <span class="text-danger er">{{$message}}</span>@enderror
-            </div>
-            <div class="modal-footer">
-                <button type="button" wire:click.prevent="confirm_new_payment()" class="btn btn-dark">Agregar</button>
-                <button type="button" wire:click.prevent="resetUI()" class="btn btn-dark close-btn text-info"
-                    data-dismiss="modal">Cerrar</button>
+                <div class="modal-body">
+                    <div class="input-group mb-2">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text" id="amount"><i class="fas fa-dollar-sign"></i></div>
+                        </div>
+                        <input wire:model='amount' type="text" class="form-control" placeholder="1560" aria-label="1560"
+                            aria-describedby="amount">
+
+                    </div>
+                    @error('amount') <span class="text-danger er">{{$message}}</span>@enderror
+                </div>
+                <div class="modal-footer">
+                    <button type="button" wire:click.prevent="confirm_new_payment()"
+                        class="btn btn-dark">Agregar</button>
+                    <button type="button" wire:click.prevent="resetUI()" class="btn btn-dark close-btn text-info"
+                        data-dismiss="modal">Cerrar</button>
+                </div>
             </div>
         </div>
     </div>
-</div>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-            window.livewire.on('confirm_new_payment', data =>{
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            window.livewire.on('xconfirm_new_payment', data =>{
                 Confirm();
             });
-
             window.livewire.on('payment_added', data =>{
                 $('#theModal').modal('hide');
                 noty('Registro de pago exitoso');
@@ -137,5 +137,5 @@
                 }
             });
 }
-</script>
+    </script>
 </div>
