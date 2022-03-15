@@ -9,7 +9,7 @@
                     <span class="fas fa-edit"></span>
                 </span>
             </div>
-            <input type="text" wire:model.lazy="name" class="form-control" placeholder="Cursos">
+            <input type="text" wire:model.lazy="name" class="form-control" placeholder="Nombre categoria">
         </div>
         @error('name') <span class="text-danger er">{{$message}}</span>@enderror
     </div>
@@ -20,6 +20,15 @@
             <label class="custom-file-label">Imagen {{$image}}</label>
         </div>
         @error('image') <span class="text-danger er">{{$message}}</span>@enderror
+        <div class="form-inline">
+            <div class="n-chk form-check form-check-inline">
+                <label class="new-control new-checkbox checkbox-primary">
+                    <input type="checkbox" class="new-control-input" wire:model="desactivated" @if($desactivated)cheked
+                        @endif>
+                    <span class="new-control-indicator"></span>Desactivado
+                </label>
+            </div>
+        </div>
     </div>
 </div>
 

@@ -12,7 +12,7 @@ class CategoriesController extends Component
     use WithFileUploads;
     use WithPagination;
 
-    public $name, $search, $image, $selected_id, $pageTitle, $componentName;
+    public $name, $search, $image, $selected_id, $pageTitle, $componentName, $desactivated = 0;
     private $pagination = 8;
 
     public function mount()
@@ -45,7 +45,7 @@ class CategoriesController extends Component
         $this->name = $record->name;
         $this->selected_id = $record->id;
         $this->image = null;
-
+        $this->desactivated = $record->desactivated;
         $this->emit('show-modal', 'show modal');
     }
 
@@ -65,6 +65,7 @@ class CategoriesController extends Component
 
         $category = Category::create([
             'name' => $this->name,
+            'desactivated' => $this->desactivated,
         ]);
 
         if ($this->image) {
@@ -93,7 +94,8 @@ class CategoriesController extends Component
 
         $category = Category::find($this->selected_id);
         $category->update([
-            'name' => $this->name
+            'name' => $this->name,
+            'desactivated' => $this->desactivated,
         ]);
 
         if ($this->image) {
@@ -101,6 +103,7 @@ class CategoriesController extends Component
             $this->image->storeAs('public/categories', $customFileName);
             $imageName = $category->image;
             $category->image = $customFileName;
+            $category->desactivated = $this->desactivated;
             $category->save();
 
             if ($imageName != null) {
@@ -119,6 +122,7 @@ class CategoriesController extends Component
         $this->image = null;
         $this->search = '';
         $this->selected_id = 0;
+        $this->desactivated = 0;
     }
 
     protected $listeners = ['deleteRow' => 'Destroy'];

@@ -65,6 +65,7 @@
                                         <div class="card-body">
                                             <h5 class="card-title text-center">{{$product->name}}
                                             </h5>
+                                            <p>${{$product->price}}</p>
                                         </div>
                                     </div>
                                 </a>
