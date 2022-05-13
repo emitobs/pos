@@ -4,7 +4,7 @@
             <div class="widget widget-chart-one">
                 <div class="widget-heading">
                     <h4 class="card-title">
-                        <b>ComponentName | PageTitle</b>
+                        <b>Sorteos</b>
                     </h4>
                     <ul class="tabs tab-pills">
                         <li>
@@ -13,25 +13,37 @@
                         </li>
                     </ul>
                 </div>
-                Search
                 <div class="widget-content">
                     <div class="table-responsive">
                         <table class="table table-bordered table striped mt-1">
                             <thead class="text-white" style="background: #3b3f5c;">
                                 <tr>
-                                    <th class="table-th text-white">Descripcion</th>
-                                    <th class="table-th text-white">Imagen</th>
-                                    <th class="table-th text-white">Actions</th>
+                                    <th class="table-th text-center text-white">Nombre</th>
+                                    <th class="table-th text-center text-white">Cod Generados</th>
+                                    <th class="table-th text-center text-white">Cant Premios</th>
+                                    <th class="table-th text-center text-white">Premios Reclamados</th>
+                                    <th class="table-th text-center text-white">Acciones</th>
                                 </tr>
                             </thead>
                             <tbody>
+                                @foreach ($raffles as $raffle)
                                 <tr>
-                                    <td>
-                                        <h6>Category namne</h6>
+                                    <td class="pl-4">
+                                        <h6>{{$raffle->name}}</h6>
                                     </td>
                                     <td class="text-center">
                                         <span>
-                                            <img src="" alt="imagen de ejemplo" height="70" width="80" class="rounded">
+                                            <h6>{{$raffle->codes->count()}}</h6>
+                                        </span>
+                                    </td>
+                                    <td class="text-center">
+                                        <span>
+                                            <h6>{{$raffle->codes->where('award', 1)->count()}}</h6>
+                                        </span>
+                                    </td>
+                                    <td class="text-center">
+                                        <span>
+                                            <h6>{{$raffle->codes->where('award', 1)->where('used_at', '!=', null)->count()}}</h6>
                                         </span>
                                     </td>
                                     <td class="text-center">
@@ -43,6 +55,7 @@
                                         </a>
                                     </td>
                                 </tr>
+                                @endforeach
                             </tbody>
                         </table>
                     </div>

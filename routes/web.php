@@ -32,6 +32,7 @@ use App\Http\Livewire\ProcessServicioController;
 use App\Http\Livewire\ProcesarPedido;
 use App\Http\Livewire\RafflesController;
 use App\Models\Raffle;
+use App\Http\Livewire\QrCajasController;
 
 /*
 |--------------------------------------------------------------------------
@@ -76,6 +77,7 @@ Route::get('/mesas', TablesController::class)->name('mesas');
 //Route::get('/procesarServicio/{id}', ProcessServicioController::class)->name('endservice');
 Route::get('/procesar', ProcesarPedido::class)->name('endservice');
 Route::get('/sorteos',RafflesController::class);
+Route::get('/qrcajas', QrCajasController::class);
 
 
 // Route::get('/migrar', function () {
