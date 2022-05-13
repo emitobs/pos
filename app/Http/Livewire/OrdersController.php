@@ -49,7 +49,7 @@ class OrdersController extends Component
         if ($this->selectedPayroll != null) {
             $currentPayroll = Payroll::find($this->selectedPayroll);
         } else {
-            $currentPayroll = Payroll::Where('isClosed', 0)->where('responsible',auth()->user()->id)->first();
+            $currentPayroll = Payroll::Where('isClosed', 0)->where('responsible', auth()->user()->id)->first();
         }
         if ($currentPayroll != null) {
             if ($this->status_selected == 'Todos') {
@@ -147,6 +147,7 @@ class OrdersController extends Component
     {
         $payroll = Payroll::where('isClosed', 0)->first();
         $sale = Sale::find($this->sale->id);
+
         if ($sale) {
             $sale->status = SaleStatus::ENTREGADO;
             $sale->deliveredTime = date("G:i");

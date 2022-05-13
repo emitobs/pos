@@ -1,9 +1,10 @@
-<div wire:ignore.self class="modal fade" id="set_units" tabindex="-1" role="dialog">
+
+<div wire:ignore.self class="modal fade" id="set_units" tabindex="6" role="dialog">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header bg-dark">
                 <h5 class="modal-title text-white">
-                    <b>¿Cuánto lleva? | <b>{{$selected_Product->name}}</b>
+                    <b>¿Cuánto lleva? | <b>{{$selected_product->name}}</b>
                 </h5>
                 <h6 class="text-center text-warning" wire:loading>POR FAVOR ESPERE</h6>
             </div>
@@ -27,6 +28,12 @@
                 <button type="button" class="btn btn-dark close-btn text-info" data-dismiss="modal">Cerrar</button>
                 <button type="button" wire:click.prevent="addProduct()" class="btn btn-dark">
                     Agregar</button>
+                {{-- @if($selected_id < 1) <button type="button" wire:click.prevent="Store()" class="btn btn-dark">
+                    Guardar</button>
+                    @else
+                    <button type="button" wire:click.prevent="Update()"
+                        class="btn btn-dark close-modal">Actualizar</button>
+                    @endif --}}
             </div>
         </div>
     </div>

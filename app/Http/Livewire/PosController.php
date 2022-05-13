@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire;
 
+use App\Models\Address;
 use App\Models\Category;
 use App\Models\Denomination;
 use App\Models\Payroll;
@@ -11,16 +12,14 @@ use App\Models\SaleDetails;
 use App\Models\SaleStatus;
 use App\Models\Client;
 use App\Models\Beeper;
+use App\Models\OrderDetail;
+use App\Models\UnitSale;
 use Livewire\Component;
 use Darryldecode\Cart\Facades\CartFacade as Cart;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Http\Request;
 use Exception;
-use Illuminate\Database\Eloquent\Collection as EloquentCollection;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Session;
 
 
 class PosController extends Component
@@ -34,8 +33,9 @@ class PosController extends Component
         $clarifications,
         $compositions = [],
         $category_selected,
+        $telephone,
         $client,
-        $selected_client = 1,
+        $selected_client,
         $address,
         $payinhouse,
         $discount = 0,
@@ -59,7 +59,11 @@ class PosController extends Component
         $cart_local = [],
         $beeper,
         $products,
-        $categoriesProducts;
+        $categoriesProducts,
+        $payroll,
+        $detail,
+        $selected_id,
+        $cart = [];
 
 
     public function mount(Request $request)
@@ -77,6 +81,7 @@ class PosController extends Component
                     'unit' => $productDB->unitSale->unit,
                     'quantity' => $product->quantity,
                     'total' => $product->quantity * $productDB->price,
+                    'detail' => $product->detail
                 ]);
             }
             $this->clarifications = $sale->clarifications;
@@ -88,22 +93,8 @@ class PosController extends Component
             $this->cash = $sale->cash;
             $this->change = $sale->change;
             $this->payWithHandy = $sale->payWithHandy;
-        } else {
-            $this->payment_method = 'cash';
-            $this->cash = 0;
-            $this->discount = 0;
-            $this->change = 0;
-            $this->compositions = [];
-            $this->clarifications = "";
-            $this->client = "";
-            $this->address = "";
-            $this->payinhouse = 0;
-            $this->payWithHandy = 0;
-            $this->discount = 0;
-            $this->deliveryTime = '';
+            $this->total = $this->refreshTotal();
         }
-
-        $this->total = $this->refreshTotal();
     }
 
     public function render()
@@ -112,6 +103,8 @@ class PosController extends Component
             ->where('responsible', auth()->user()->id)
             ->first();
         if ($payroll) {
+            $units = UnitSale::where('disabled', 0)->get();
+            $this->payroll = $payroll;
             if ($payroll->zone == 1) {
                 $this->categoriesProducts = Category::all();
             }
@@ -123,7 +116,7 @@ class PosController extends Component
             foreach ($this->categoriesProducts as $categorie) {
                 array_push($categories, $categorie->id);
             }
-            //dd($this->categoriesProducts->first()->id);
+
             $products = [];
             if ($this->category_selected) {
                 $this->products = Product::where('category_id', '=', $this->category_selected)->where('desactivated', 0)->orderBy('name', 'asc')->get();
@@ -133,9 +126,7 @@ class PosController extends Component
             }
 
             if (strlen($this->search) > 0) {
-
                 $this->searched_products = Product::where('name', 'LIKE', '%' . $this->search . '%')->whereIn('category_id', $categories)->where('desactivated', 0)->get();
-                //where('name', 'LIKE', '%' . $this->search . '%')->get();
             }
         } else {
             $this->emit('sale-error', 'No se encuentra planilla abierta.');
@@ -147,12 +138,8 @@ class PosController extends Component
                     ->orWhere('telephone', 'LIKE', '%' . $this->searched_client . '%');
             })->where('disabled', 0)->get();
         }
-
         if ($this->discount == '') $this->discount = 0;
         if ($this->cash == '') $this->cash = 0;
-
-
-
         $beepers = Beeper::where('inUse', 0)->get();
         return view(
             'livewire.pos.component',
@@ -160,7 +147,8 @@ class PosController extends Component
                 'products' => $this->products,
                 'categoriesProducts' => $this->categoriesProducts,
                 'cart' => Cart::getContent()->sortBy('name'),
-                'beepers' => $beepers
+                'beepers' => $beepers,
+                //'units' => $units
             ]
         )->extends('layouts.theme.app')
             ->section('content');
@@ -168,10 +156,12 @@ class PosController extends Component
 
     public function selectClient(Client $client)
     {
+
         if (isset($client)) {
-            $this->selected_client = $client->id;
+            $this->selected_client = $client;
             $this->client = $client->name;
             $this->address = $client->default_address;
+            $this->telephone = $client->telephone;
             $this->searched_client = '';
             $this->emit('noty', 'Cliente seleccionado');
         }
@@ -210,7 +200,8 @@ class PosController extends Component
         'saveSale' => 'saveSale',
         'refreshProducts' => 'refreshProducts',
         'selectClient' => 'selectClient',
-        'select_product' => 'select_product'
+        'select_product' => 'select_product',
+        'add_product'
     ];
 
     public function InCart($productId)
@@ -329,6 +320,19 @@ class PosController extends Component
             if ($payroll) {
                 if ($this->payment_method == 'debt') $this->debt = 1;
                 if ($this->payment_method == 'card') $this->payWithHandy = 1;
+                if (!$this->selected_client) {
+                    $new_client = Client::create([
+                        'name' => $this->client,
+                        'telephone' => $this->telephone
+                    ]);
+                    Address::create([
+                        'address' => $this->address,
+                        'client_id' => $new_client->id,
+                        'default' => 1,
+                        'clarification' => $this->clarifications
+                    ]);
+                    $this->selected_client = $new_client->id;
+                }
                 $sale = Sale::create([
                     'total' => $this->total_result,
                     'subtotal' => $this->cart_total + $this->discount,
@@ -338,7 +342,7 @@ class PosController extends Component
                     'user_id' => Auth()->user()->id,
                     'clarifications' => $this->clarifications,
                     'status' => SaleStatus::ENESPERA,
-                    'client_id' => $this->selected_client,
+                    'client_id' => $this->selected_client->id,
                     'address' => $this->address,
                     'payinhouse' => $this->payinhouse,
                     'payWithHandy' => $this->payWithHandy,
@@ -348,7 +352,8 @@ class PosController extends Component
                     'dayid' => $payroll->sales->count(),
                     'debt' => $this->debt,
                     'rounding' => $this->rounding,
-                    'beeper' => $this->beeper
+                    'beeper' => $this->beeper,
+
                 ]);
                 if ($sale) {
                     //si la compra va a cuenta, se setea la deuda en el total - la entrega.
@@ -404,7 +409,6 @@ class PosController extends Component
             $this->emit('sale-error', $e->getMessage());
         }
     }
-
 
     public function updateSale()
     {
@@ -529,6 +533,7 @@ class PosController extends Component
         $this->units_quantity = 1;
         $this->kgs_quantity = 0;
         $this->cart_local = [];
+        $this->selected_client = null;
     }
 
     public function select_product($id)
@@ -570,6 +575,21 @@ class PosController extends Component
         }
     }
 
+    // public function add_product($barcode)
+    // {
+    //     $product = Product::where('barcode', $barcode)->firstOrFail();
+    //     if ($product && $product->stock >= $this->quantity) {
+    //         array_push($this->cart, [
+    //             'product_id' => $product->id,
+    //             'quantity' => $this->quantity,
+    //             'detail' => $this->detail
+    //         ]);
+    //         dd($this->cart);
+    //     } else {
+    //         dd('que pinta pa');
+    //     }
+    // }
+
     public function ScanCode($barcode, $cant = 1)
     {
         $count = 0;
@@ -579,7 +599,7 @@ class PosController extends Component
             while (!$founded && $count < count($this->cart_local)) {
                 if ($this->cart_local[$count]['product_barcode'] == $product->barcode) {
                     $founded = true;
-                    if ($this->cart_local[$count]['unit'] == "Kg") {
+                    if ($this->cart_local[$count]['unit'] == "Kg" || $this->cart_local[$count]['detail'] != $this->detail) {
                         array_push($this->cart_local, [
                             'product_id' => $product->id,
                             'product_barcode' => $product->barcode,
@@ -588,6 +608,7 @@ class PosController extends Component
                             'unit' => $product->unitSale->unit,
                             'quantity' => $cant,
                             'total' => $cant * $product->price,
+                            'detail' => $this->detail
                         ]);
                         $this->refreshTotal();
                         $this->emit('scan-ok', 'Producto agregado');
@@ -608,7 +629,8 @@ class PosController extends Component
                     'product_name' => $product->name,
                     'product_price' => $product->price,
                     'unit' => $product->unitSale->unit,
-                    'quantity' => $cant
+                    'quantity' => $cant,
+                    'detail' => $this->detail
                 ]);
                 $this->refreshTotal();
                 $this->emit('scan-ok', 'Producto agregado');

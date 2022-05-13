@@ -16,7 +16,7 @@
             noty(Msg);
         });
         window.livewire.on('print-ticket', saleId => {
-            window.open("print://" + saleId, '_self');
+            window.open("print://" + saleId + "/1", '_self');
         });
         window.livewire.on('sale-ok', Msg => {
             noty(Msg);

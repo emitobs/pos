@@ -1,15 +1,4 @@
 <div>
-    <style>
-        .order {
-            width: 125px;
-            background-color: pink;
-            height: 125px;
-            cursor: pointer;
-            box-sizing: border-box;
-            padding: 13px;
-            margin: 0 5px 10px 5px;
-        }
-    </style>
     <div class="row sales layout-top-spacing">
         <div class="col-sm-12">
             <div class="widget widget-chart-one">

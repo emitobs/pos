@@ -116,9 +116,9 @@
                 </a>
             </li>
             <li class="">
-                <a href="/deliveries" class="menu-toggle" data-active="false">
+                <a href="/deliveries" class="menu-toggle text-white" data-active="false">
                     <div class="base-menu">
-                        <div class="base-icons">
+                        <div class="base-icons text-white">
                             <i class="fas fa-motorcycle"></i>
                         </div>
                         <span>

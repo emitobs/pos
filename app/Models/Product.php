@@ -45,4 +45,8 @@ class Product extends Model
             return 'noimg.png';
         }
     }
+
+    public function raffles(){
+        return $this->belongsToMany(Raffle::class)->using(RaffleProduct::class);
+    }
 }

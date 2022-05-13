@@ -1,8 +1,4 @@
 <div>
-    <style>
-
-    </style>
-
     <div class="row layout-top-spacing">
         <div class="col-sm-12 col-md-4">
             @include('livewire.local.partials.products')

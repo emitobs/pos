@@ -1,50 +1,12 @@
 <div>
+
     <style>
         body {
             background-color: black;
-            color: whitesmoke !important;
         }
 
         p {
-            color: #959595;
-        }
-
-        .media-heading {
             color: whitesmoke;
-            font-size: 1.3rem;
-            margin-top: 5px;
-        }
-
-        .page-title h3 {
-            color: whitesmoke;
-        }
-
-        .page-title h4 {
-            color: whitesmoke;
-            font-size: 1.1rem;
-        }
-
-        .page-title::before {
-            background: #157b03;
-        }
-
-        #content {
-            margin-top: 40px;
-        }
-
-        .media {
-            margin: 34px 0px 34px 0px;
-            /* background: rgba(0, 0, 0, 0.2);
-            box-shadow: -2px 0px 5px 3px rgba(202, 202, 202, 0.11);
-            -webkit-box-shadow: -2px 0px 5px 3px rgba(202, 202, 202, 0.11);
-            -moz-box-shadow: -2px 0px 5px 3px rgba(202, 202, 202, 0.11);
-
-            box-shadow: rgb(202 202 202 / 80%) 0px 8px 34px -25px;*/
-        }
-
-        .media img {
-            margin-right: 13px;
-            border-radius: 2px;
         }
     </style>
     <img class="media-object justify-content-center" src="{{asset('assets/img/campobar.PNG')}}" alt="" width="200px"

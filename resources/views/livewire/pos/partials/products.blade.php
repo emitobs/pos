@@ -1,23 +1,21 @@
-<style>
-    .products-container {
-        max-height: 350px;
-        overflow-y: auto;
-    }
-</style>
 <div class="row mb-3">
     <div class="col-sm-12">
         <div class="connect-sorting-content">
             <div class="card simple-normal-title-task ui-sorteable-handle">
                 <div class="card-body">
                     <div class="task-header">
-                        <div class="row">
-                            <div class="col-12 mb-2">
-                                <div class="row justify-content-between">
-                                    <div class="col-3">
-                                        <!--<input type="number" wire:model="quantity" placeholder="Cantidad" class="form-control">-->
-                                    </div>
+                        {{-- <div class="form-row">
+                            <div class="col">
+                                <div class="form-group">
+                                    <input type="number" wire:model="quantity" placeholder="Cantidad"
+                                        class="form-control">
+                                </div>
+                                <div class="form-group">
+                                    <textarea name="" id="" cols="30" rows="4" class="form-control" placeholder="Detalle"></textarea>
                                 </div>
                             </div>
+                        </div> --}}
+                        <div class="row">
                             <div class="col-12">
                                 @include('common.searchbox')
                                 @if(strlen($search) > 0)
@@ -32,11 +30,9 @@
                                         Producto: <b>{{$product->name}}</b> &nbsp; Precio:
                                         <b>${{$product->price}}</b>{{$product->unitSale->unit}}
                                     </li>
-
                                     @endforeach
                                 </ul>
                                 @endif
-
                                 @endif
                             </div>
                         </div>
@@ -61,11 +57,9 @@
                                 <a href="javascript:void(0)"
                                     wire:click.prevent="$emit('select_product', {{$product->barcode}})" title="Ver">
                                     <div class="card component-card_2">
-
                                         <div class="card-body">
-                                            <h5 class="card-title text-center">{{$product->name}}
-                                            </h5>
-                                            <p>${{$product->price}}</p>
+                                            <h5 class="card-title text-center">{{$product->name}}</h5>
+                                            <p>Precio: ${{$product->price}} | Stock: {{$product->stock}}</p>
                                         </div>
                                     </div>
                                 </a>
@@ -79,5 +73,4 @@
         </div>
     </div>
 </div>
-
 @include('livewire.pos.partials.productform')

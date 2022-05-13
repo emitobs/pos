@@ -20,7 +20,7 @@
                     <div class="row">
                         <div class="col-12 mb-3">
                             <ul class="list-group list-group-horizontal">
-                                <li class="list-group-item"><b>Debe:</b> ${{$selected_client->debts->sum('total')}}</li>
+                                <li class="list-group-item"><b>Debe:</b> ${{$selected_client->debts->sum('remaining')}}</li>
                                 <li class="list-group-item"><b>Saldo:</b> ${{$selected_client->balance}}</li>
                                 <li class="list-group-item"><b>Última entrega:</b> {{$last_payment}}</li>
                             </ul>

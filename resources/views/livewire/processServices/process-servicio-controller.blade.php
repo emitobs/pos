@@ -26,15 +26,17 @@
                 @endif
             </div>
             <hr>
-            @include('livewire.pos.partials.clarifications')
+            <div class="form-group mb-4">
+                <input type="text" class="form-control" wire:model="client" id="rClientName" placeholder="Cliente *" required>
+                @error('client') <span class="text-danger er">{{$message}}</span>@enderror
+            </div>
         </div>
         <div class="col">
-            @include('livewire.pos.partials.products')
+            @include('livewire.processServices.partials.products')
         </div>
         <div class="col-sm-12 col-md-3">
-            @include('livewire.pos.partials.detail')
+            @include('livewire.processServices.partials.detail')
             <div class="mt-2">
-
                 <div class="connect-sorting-content mt-4">
                     <div class="card simple-title-task ui-sortable-handle">
                         <div class="card-body">
@@ -49,14 +51,11 @@
                                         class="custom-control-input">
                                     <label class="custom-control-label" for="card">Tarjeta</label>
                                 </div>
-
-                                @if($selected_client && $selected_client->allowed_debts)
                                 <div class="custom-control custom-radio mr-2">
                                     <input wire:model='payment_method' value='debt' type="radio" id="debt"
                                         class="custom-control-input">
                                     <label class="custom-control-label" for="debt">A cuenta</label>
                                 </div>
-                                @endif
                             </div>
                             {{-- <div class="input-group input-group-md mb-3">
                                 <div class="input-group-prepend" style="min-width: 133px;">
@@ -71,12 +70,11 @@
                                 <div class="input-group-append">
                                     <span wire:click.prevent="ClearChangeCash()" class="input-group-text"
                                         style="background: #3b3f5c; color:white;"">
-                                        <i class=" fas fa-backspace fa-2x"></i>
+                                            <i class=" fas fa-backspace fa-2x"></i>
                                     </span>
                                 </div>
                             </div> --}}
                             <div id="cash_data">
-
                                 <div class="input-group input-group-md mb-3">
                                     <div class="input-group-prepend">
                                         <span class="input-group-text input-gp hideonsm "
@@ -102,19 +100,14 @@
                                 @endif
                                 <ul class="ul-money-detail">
                                     <li>
-                                        <h4 class="text-muted">Cambio: ${{number_format($change + $discount,2)}}</h4>
+                                        <h4 class="text-muted">Cambio: ${{number_format($change + $discount,2)}}
+                                        </h4>
                                     </li>
                                     <li>subtotal: ${{$cart_total - $discount}}</li>
                                     @if($rounding != 0.00)
                                     <li>redondeo: ${{$rounding}}</li>
                                     @endif
-                                    <li>
-                                        <h2>TOTAL: ${{$total_result}}</h2>
-                                    </li>
                                 </ul>
-
-
-
                             </div>
                             <input type="hidden" id="hiddenTotal" value="{{number_format($cart_total,2)}}">
                             <div class="row justify-content-between mt-3">
@@ -127,18 +120,9 @@
                                     @endif
                                 </div>
                                 <div class="col-sm-12 col-md-12 col-lg-6">
-                                    @if($cash >= $total_result && $total_result > 0 || $discount - $total_result == 0 &&
-                                    $itemsQuantity > 0 || $payment_method == 'card' || $payment_method == 'debt')
-                                    @if($saleSelected)
-                                    <button wire:click.prevent="updateSale()" class="btn btn-dark btn-md btn-block">
-                                        ACTUALIZAR F9
-                                    </button>
-                                    @else
                                     <button wire:click.prevent="saveSale()" class="btn btn-dark btn-md btn-block">
                                         GUARDAR F9
                                     </button>
-                                    @endif
-                                    @endif
                                 </div>
                             </div>
                         </div>
@@ -146,49 +130,39 @@
                 </div>
             </div>
         </div>
-        @if($selected_Product)
-        @if ($selected_Product->unit_sale == 1)
-        @include('livewire.pos.set_unit')
-        @endif
-        @if ($selected_Product->unit_sale == 2)
-        @include('livewire.pos.set_kg')
-        @endif
-        @endif
-
-
     </div>
 
 
     <script>
         document.addEventListener('DOMContentLoaded', function(){
-        // $('#select-client').on('change', function(e){
-        //     var client_id = $('#select-client').select2("val");
-        //     //@this.set()
-        // });
-        window.livewire.on('noty', msg => {
-        noty(msg);
+            // $('#select-client').on('change', function(e){
+            //     var client_id = $('#select-client').select2("val");
+            //     //@this.set()
+            // });
+            window.livewire.on('noty', msg => {
+            noty(msg);
+            });
+
+            window.livewire.on('set_kg',msg => {
+                $('#set_kg').modal('show');
+            });
+
+            window.livewire.on('set_units',msg => {
+                $('#set_units').modal('show');
+            });
+
+            $('#set_units').on('shown.bs.modal', function () {
+                // get the locator for an input in your modal. Here I'm focusing on
+                // the element with the id of myInput
+                $('#units_quantity').focus()
+            })
+
+            $('#set_kg').on('shown.bs.modal', function () {
+                // get the locator for an input in your modal. Here I'm focusing on
+                // the element with the id of myInput
+                $('#kgs_quantity').focus()
+            })
         });
-
-        window.livewire.on('set_kg',msg => {
-            $('#set_kg').modal('show');
-        });
-
-        window.livewire.on('set_units',msg => {
-            $('#set_units').modal('show');
-        });
-
-        $('#set_units').on('shown.bs.modal', function () {
-            // get the locator for an input in your modal. Here I'm focusing on
-            // the element with the id of myInput
-            $('#units_quantity').focus()
-        })
-
-        $('#set_kg').on('shown.bs.modal', function () {
-            // get the locator for an input in your modal. Here I'm focusing on
-            // the element with the id of myInput
-            $('#kgs_quantity').focus()
-        })
-    });
     </script>
     <script src="{{asset('js/keypress.js')}}"></script>
     <script src="{{asset('js/onscan.min.js')}}"></script>
@@ -197,7 +171,6 @@
     @include('livewire.pos.scripts.events')
     @include('livewire.pos.scripts.general')
     @include('livewire.pos.scripts.scan')
-
     @else
     <div class="row">
         <div class="col">

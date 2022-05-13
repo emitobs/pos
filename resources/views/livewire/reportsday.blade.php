@@ -94,7 +94,7 @@
                                 <div class="card-body">
                                     <h5 class="card-title mb-3">Información</h5>
                                     <p class="card-text">Total de ventas: {{$total_sales}}</p>
-                                    <p class="card-text">Total recaudado: {{$total_cash}}</p>
+                                    <p class="card-text">Total recaudado: {{$total}}</p>
                                     </p>
                                 </div>
                             </div>

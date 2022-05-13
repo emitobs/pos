@@ -68,6 +68,7 @@
                         </thead>
                         <tbody>
                             @foreach ($orders as $order)
+
                             <tr>
                                 <td>{{$order->id}}</td>
                                 <td class="text-center">{{$order->client->name}}</td>

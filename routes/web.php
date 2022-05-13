@@ -12,6 +12,7 @@ use App\Http\Livewire\PosController;
 use App\Http\Livewire\LocalController;
 use App\Http\Livewire\OrdersController;
 use App\Http\Livewire\ReportsController;
+use App\Http\Livewire\ReportsdaysController;
 use App\Http\Livewire\PayrollsController;
 use App\Http\Livewire\KitchenController;
 use App\Http\Livewire\RolesController;
@@ -26,6 +27,11 @@ use App\Models\Cliente;
 use App\Models\Client;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\PdfController;
+use App\Http\Livewire\TablesController;
+use App\Http\Livewire\ProcessServicioController;
+use App\Http\Livewire\ProcesarPedido;
+use App\Http\Livewire\RafflesController;
+use App\Models\Raffle;
 
 /*
 |--------------------------------------------------------------------------
@@ -53,6 +59,7 @@ Route::get('local', LocalController::class)->middleware('auth')->name('PosContro
 Route::get('nuevopedido', PosController::class)->middleware('auth')->name('PosController');
 Route::get('pedidos', OrdersController::class)->middleware('auth');
 Route::get('reports', ReportsController::class)->middleware('auth');
+Route::get('reportsdays', ReportsdaysController::class)->middleware('auth');
 Route::get('payrolls', PayrollsController::class)->middleware('auth');
 Route::get('kitchen', KitchenController::class)->middleware('auth');
 Route::get('roles', RolesController::class)->middleware('auth');
@@ -65,6 +72,11 @@ Route::get('debts', DebtsController::class);
 Route::get('beepers', BeepersController::class);
 Route::get('beepersperson', Beepersperson::class);
 Route::get('/generatePDF', [PdfController::class, 'generatePDF'])->name('generatePDF');
+Route::get('/mesas', TablesController::class)->name('mesas');
+//Route::get('/procesarServicio/{id}', ProcessServicioController::class)->name('endservice');
+Route::get('/procesar', ProcesarPedido::class)->name('endservice');
+Route::get('/sorteos',RafflesController::class);
+
 
 // Route::get('/migrar', function () {
 //     $articulos = Articulos::on('bellas')->get();

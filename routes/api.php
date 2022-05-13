@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::get('v1/print/{id}', [App\Http\Controllers\Api\V1\PrintController::class, 'print']);
+Route::get('v1/print_order/{id}', [App\Http\Controllers\Api\V1\PrintController::class, 'print_order']);
 
 Route::post('login',[App\Http\Controllers\Api\LoginController::class,'login']);
 
