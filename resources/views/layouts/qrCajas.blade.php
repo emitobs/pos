@@ -503,8 +503,10 @@
 
         .containercontacto form input {
           width: 50%;
+          border-radius: 5px;
           border: 1px solid black;
-          background-color: #ecf6f2;
+          filter: drop-shadow(5px 5px 1px #b1a327);
+          background-color: #f5f76d56;
           color: #0c1225;
           padding: 12px 20px;
           -webkit-box-sizing: border-box;
@@ -529,10 +531,12 @@
         .containercontacto .btn {
           width: 200px;
           height: 35px;
+          border-radius: 5px;
+          border: 1px solid black;
+          filter: drop-shadow(5px 5px 1px #b1a327);
+          background-color: #f5f76d56;
           font-size: 25px;
           font-family: "Amatic SC", cursive;
-          border: 1px solid black;
-          background-color: #ecf6f2;
           margin-top: 20px;
           background-image: -webkit-gradient(linear, left top, left bottom, from(transparent), color-stop(97%, transparent), color-stop(90%, black), to(black));
           background-image: linear-gradient(transparent 0%, transparent 97%, black 90%, black 100%);
@@ -795,7 +799,7 @@
             width: 75%;
             border: 1px solid black;
             background-color: #ecf6f2;
-            color: #0c1225;
+            color: #073df1;
             padding: 12px 20px;
             -webkit-box-sizing: border-box;
                     box-sizing: border-box;

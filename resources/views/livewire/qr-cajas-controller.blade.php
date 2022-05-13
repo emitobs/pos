@@ -19,15 +19,19 @@
             <div class="form-row">
                 <div class="col">
                     <label>Nombre*</label>
-                    <input type="text" class="form-control" wire:model.lazy='name' placeholder="ingresa tu nombre">
+                    <input type="text" class="form-control " wire:model.lazy='name' placeholder="ingresa tu nombre">
+                    @error('name') <span class="" style="color: red; display:block; margin-top:10px;">{{$message}}</span>@enderror
+                    
                 </div>
                 <div class="col">
                     <label>Telefono*</label>
-                    <input type="number" class="form-control" wire:model.lazy='phone' placeholder="ingresa tu telefono">
+                    <input type="number" class="form-control " wire:model.lazy='phone' placeholder="ingresa tu telefono">
+                    @error('phone') <span class="" style="color: red; display:block; margin-top:10px;">{{$message}}</span>@enderror
                 </div>
                 <div class="col">
                     <label>Codigo*</label>
-                    <input type="text" class="form-control" wire:model.lazy='code' placeholder="ingresa tu codigo">
+                    <input type="text" class="form-control " wire:model.lazy='code' placeholder="ingresa tu codigo">
+                    @error('code') <span class="" style="color: red; display:block; margin-top:10px;">{{$message}}</span>@enderror
                 </div>
             </div>
         </form>
@@ -63,16 +67,24 @@
         window.livewire.on('better-luck-next-time', data => {
             Swal.fire({
             title: 'Upss! :(',
-            html: 'Mas suerte la proxima, maquina!',
+            html: '<h2>Mas suerte la proxima, '+data.name+' (:!</h2>',
             width: 600,
             padding: '3em',
             color: '#000',
+            confirmButtonText: 'Volver!',
+            confirmButtonColor: '#b3a318',
+            showCancelButton: false,
             backdrop: `
                 rgba(0,0,0,0.8)
                 url("https://sweetalert2.github.io/images/nyan-cat.gif")
                 left top
                 no-repeat
             `
+            
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.replace('qrcajas');
+                }
             })
         });
     });

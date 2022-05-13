@@ -21,12 +21,20 @@ class PrintController extends Controller
         $products = [];
         $codes = [];
         foreach ($sale->details as $detail) {
-            if ($detail->product->raffleActive) {
-                $code = $detail->product->raffleActive->get_random_code;
-                array_push($codes, $code->code);
+            $rafflesActives = $detail->product->raffles->where('finished_date', null);
+            if ($rafflesActives->count() > 0) {
+                foreach ($rafflesActives as $rafleActive) {
+                    $codeActive = $rafleActive->codes->where('printed_at', null);
+                    if($codeActive->count() > 0){
+                        $code = $rafleActive->codes->where('printed_at', null)->random();
+                        array_push($codes, ['code' => $code->code, 'raffle' => $rafleActive->name]);
+                    }
+                };
+                
                 $code->printed_at = Carbon::now();
                 $code->save();
             }
+
             $product = [
                 'Product' => $detail->product->name,
                 'Quantity' => $detail->quantity,
@@ -51,7 +59,7 @@ class PrintController extends Controller
             'SaleDetails' => $products,
             'Rounding' => $sale->rounding,
             'PayWithHandy' => $sale->paywithhandy,
-            'rafflecodes' => [],
+            'rafflecodes' => $codes,
             'Debt' => $sale->debt
         ];
         return response()->json($response);

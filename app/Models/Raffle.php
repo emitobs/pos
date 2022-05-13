@@ -19,4 +19,5 @@ class Raffle extends Model
     {
         return $this->hasMany(RaffleCode::class);
     }
+
 }

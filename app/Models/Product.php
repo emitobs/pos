@@ -49,4 +49,8 @@ class Product extends Model
     public function raffles(){
         return $this->belongsToMany(Raffle::class)->using(RaffleProduct::class);
     }
+
+    public function getRafflesActivesAttribute(){
+        return Raffle::where('finished_date', null)->get();
+    }
 }
