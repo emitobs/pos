@@ -491,7 +491,6 @@
 
         .containercontacto {
           width: 100%;
-          height: 900px;
           margin-top: 30px;
         }
 
@@ -787,7 +786,6 @@
           }
           .containercontacto {
             width: 100%;
-            height: 850px;
             margin-top: 30px;
           }
           .containercontacto form {
@@ -797,9 +795,10 @@
           }
           .containercontacto form input {
             width: 75%;
-            border: 1px solid black;
-            background-color: #ecf6f2;
-            color: #073df1;
+            border-radius: 5px;
+          border: 1px solid black;
+          filter: drop-shadow(5px 5px 1px #b1a327);
+          background-color: #f5f76d56;
             padding: 12px 20px;
             -webkit-box-sizing: border-box;
                     box-sizing: border-box;
@@ -826,8 +825,10 @@
             font-size: 25px;
             font-family: 'Amatic SC', cursive;
             margin-top: 20px;
-            border: 1px solid black;
-            background-color: #ecf6f2;
+            border-radius: 5px;
+          border: 1px solid black;
+          filter: drop-shadow(5px 5px 1px #b1a327);
+          background-color: #f5f76d56;
           }
           textarea {
             width: 75%;
@@ -842,6 +843,8 @@
             resize: none;
           }
           footer {
+            bottom: 0px;
+            position: flex;
             height: auto;
             width: 100%;
             background-image: url("img/Diseño sin título.jpg");
@@ -1049,6 +1052,13 @@
         <i class="fa-brands fa-whatsapp-square"></i>
         <i class="fa-brands fa-instagram-square"></i>
         <p>Mercedes Fried Chicken<br> <span>Mercedes Uruguay Since 2020</span></p>
+        <p>With
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-heart">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z">
+                </path>
+            </svg>
+            <a href="https://Erizos.dev" target="_Blank">Erizos Dev</a>
+        </p>
     </footer>
     @livewireScripts
 </body></html>

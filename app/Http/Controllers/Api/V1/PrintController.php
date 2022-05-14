@@ -30,7 +30,7 @@ class PrintController extends Controller
                         array_push($codes, ['code' => $code->code, 'raffle' => $rafleActive->name]);
                     }
                 };
-                
+
                 $code->printed_at = Carbon::now();
                 $code->save();
             }

@@ -3,6 +3,7 @@
 namespace App\Http\Livewire;
 
 use App\Models\Raffle;
+use Illuminate\Support\Carbon;
 use App\Models\RaffleCode;
 use Livewire\Component;
 
@@ -37,14 +38,21 @@ class QrCajasController extends Component
             'code.max' => 'El codigo es demasiado largo'
         ];
         $this->validate($rules, $messages);
-
-        
         $raffle = RaffleCode::where('code', $this->code)->first();
-       
         if ($raffle) {
-            $this->emit('congratulations', ['name' => $this->name, 'award' => $raffle->content, 'code' => $this->code]);
+            if (!isset($raffle->used_at)) {
+                $raffle->used_at = Carbon::now();
+                $raffle->save();
+                if ($raffle->award == 1) {
+                    $this->emit('congratulations', ['name' => $this->name, 'award' => $raffle->content, 'code' => $this->code]);
+                } else {
+                    $this->emit('better-luck-next-time', ['name' => $this->name]);
+                }
+            } else {
+                $this->emit('error-code', ['message' => 'Este codigo ya fue utilizado!']);
+            }
         } else {
-            $this->emit('better-luck-next-time', ['name' => $this->name]);
+            $this->emit('error-code', ['message' => 'El codigo ingresado no existe!']);
         }
     }
 }
