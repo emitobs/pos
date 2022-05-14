@@ -331,7 +331,7 @@ class PosController extends Component
                         'default' => 1,
                         'clarification' => $this->clarifications
                     ]);
-                    $this->selected_client = $new_client->id;
+                    $this->selected_client = $new_client;
                 }
                 $sale = Sale::create([
                     'total' => $this->total_result,

@@ -30,7 +30,6 @@ class PrintController extends Controller
                         array_push($codes, ['code' => $code->code, 'raffle' => $rafleActive->name]);
                     }
                 };
-
                 $code->printed_at = Carbon::now();
                 $code->save();
             }
@@ -91,7 +90,8 @@ class PrintController extends Controller
         $response = [
             'id' => $order->id,
             'Table' => $order->service->table_id,
-            'Products' => $xproducts
+            'Products' => $xproducts,
+            'DeliveryTime' => $order->delivery_time
         ];
         return $response;
     }

@@ -1,8 +1,9 @@
 <?php
-
-class Helper{
-    public static use_beepers(){
-
+    function use_beepers(){
+        return true;
     }
-}
+
+    function use_tables(){
+        return false;
+    }
 ?>

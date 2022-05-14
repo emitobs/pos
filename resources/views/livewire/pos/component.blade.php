@@ -49,8 +49,7 @@
                                         class="custom-control-input">
                                     <label class="custom-control-label" for="card">Tarjeta</label>
                                 </div>
-
-                                @if($selected_client && $selected_client->allowed_debts)
+                                @if($selected_client)
                                 <div class="custom-control custom-radio mr-2">
                                     <input wire:model='payment_method' value='debt' type="radio" id="debt"
                                         class="custom-control-input">

@@ -44,4 +44,5 @@ class Client extends Model
     {
         return $query->where('name', 'LIKE', "%$name");
     }
+
 }
