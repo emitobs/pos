@@ -36,7 +36,7 @@
                                 @endif
                             </div>
                         </div>
-                        @if(strlen($search) == 0)
+                        {{-- @if(strlen($search) == 0)
                         <div class="row">
                             <div class="form-inline">
                                 @foreach ($categoriesProducts as $category)
@@ -66,7 +66,7 @@
                             </div>
                             @endforeach
                         </div>
-                        @endif
+                        @endif --}}
                     </div>
                 </div>
             </div>

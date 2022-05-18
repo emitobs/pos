@@ -84,16 +84,6 @@ class PosController extends Component
                     'detail' => $product->detail
                 ]);
             }
-            $this->clarifications = $sale->clarifications;
-            $this->client = $sale->client->name;
-            $this->address = $sale->address;
-            $this->payinhouse = $sale->payinhouse;
-            $this->discount = $sale->discount;
-            $this->deliveryTime = $sale->deliveryTime;
-            $this->cash = $sale->cash;
-            $this->change = $sale->change;
-            $this->payWithHandy = $sale->payWithHandy;
-            $this->total = $this->refreshTotal();
         }
     }
 
