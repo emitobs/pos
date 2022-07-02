@@ -1,7 +1,7 @@
 <div>
     @if($payroll)
     <div class="row">
-        <div class="col-2">
+        <div class="col-3">
             <div class="form-group">
                 <input type="text" class="form-control" placeholder="Ingresar cliente buscado..."
                     wire:model='searched_client'>
@@ -26,12 +26,14 @@
                 @endif
             </div>
             <hr>
-            @include('livewire.pos.partials.clarifications')
+            <div>
+                @include('livewire.pos.partials.clarifications')
+            </div>
         </div>
-        <div class="col">
+        <div class="col-5">
             @include('livewire.pos.partials.products')
         </div>
-        <div class="col-sm-12 col-md-3">
+        <div class="col-sm-12 col-md-4">
             @include('livewire.pos.partials.detail')
             <div class="mt-2">
 

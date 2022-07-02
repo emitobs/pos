@@ -8,8 +8,8 @@
                     </h4>
                     <ul class="tabs tab-pills">
                         <li>
-                            <button href="javascript:void(0)" class="tabmenu bg-dark"
-                                wire:click='create_table'>Agregar</button>
+                            <a href="javascript:void(0)" class="tabmenu bg-dark" data-toggle="modal"
+                                wire:click='create_table'>Agregar</a>
                         </li>
                     </ul>
                 </div>
@@ -54,7 +54,6 @@
                                     @default
                                     <p>Servicio sin iniciar</p>
                                     <button class="btn btn-success" wire:click="select_attendant({{$table->id}})">Inciar
-                                        servicio
                                         servicio</button>
                                     @endswitch
                                 </div>
@@ -77,6 +76,9 @@
                         Mesa {{$table_selected->id}}
                     </h5>
                     <h6 class="text-center text-warning" wire:loading>POR FAVOR ESPERE</h6>
+                    <button class="btn btn-danger"
+                        wire:click.prevent="cancel_service({{$table_selected->current_service->id}})"> Cancelar
+                        servicio</button>
                     <button class="btn btn-danger"
                         onclick="confirm_end_service({{$table_selected->current_service->id}})">Finalizar
                         servicio</button>
@@ -175,7 +177,14 @@
                         </div>
                     </div>
                 </div>
+                <style>
+                    .modal-footer {
+                        display: flex;
+                        justify-content: space-between;
+                    }
+                </style>
                 <div class="modal-footer">
+
                     <button type="button" wire:click.prevent="resetUI()" class="btn btn-dark close-btn text-info"
                         data-dismiss="modal">Cerrar</button>
                 </div>
@@ -185,7 +194,34 @@
     @endif
 
     @if($table_selected)
-    @include('livewire.tables.select_modal_attendant')
+    <div wire:ignore.self class="modal fade" id="select_modal_attendant" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-dark">
+                    <h5 class="modal-title text-white">
+                        Mesa {{$table_selected->id}}
+                    </h5>
+                    <h6 class="text-center text-warning" wire:loading>POR FAVOR ESPERE</h6>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-group">
+                                <label for="txt_attendant">Encargad@</label>
+                                <input type="text" class="form-control" id="txt_attendant" wire:model="attendant">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" wire:click.prevent="resetUI()" class="btn btn-dark close-btn text-info"
+                        data-dismiss="modal">Cerrar</button>
+                    <button type="button" wire:click.prevent="init_service()" class="btn btn-primary"
+                        data-dismiss="modal">Iniciar</button>
+                </div>
+            </div>
+        </div>
+    </div>
     @endif
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -201,6 +237,12 @@
 
         window.livewire.on('set_units',msg => {
             $('#set_units').modal('show');
+        });
+        window.livewire.on('hide-modal', msg => {
+            $('#theModal').modal('hide');
+        });
+        window.livewire.on('empty-cart', data => {
+            noty('No hay productos para ordenar.')
         });
         });
 

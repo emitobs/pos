@@ -60,6 +60,17 @@ class ProcesarPedido extends Component
 
     public function saveSale()
     {
+        switch ($this->payment_method) {
+            case 'cash':
+                break;
+            case 'card':
+                $this->payWithHandy = 1;
+                if ($this->cash == null) $this->cash = 0;
+                break;
+            case 'debt':
+                break;
+        }
+
         $cart = collect();
         $payroll = Payroll::with('sales')->where('isClosed', 0)
             ->where('responsible', auth()->user()->id)

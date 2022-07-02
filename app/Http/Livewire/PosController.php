@@ -89,9 +89,15 @@ class PosController extends Component
 
     public function render()
     {
+        //CONSULTA POR PLANILLA ABIERTA PARA EL USUARIO LOGUEADO
         $payroll = Payroll::with('sales')->where('isClosed', 0)
             ->where('responsible', auth()->user()->id)
             ->first();
+
+        //DEVUELVE TODOS LOS PEDIDOS DEL DIA ORDENADOS DEL ULTIMO AL PRIMERO
+        $payrollSales = $payroll->sales->where('status', '!=', 'Cancelado');
+
+        //SI EXISTE LA PLANILLA
         if ($payroll) {
             $units = UnitSale::where('disabled', 0)->get();
             $this->payroll = $payroll;
@@ -138,6 +144,7 @@ class PosController extends Component
                 'categoriesProducts' => $this->categoriesProducts,
                 'cart' => Cart::getContent()->sortBy('name'),
                 'beepers' => $beepers,
+                'sales' => $payrollSales
                 //'units' => $units
             ]
         )->extends('layouts.theme.app')
@@ -191,7 +198,8 @@ class PosController extends Component
         'refreshProducts' => 'refreshProducts',
         'selectClient' => 'selectClient',
         'select_product' => 'select_product',
-        'add_product'
+        'add_product',
+        'loadSale'
     ];
 
     public function InCart($productId)
@@ -311,17 +319,22 @@ class PosController extends Component
                 if ($this->payment_method == 'debt') $this->debt = 1;
                 if ($this->payment_method == 'card') $this->payWithHandy = 1;
                 if (!$this->selected_client) {
-                    $new_client = Client::create([
-                        'name' => $this->client,
-                        'telephone' => $this->telephone
-                    ]);
-                    Address::create([
-                        'address' => $this->address,
-                        'client_id' => $new_client->id,
-                        'default' => 1,
-                        'clarification' => $this->clarifications
-                    ]);
-                    $this->selected_client = $new_client;
+                    if ($this->client == null && $this->telephone == null && $this->address == null) {
+                        $this->selected_client = Client::find(1);
+                        $this->address = $this->selected_client->default_address;
+                    } else {
+                        $new_client = Client::create([
+                            'name' => $this->client,
+                            'telephone' => $this->telephone
+                        ]);
+                        Address::create([
+                            'address' => $this->address,
+                            'client_id' => $new_client->id,
+                            'default' => 1,
+                            'clarification' => $this->clarifications
+                        ]);
+                        $this->selected_client = $new_client;
+                    }
                 }
                 $sale = Sale::create([
                     'total' => $this->total_result,
@@ -343,7 +356,6 @@ class PosController extends Component
                     'debt' => $this->debt,
                     'rounding' => $this->rounding,
                     'beeper' => $this->beeper,
-
                 ]);
                 if ($sale) {
                     //si la compra va a cuenta, se setea la deuda en el total - la entrega.
@@ -563,6 +575,35 @@ class PosController extends Component
         } else {
             dd('error');
         }
+    }
+
+    public function loadSale(Sale $sale)
+    {
+        $this->cart_local = [];
+        $selected_client = $sale->client;
+
+        $this->telephone = $selected_client->telephone;
+        $this->clarifications = $sale->clarifications;
+        $this->client = $selected_client->name;
+        $this->address = $sale->address;
+        $this->deliveryTime = $sale->deliveryTime;
+
+        $this->saleSelected = $sale->id;
+        foreach ($sale->details as $product) {
+            $productDB = Product::find($product->product_id);
+            array_push($this->cart_local, [
+                'product_id' => $productDB->id,
+                'product_barcode' => $productDB->barcode,
+                'product_name' => $productDB->name,
+                'product_price' => $productDB->price,
+                'unit' => $productDB->unitSale->unit,
+                'quantity' => $product->quantity,
+                'total' => $product->quantity * $productDB->price,
+                'detail' => $product->detail
+            ]);
+        }
+
+        $this->refreshTotal();
     }
 
     // public function add_product($barcode)

@@ -8,6 +8,9 @@ use Livewire\WithPagination;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\UnitSale;
+use App\Exports\ExportProduct;
+use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Http\Request;
 
 class ProductsController extends Component
 {
@@ -207,7 +210,7 @@ class ProductsController extends Component
         $this->description = '';
     }
 
-    protected $listeners = ['deleteRow' => 'Destroy'];
+    protected $listeners = ['deleteRow' => 'Destroy','exportProducts'];
 
     public function Destroy(Product $product)
     {
@@ -220,5 +223,10 @@ class ProductsController extends Component
         }
         $this->resetUI();
         $this->emit('product-deleted', 'Producto eliminado');
+    }
+
+    public function exportProducts(Request $request)
+    {
+        return Excel::download(new ExportProduct, 'Products.xlsx');
     }
 }

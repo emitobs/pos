@@ -9,7 +9,7 @@ class Client extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'telephone', 'address_id','discount','allowed_debts'];
+    protected $fillable = ['name', 'telephone', 'address_id', 'discount', 'allowed_debts'];
 
 
     public function orders()
@@ -19,7 +19,7 @@ class Client extends Model
 
     public function getDebtsAttribute()
     {
-        return $this->orders()->where('debt', 1)->where('payed', 0)->where('status',"!=",'Cancelado')->get();
+        return $this->orders()->where('debt', 1)->where('payed', 0)->where('status', "!=", 'Cancelado')->get();
     }
     public function defaultAddress()
     {
@@ -34,9 +34,7 @@ class Client extends Model
     public function getDefaultAddressAttribute()
     {
         $return_value = '';
-        if ($this->addresses->count() > 0) {
-            $return_value = $this->addresses()->where('default', 1)->first()->address;
-        }
+        $return_value = Address::where('client_id', $this->id)->where('default', 1)->first()->address;
         return $return_value;
     }
 
@@ -44,5 +42,4 @@ class Client extends Model
     {
         return $query->where('name', 'LIKE', "%$name");
     }
-
 }

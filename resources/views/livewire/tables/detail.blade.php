@@ -29,7 +29,7 @@
         </div>
     </div>
 
-    <button class="btn btn-danger mt-2">Limpiar pedido</button>
+    <button class="btn btn-danger mt-2" wire:click="clearCart()">Limpiar pedido</button>
     <button class="btn btn-info mt-2" wire:click='generate_order'>Generar pedido</button>
 
     <div class="card simple-title-task ui-sorteable-handle mt-4">
@@ -47,8 +47,3 @@
         @endforeach
     </div>
 
-    <script>
-        window.livewire.on('empty-cart', data => {
-            noty('No hay productos para ordenar.')
-        });
-    </script>
