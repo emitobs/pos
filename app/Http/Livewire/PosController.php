@@ -524,8 +524,6 @@ class PosController extends Component
         $this->emit('show-modal', 'show modal');
     }
 
-
-
     public function select_product($id)
     {
         $product = Product::where('barcode', $id)->get()->first();
@@ -535,30 +533,6 @@ class PosController extends Component
             $this->emit('product_selected');
         }
     }
-
-    // public function addProduct()
-    // {
-    //     //se chequea en que unidad se ingreso la cantidad
-    //     if ($this->selected_Product) {
-    //         if ($this->kgs_quantity > 0) {
-    //             if ($this->kg_unit == 'kgs')
-    //                 //si es kgs se pasa el valor entero
-    //                 $this->ScanCode($this->selected_Product->barcode, $this->kgs_quantity);
-    //             //si es money transformar a peso
-    //             else if ($this->kg_unit == 'money') {
-    //                 //plata dividirla entre precio
-    //                 $result = $this->kgs_quantity / $this->selected_Product->price;
-    //                 $this->ScanCode($this->selected_Product->barcode, $result);
-    //             } else
-    //                 //si es grs
-    //                 $this->ScanCode($this->selected_Product->barcode, ($this->kgs_quantity / 1000));
-    //         } else {
-    //             $this->ScanCode($this->selected_Product->barcode, $this->units_quantity);
-    //         }
-    //     } else {
-    //         dd('error');
-    //     }
-    // }
 
     public function loadSale(Sale $sale)
     {
@@ -603,10 +577,10 @@ class PosController extends Component
         }
     }
 
-    public function ScanCode($barcode, $cant = 1)
+    public function ScanCode()
     {
         $count = 0;
-        $product = Product::where('barcode', $barcode)->firstOrFail();
+        $product = Product::where('barcode', $this->selected_product->barcode)->firstOrFail();
         if ($product) {
             $founded = false;
             while (!$founded && $count < count($this->cart_local)) {
@@ -619,14 +593,14 @@ class PosController extends Component
                             'product_name' => $product->name,
                             'product_price' => $product->price,
                             'unit' => $product->unitSale->unit,
-                            'quantity' => $cant,
-                            'total' => $cant * $product->price,
+                            'quantity' => $this->quantity,
+                            'total' => $this->quantity * $product->price,
                             'detail' => $this->detail
                         ]);
                         $this->refreshTotal();
                         $this->emit('scan-ok', 'Producto agregado');
                     } else {
-                        $this->cart_local[$count]['quantity'] += $cant;
+                        $this->cart_local[$count]['quantity'] += $this->quantity;
                         $this->cart_local[$count]['total'] = $this->cart_local[$count]['quantity'] * $this->cart_local[$count]['product_price'];
                         $this->refreshTotal();
                         $this->emit('scan-ok', 'Producto agregado');
@@ -642,7 +616,7 @@ class PosController extends Component
                     'product_name' => $product->name,
                     'product_price' => $product->price,
                     'unit' => $product->unitSale->unit,
-                    'quantity' => $cant,
+                    'quantity' => $this->quantity,
                     'detail' => $this->detail
                 ]);
                 $this->refreshTotal();

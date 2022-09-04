@@ -44,6 +44,7 @@
                                     <textarea name="" id="" cols="30" rows="4" class="form-control"
                                         placeholder="Detalle"></textarea>
                                 </div>
+                                <input wire:click="ScanCode" type="button" class="btn btn-primary" value="Agregar al pedido">
                             </div>
                         </div>
                         {{-- @if(strlen($search) == 0)
