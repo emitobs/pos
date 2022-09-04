@@ -4,18 +4,7 @@
             <div class="card simple-normal-title-task ui-sorteable-handle">
                 <div class="card-body">
                     <div class="task-header">
-                        {{-- <div class="form-row">
-                            <div class="col">
-                                <div class="form-group">
-                                    <input type="number" wire:model="quantity" placeholder="Cantidad"
-                                        class="form-control">
-                                </div>
-                                <div class="form-group">
-                                    <textarea name="" id="" cols="30" rows="4" class="form-control" placeholder="Detalle"></textarea>
-                                </div>
-                            </div>
-                        </div> --}}
-                        <div class="row">
+                        <div class="form-row">
                             <div class="col-12">
                                 @include('common.searchbox')
                                 @if(strlen($search) > 0)
@@ -25,7 +14,7 @@
                                 @if($searched_products->count() > 0)
                                 <ul class="list-group">
                                     @foreach ($searched_products as $product)
-                                    <li class="list-group-item"
+                                    <li class="list-group-item pointer"
                                         wire:click.prevent="$emit('select_product', {{$product->barcode}})">
                                         Producto: <b>{{$product->name}}</b> &nbsp; Precio:
                                         <b>${{$product->price}}</b>{{$product->unitSale->unit}}
@@ -34,6 +23,27 @@
                                 </ul>
                                 @endif
                                 @endif
+                            </div>
+
+                            @if($selected_product != null)
+                            <div class="col-12 mb-3">
+                                <ul class="list-group">
+                                    <li class="list-group-item">
+                                        Producto: <b>{{$selected_product->name}}</b> &nbsp; Precio:
+                                        <b>${{$selected_product->price}}</b>{{$selected_product->unitSale->unit}}
+                                    </li>
+                                </ul>
+                            </div>
+                            @endif
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <input type="number" wire:model="quantity" placeholder="Cantidad"
+                                        class="form-control">
+                                </div>
+                                <div class="form-group">
+                                    <textarea name="" id="" cols="30" rows="4" class="form-control"
+                                        placeholder="Detalle"></textarea>
+                                </div>
                             </div>
                         </div>
                         {{-- @if(strlen($search) == 0)

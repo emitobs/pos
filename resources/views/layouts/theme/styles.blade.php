@@ -11,7 +11,7 @@
 <!-- END GLOBAL MANDATORY STYLES -->
 
 <!-- BEGIN PAGE LEVEL PLUGINS/CUSTOM STYLES -->
-<link href="{{asset('plugins/apex/apexcharts.css')}}" rel="stylesheet" type="text/css">
+
 <link href="{{asset('assets/css/dashboard/dash_2.css')}}" rel="stylesheet" type="text/css" class="dashboard-sales" />
 <!-- END PAGE LEVEL PLUGINS/CUSTOM STYLES -->
 
@@ -40,8 +40,8 @@
         background-color: #e21b3c;
     }
 
-    .list-group-item {
-        cursor: pointer;
+    .pointer {
+        cursor: pointer !important;
     }
 
     input[type=number]::-webkit-inner-spin-button,
@@ -289,7 +289,7 @@
         }
     }
 
-    .list-group-item {
+    .pointer {
         cursor: pointer;
     }
 
@@ -355,7 +355,7 @@
         }
     }
 
-    .list-group-item {
+    .pointer {
         cursor: pointer;
     }
 

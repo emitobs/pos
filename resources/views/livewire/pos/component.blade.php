@@ -147,51 +147,9 @@
                 </div>
             </div>
         </div>
-        @if($selected_Product)
-        @if ($selected_Product->unit_sale == 1)
-        @include('livewire.pos.set_unit')
-        @endif
-        @if ($selected_Product->unit_sale == 2)
-        @include('livewire.pos.set_kg')
-        @endif
-        @endif
-
-
     </div>
 
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function(){
-        // $('#select-client').on('change', function(e){
-        //     var client_id = $('#select-client').select2("val");
-        //     //@this.set()
-        // });
-        window.livewire.on('noty', msg => {
-        noty(msg);
-        });
-
-        window.livewire.on('set_kg',msg => {
-            $('#set_kg').modal('show');
-        });
-
-        window.livewire.on('set_units',msg => {
-            $('#set_units').modal('show');
-        });
-
-        $('#set_units').on('shown.bs.modal', function () {
-            // get the locator for an input in your modal. Here I'm focusing on
-            // the element with the id of myInput
-            $('#units_quantity').focus()
-        })
-
-        $('#set_kg').on('shown.bs.modal', function () {
-            // get the locator for an input in your modal. Here I'm focusing on
-            // the element with the id of myInput
-            $('#kgs_quantity').focus()
-        })
-    });
-    </script>
-    <script src="{{asset('js/keypress.js')}}"></script>
+    
     <script src="{{asset('js/onscan.min.js')}}"></script>
 
     @include('livewire.pos.scripts.shortcuts')

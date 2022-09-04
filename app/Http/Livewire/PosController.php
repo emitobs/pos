@@ -29,7 +29,7 @@ class PosController extends Component
         $itemsQuantity,
         $cash,
         $change,
-        $selected_Product,
+        $selected_product,
         $clarifications,
         $compositions = [],
         $category_selected,
@@ -63,7 +63,8 @@ class PosController extends Component
         $payroll,
         $detail,
         $selected_id,
-        $cart = [];
+        $cart = [],
+        $payrollSales;
 
 
     public function mount(Request $request)
@@ -90,12 +91,19 @@ class PosController extends Component
     public function render()
     {
         //CONSULTA POR PLANILLA ABIERTA PARA EL USUARIO LOGUEADO
+
         $payroll = Payroll::with('sales')->where('isClosed', 0)
             ->where('responsible', auth()->user()->id)
             ->first();
 
+        if ($payroll) {
+            $this->payrollSales = $payroll->sales->where('status', '!=', 'Cancelado');
+        } else {
+            $this->emit('no-payroll');
+        }
+
         //DEVUELVE TODOS LOS PEDIDOS DEL DIA ORDENADOS DEL ULTIMO AL PRIMERO
-        $payrollSales = $payroll->sales->where('status', '!=', 'Cancelado');
+
 
         //SI EXISTE LA PLANILLA
         if ($payroll) {
@@ -144,7 +152,8 @@ class PosController extends Component
                 'categoriesProducts' => $this->categoriesProducts,
                 'cart' => Cart::getContent()->sortBy('name'),
                 'beepers' => $beepers,
-                'sales' => $payrollSales
+                'sales' => $this->payrollSales,
+                'all_products' => Product::where('desactivated', 0)->get()
                 //'units' => $units
             ]
         )->extends('layouts.theme.app')
@@ -515,67 +524,41 @@ class PosController extends Component
         $this->emit('show-modal', 'show modal');
     }
 
-    public function resetUI()
-    {
-        $this->cash = 0;
-        $this->change = 0;
-        $this->total = 0;
-        $this->compositions = [];
-        $this->clarifications = "";
-        $this->client = "";
-        $this->address = "";
-        $this->payinhouse = 0;
-        $this->deliveryTime =   "";
-        $this->saleSelected = "";
-        $this->payWithHandy = 0;
-        $this->debt = 0;
-        $this->cart_total = 0;
-        $this->total_result = 0;
-        $this->rounding = 0;
-        $this->units_quantity = 1;
-        $this->kgs_quantity = 0;
-        $this->cart_local = [];
-        $this->selected_client = null;
-    }
+
 
     public function select_product($id)
     {
         $product = Product::where('barcode', $id)->get()->first();
         if ($product) {
-            $this->selected_Product = $product;
-            if ($product->unit_sale == 1) {
-                $this->emit('set_units');
-            } else if ($product->unit_sale == 2) {
-                $this->emit('set_kg');
-            } else {
-                $this->ScanCode($product->barcode);
-            }
+            $this->selected_product = $product;
+            $this->search = '';
+            $this->emit('product_selected');
         }
     }
 
-    public function addProduct()
-    {
-        //se chequea en que unidad se ingreso la cantidad
-        if ($this->selected_Product) {
-            if ($this->kgs_quantity > 0) {
-                if ($this->kg_unit == 'kgs')
-                    //si es kgs se pasa el valor entero
-                    $this->ScanCode($this->selected_Product->barcode, $this->kgs_quantity);
-                //si es money transformar a peso
-                else if ($this->kg_unit == 'money') {
-                    //plata dividirla entre precio
-                    $result = $this->kgs_quantity / $this->selected_Product->price;
-                    $this->ScanCode($this->selected_Product->barcode, $result);
-                } else
-                    //si es grs
-                    $this->ScanCode($this->selected_Product->barcode, ($this->kgs_quantity / 1000));
-            } else {
-                $this->ScanCode($this->selected_Product->barcode, $this->units_quantity);
-            }
-        } else {
-            dd('error');
-        }
-    }
+    // public function addProduct()
+    // {
+    //     //se chequea en que unidad se ingreso la cantidad
+    //     if ($this->selected_Product) {
+    //         if ($this->kgs_quantity > 0) {
+    //             if ($this->kg_unit == 'kgs')
+    //                 //si es kgs se pasa el valor entero
+    //                 $this->ScanCode($this->selected_Product->barcode, $this->kgs_quantity);
+    //             //si es money transformar a peso
+    //             else if ($this->kg_unit == 'money') {
+    //                 //plata dividirla entre precio
+    //                 $result = $this->kgs_quantity / $this->selected_Product->price;
+    //                 $this->ScanCode($this->selected_Product->barcode, $result);
+    //             } else
+    //                 //si es grs
+    //                 $this->ScanCode($this->selected_Product->barcode, ($this->kgs_quantity / 1000));
+    //         } else {
+    //             $this->ScanCode($this->selected_Product->barcode, $this->units_quantity);
+    //         }
+    //     } else {
+    //         dd('error');
+    //     }
+    // }
 
     public function loadSale(Sale $sale)
     {
@@ -606,20 +589,19 @@ class PosController extends Component
         $this->refreshTotal();
     }
 
-    // public function add_product($barcode)
-    // {
-    //     $product = Product::where('barcode', $barcode)->firstOrFail();
-    //     if ($product && $product->stock >= $this->quantity) {
-    //         array_push($this->cart, [
-    //             'product_id' => $product->id,
-    //             'quantity' => $this->quantity,
-    //             'detail' => $this->detail
-    //         ]);
-    //         dd($this->cart);
-    //     } else {
-    //         dd('que pinta pa');
-    //     }
-    // }
+    public function add_product($barcode)
+    {
+        $product = Product::where('barcode', $barcode)->firstOrFail();
+        if ($product && $product->stock >= $this->quantity) {
+            array_push($this->cart, [
+                'product_id' => $product->id,
+                'quantity' => $this->quantity,
+                'detail' => $this->detail
+            ]);
+        } else {
+            dd('que pinta pa');
+        }
+    }
 
     public function ScanCode($barcode, $cant = 1)
     {
@@ -670,5 +652,28 @@ class PosController extends Component
             $this->emit('scan-notfound', 'El producto no está registrado');
         }
         $this->kgs_quantity = 0;
+    }
+
+    public function resetUI()
+    {
+        $this->cash = 0;
+        $this->change = 0;
+        $this->total = 0;
+        $this->compositions = [];
+        $this->clarifications = "";
+        $this->client = "";
+        $this->address = "";
+        $this->payinhouse = 0;
+        $this->deliveryTime =   "";
+        $this->saleSelected = "";
+        $this->payWithHandy = 0;
+        $this->debt = 0;
+        $this->cart_total = 0;
+        $this->total_result = 0;
+        $this->rounding = 0;
+        $this->units_quantity = 1;
+        $this->kgs_quantity = 0;
+        $this->cart_local = [];
+        $this->selected_client = null;
     }
 }

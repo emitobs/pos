@@ -28,5 +28,32 @@
         window.livewire.on('modal-hide', msg => {
             $('#theModal').modal('hide');
         });
+
+        window.livewire.on('product_selected', msg => {
+            noty('Producto seleccionado');
+        });
+        window.livewire.on('noty', msg => {
+        noty(msg);
+        });
+
+        window.livewire.on('set_kg',msg => {
+            $('#set_kg').modal('show');
+        });
+
+        window.livewire.on('set_units',msg => {
+            $('#set_units').modal('show');
+        });
+
+        $('#set_units').on('shown.bs.modal', function () {
+            // get the locator for an input in your modal. Here I'm focusing on
+            // the element with the id of myInput
+            $('#units_quantity').focus()
+        })
+
+        $('#set_kg').on('shown.bs.modal', function () {
+            // get the locator for an input in your modal. Here I'm focusing on
+            // the element with the id of myInput
+            $('#kgs_quantity').focus()
+        })
     })
 </script>

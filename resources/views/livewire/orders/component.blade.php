@@ -175,7 +175,6 @@
         }
 
         function selectedDelivery( sale_id,delivery_id){
-            console.log(sale_id,delivery_id);
             swal({
                 title : 'CONFIRMAR',
                 text : '¿Se lo lleva ' + delivery_id + ' al pedido?',

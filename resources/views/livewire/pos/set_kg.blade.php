@@ -3,7 +3,7 @@
         <div class="modal-content">
             <div class="modal-header bg-dark">
                 <h5 class="modal-title text-white">
-                    <b>¿Cuánto lleva?</b> | <b>{{$selected_Product->name}}</b>
+                    <b>¿Cuánto lleva?</b> | <b>{{$selected_product->name}}</b>
                 </h5>
                 <h6 class="text-center text-warning" wire:loading>POR FAVOR ESPERE</h6>
             </div>

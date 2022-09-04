@@ -142,7 +142,7 @@
         });
 
         window.livewire.on('refresh_daily_deliveries', data => {
-            console.log(data);
+
         });
 
         try {

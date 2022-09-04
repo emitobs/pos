@@ -1,5 +1,6 @@
+<script src="{{asset('js/keypress.js')}}"></script>
 <script>
-    var listener = new window.keypress.Listener();
+var listener = new window.keypress.Listener();
 
 listener.simple_combo('f2',function(){
     document.getElementById('code').focus();
