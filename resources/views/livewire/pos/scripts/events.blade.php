@@ -4,6 +4,9 @@
             noty(Msg);
             $('#set_kg').modal('hide');
             $('#set_units').modal('hide');
+            $("#selected_product").val('default');
+            $("#select2-selected_product-container").html('Buscar producto');
+            $("#selected_product").focus();
         });
 
         window.livewire.on('scan-notfound', Msg => {
@@ -31,6 +34,7 @@
 
         window.livewire.on('product_selected', msg => {
             noty('Producto seleccionado');
+            $('#quantity').focus();
         });
         window.livewire.on('noty', msg => {
         noty(msg);

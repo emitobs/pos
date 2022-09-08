@@ -50,7 +50,7 @@ class PosController extends Component
         $quantity = 1,
         $cart_total,
         $debt = 0,
-        $payment_method,
+        $payment_method = "cash",
         $rounding = 0.0,
         $total_result = 0.0,
         $search,
@@ -64,7 +64,8 @@ class PosController extends Component
         $detail,
         $selected_id,
         $cart = [],
-        $payrollSales;
+        $payrollSales,
+        $select_product;
 
 
     public function mount(Request $request)
@@ -208,7 +209,8 @@ class PosController extends Component
         'selectClient' => 'selectClient',
         'select_product' => 'select_product',
         'add_product',
-        'loadSale'
+        'loadSale',
+        ''
     ];
 
     public function InCart($productId)
@@ -524,14 +526,9 @@ class PosController extends Component
         $this->emit('show-modal', 'show modal');
     }
 
-    public function select_product($id)
+    public function select_product()
     {
-        $product = Product::where('barcode', $id)->get()->first();
-        if ($product) {
-            $this->selected_product = $product;
-            $this->search = '';
-            $this->emit('product_selected');
-        }
+        $this->emit('product_selected');
     }
 
     public function loadSale(Sale $sale)
@@ -565,6 +562,7 @@ class PosController extends Component
 
     public function add_product($barcode)
     {
+        dd('asd');
         $product = Product::where('barcode', $barcode)->firstOrFail();
         if ($product && $product->stock >= $this->quantity) {
             array_push($this->cart, [
@@ -580,7 +578,7 @@ class PosController extends Component
     public function ScanCode()
     {
         $count = 0;
-        $product = Product::where('barcode', $this->selected_product->barcode)->firstOrFail();
+        $product = Product::where('barcode', $this->select_product)->firstOrFail();
         if ($product) {
             $founded = false;
             while (!$founded && $count < count($this->cart_local)) {
@@ -599,11 +597,19 @@ class PosController extends Component
                         ]);
                         $this->refreshTotal();
                         $this->emit('scan-ok', 'Producto agregado');
+                        $this->selected_product = null;
+                        $this->select_product = 'default';
+                        $this->detail = '';
+                        $this->quantity = 1;
                     } else {
                         $this->cart_local[$count]['quantity'] += $this->quantity;
                         $this->cart_local[$count]['total'] = $this->cart_local[$count]['quantity'] * $this->cart_local[$count]['product_price'];
                         $this->refreshTotal();
                         $this->emit('scan-ok', 'Producto agregado');
+                        $this->selected_product = null;
+                        $this->select_product = 'default';
+                        $this->detail = '';
+                        $this->quantity = 1;
                     }
                 } else {
                     $count++;
@@ -621,6 +627,10 @@ class PosController extends Component
                 ]);
                 $this->refreshTotal();
                 $this->emit('scan-ok', 'Producto agregado');
+                $this->selected_product = null;
+                $this->select_product = 'default';
+                $this->detail = '';
+                $this->quantity = 1;
             }
         } else {
             $this->emit('scan-notfound', 'El producto no está registrado');

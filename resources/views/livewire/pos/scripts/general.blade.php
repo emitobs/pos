@@ -1,6 +1,10 @@
 <script>
     document.addEventListener('DOMContentLoaded',function(){
-    
-
+        $("#selected_product").select2();
+        $("#selected_product").on('change',function(){
+            @this.set('select_product',this.value);
+            Livewire.emit('select_product');
+            $('#quantity').focus();
+        })
     });
 </script>

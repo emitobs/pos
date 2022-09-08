@@ -3,7 +3,7 @@
     <div class="row">
         <div class="col-3">
             <div class="form-group">
-                <input type="text" class="form-control" placeholder="Ingresar cliente buscado..."
+                <input type="text" id="search_client" class="form-control" placeholder="Ingresar cliente buscado..."
                     wire:model='searched_client'>
                 @if(strlen($searched_client) > 0)
                 <div wire:loading class="rounded-t-none shadow-lg list-group">
@@ -113,9 +113,6 @@
                                         <h2>TOTAL: ${{$total_result}}</h2>
                                     </li>
                                 </ul>
-
-
-
                             </div>
                             <input type="hidden" id="hiddenTotal" value="{{number_format($cart_total,2)}}">
                             <div class="row justify-content-between mt-3">
@@ -149,13 +146,10 @@
         </div>
     </div>
 
-    
     <script src="{{asset('js/onscan.min.js')}}"></script>
-
     @include('livewire.pos.scripts.shortcuts')
     @include('livewire.pos.scripts.events')
     @include('livewire.pos.scripts.general')
-    @include('livewire.pos.scripts.scan')
 
     @else
     <div class="row">

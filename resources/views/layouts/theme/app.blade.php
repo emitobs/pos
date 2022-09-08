@@ -7,14 +7,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no">
     <title>POS Erizos DevOps</title>
     <link rel="icon" type="image/x-icon" href="assets/img/favicon.ico" />
-    <link type="text/css" rel="stylesheet" href="{{ mix('css/app.css') }}">
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-
 
     <!-- BEGIN GLOBAL MANDATORY STYLES -->
     @include('layouts.theme.styles')
     <!-- END PAGE LEVEL PLUGINS/CUSTOM STYLES -->
-
 </head>
 
 <body class="dashboard-analytics">

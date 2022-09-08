@@ -1,6 +1,7 @@
 <link type="text/css" rel="stylesheet" href="{{ mix('css/app.css') }}">
-<link href="{{asset('bootstrap/css/bootstrap.min.css')}}" rel="stylesheet" type="text/css" />
+
 <link href="{{asset('assets/css/loader.css')}}" rel="stylesheet" type="text/css" />
+<link rel="stylesheet" type="text/css" href="plugins/select2/select2.min.css">
 <script src="{{asset('assets/js/loader.js')}}"></script>
 
 
