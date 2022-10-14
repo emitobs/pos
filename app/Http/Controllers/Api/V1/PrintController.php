@@ -3,13 +3,16 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Models\Client;
 use App\Models\Sale;
 use App\Models\Orders_Services;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 
 class PrintController extends Controller
 {
+    public $data;
     /**
      * Display a listing of the resource.
      *
@@ -93,6 +96,19 @@ class PrintController extends Controller
             'Products' => $xproducts,
             'DeliveryTime' => $order->delivery_time
         ];
+        return $response;
+    }
+
+    public function getClients(Request $request){
+        $input = $request->all();
+        $clients = Client::where(function ($query) use ($input) {
+            $query->where('name', 'LIKE', '%' . $input['term']['term'] . '%')
+                ->orWhere('telephone', 'LIKE', '%' . $input['term']['term'] . '%');
+        })->where('disabled', 0)->get();
+        $response = [];
+        foreach($clients as $client){
+            array_push($response,['id' => $client->id,'text' => $client->name . ' | ' . $client->telephone . ' | ' . $client->defaultAddress]);
+        }
         return $response;
     }
 }

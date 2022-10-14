@@ -1,34 +1,10 @@
 <div>
     @if($payroll)
+    <!-- Inicio POS-->
     <div class="row">
         <div class="col-3">
-            <div class="form-group">
-                <input type="text" id="search_client" class="form-control" placeholder="Ingresar cliente buscado..."
-                    wire:model='searched_client'>
-                @if(strlen($searched_client) > 0)
-                <div wire:loading class="rounded-t-none shadow-lg list-group">
-                    <div class="list-item">Buscando...</div>
-                </div>
-
-                <ul class="list-group">
-                    @foreach ($clients as $client)
-                    <li class="list-group-item" style="font-size: 12px"
-                        wire:click.prevent="selectClient({{$client->id}})">
-                        {{$client->name}} | {{$client->telephone}} | {{$client->default_address}}
-                    </li>
-
-                    @endforeach
-                </ul>
-                @if(!empty($client))
-                <div class="fixed top-0 bottom-0 left-0 right-0" wire:click="reset"></div>
-                @endif
-                @error('client') <span class="text-danger er">{{$message}}</span>@enderror
-                @endif
-            </div>
-            <hr>
-            <div>
-                @include('livewire.pos.partials.clarifications')
-            </div>
+            @include('livewire.pos.partials.client')
+            @include('livewire.pos.partials.orders')
         </div>
         <div class="col-5">
             @include('livewire.pos.partials.products')
@@ -36,7 +12,6 @@
         <div class="col-sm-12 col-md-4">
             @include('livewire.pos.partials.detail')
             <div class="mt-2">
-
                 <div class="connect-sorting-content mt-4">
                     <div class="card simple-title-task ui-sortable-handle">
                         <div class="card-body">
@@ -145,12 +120,13 @@
             </div>
         </div>
     </div>
-
+    <!-- Fin POS-->
+    @push('scripts')
     <script src="{{asset('js/onscan.min.js')}}"></script>
     @include('livewire.pos.scripts.shortcuts')
     @include('livewire.pos.scripts.events')
     @include('livewire.pos.scripts.general')
-
+    @endpush
     @else
     <div class="row">
         <div class="col">

@@ -49,16 +49,11 @@
             <div class="layout-px-spacing">
                 <!-- donde va el contenido de la seccion-->
                 @yield('content')
-
             </div>
-
-
             @include('layouts.theme.footer')
         </div>
-        <!--  END CONTENT AREA  -->
-
-
     </div>
+    <!--  END CONTENT AREA  -->
     <!-- END MAIN CONTAINER -->
 
     <!-- BEGIN GLOBAL MANDATORY SCRIPTS -->

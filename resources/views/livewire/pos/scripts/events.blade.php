@@ -4,9 +4,8 @@
             noty(Msg);
             $('#set_kg').modal('hide');
             $('#set_units').modal('hide');
-            $("#selected_product").val('default');
-            $("#select2-selected_product-container").html('Buscar producto');
-            $("#selected_product").focus();
+            $('#selected_product').select2('open');
+            $(".select2-search__field")[0].focus();
         });
 
         window.livewire.on('scan-notfound', Msg => {

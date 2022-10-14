@@ -36,3 +36,4 @@
 </script>
 
 @livewireScripts
+@stack('scripts')

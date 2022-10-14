@@ -1,5 +1,5 @@
 <div class="row mb-3">
-    <div class="col-sm-12">
+    <div class="col-12">
         <div class="connect-sorting-content">
             <div class="card simple-normal-title-task ui-sorteable-handle">
                 <div class="card-body">
@@ -18,7 +18,7 @@
                                         class="form-control mt-2">
                                 </div>
                                 <div class="form-group">
-                                    <textarea name="" id="" cols="30" rows="4" class="form-control"
+                                    <textarea wire:model='detail' name="" id="" cols="30" rows="4" class="form-control"
                                         placeholder="Detalle"></textarea>
                                 </div>
                                 <input wire:click="ScanCode" type="button" class="btn btn-primary"
@@ -31,4 +31,3 @@
         </div>
     </div>
 </div>
-@include('livewire.pos.partials.productform')

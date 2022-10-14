@@ -163,7 +163,6 @@ class PosController extends Component
 
     public function selectClient(Client $client)
     {
-
         if (isset($client)) {
             $this->selected_client = $client;
             $this->client = $client->name;
@@ -186,7 +185,7 @@ class PosController extends Component
         $this->cart_total = $total;
         $this->rounding =  round(round($total) - $total, 2);
         $this->total_result = round($this->cart_total + $this->rounding);
-        $this->change = (round(($this->cash + $this->discount) - $this->total_result));
+        $this->change = round(($this->cash + $this->discount) - $this->total_result) > 0 ? round(($this->cash + $this->discount) - $this->total_result) : 0;
     }
 
     public function ACash($value)
@@ -209,66 +208,9 @@ class PosController extends Component
         'selectClient' => 'selectClient',
         'select_product' => 'select_product',
         'add_product',
-        'loadSale',
-        ''
+        'loadSale'
     ];
 
-    public function InCart($productId)
-    {
-        $exist = Cart::get($productId);
-        $exist == true ? true : false;
-    }
-
-    public function increaseQty($productId, $cant = 1)
-    {
-        $title = '';
-        $product = Product::find($productId);
-        $exist = Cart::get($productId);
-
-        $title = $exist == true ? 'Cantidad actualizada.' : 'Producto agregado.';
-
-        if ($exist) {
-            if ($product->stock < ($cant + $exist->quantity)) {
-                $this->emit('no-stock', 'Stock insuficiente');
-                return;
-            }
-        }
-        $product = Cart::add($product->id, $product->name, $product->price, $cant, $product->imagen);
-        $this->total = $this->refreshTotal();
-        $this->itemsQuantity = Cart::getTotalQuantity();
-
-        $this->emit('scan-ok', $title);
-    }
-
-    public function updateQty($productId, $cant = 1)
-    {
-        $title = '';
-        $product = Product::find($productId);
-        $exist = Cart::get($productId);
-        $title = $exist == true ? 'Cantidad actualizada.' : 'Producto agregado.';
-        if ($exist) {
-            if ($product->stock < ($cant + $exist->quantity)) {
-                $this->emit('no-stock', 'Stock insuficiente');
-                return;
-            }
-        }
-
-        $this->removeItem($productId);
-
-        if ($cant > 0) {
-            Cart::add($product->id, $product->name, $product->price, $cant, $product->image);
-            $this->total = $this->refreshTotal();
-            $this->itemsQuantity = Cart::getTotalQuantity();
-            $this->emit('scan-ok', $title);
-        }
-    }
-    public function removeItem($productId)
-    {
-        Cart::remove($productId);
-        $this->total = $this->refreshTotal();
-        $this->itemsQuantity = Cart::getTotalQuantity();
-        $this->emit('scan-ok', 'Producto eliminado.');
-    }
 
     public function decreaseQty($product_position, $cant = 1)
     {
@@ -286,16 +228,6 @@ class PosController extends Component
         $this->emit('scan-ok', 'Cantidad actualizada.');
     }
 
-    public function clearCart()
-    {
-        Cart::clear();
-        $this->cash = 0;
-        $this->change = 0;
-        $this->total = $this->refreshTotal();
-        $this->itemsQuantity = Cart::getTotalQuantity();
-
-        $this->emit('scan-ok', 'Carrito vacio.');
-    }
 
     public function saveSale()
     {
@@ -388,6 +320,7 @@ class PosController extends Component
                             'quantity' => $item['quantity'],
                             'product_id' => $item['product_id'],
                             'sale_id' => $sale['id'],
+                            'detail' => $item['detail']
                         ]);
                         if ($saledetail && $item['quantity'] > 0) {
                             $saledetail->price = number_format($item['product_price'] * $item['quantity'], 2);
@@ -462,9 +395,9 @@ class PosController extends Component
             }
 
             $sale->update([
-                'total' => Cart::getTotal() - $this->discount,
-                'subtotal' => Cart::getTotal(),
-                'items' => $this->itemsQuantity,
+                'total' => $this->cart_total - $this->discount,
+                'subtotal' => $this->cart_total,
+                'items' => count($this->cart_local),
                 'cash' => $this->cash,
                 'change' => $this->change,
                 'user_id' => Auth()->user()->id,
@@ -478,17 +411,18 @@ class PosController extends Component
                 'payWithHandy' => $this->payWithHandy
             ]);
 
-            $items = Cart::getContent();
+            $items = $this->cart_local;
             foreach ($items as $item) {
+                $xItem = (object) $item;
                 SaleDetails::create([
-                    'price' => $item->price,
-                    'quantity' => $item->quantity,
-                    'product_id' => $item->id,
+                    'price' => $xItem->product_price,
+                    'quantity' => $xItem->quantity,
+                    'product_id' => $xItem->product_id,
                     'sale_id' => $sale->id,
                 ]);
                 //update stock
-                $product = Product::find($item->id);
-                $product->stock = $product->stock - $item->quantity;
+                $product = Product::find($xItem->product_id);
+                $product->stock = $product->stock - $xItem->quantity;
                 $product->save();
             }
             $sale->payroll->calculateTotal();
@@ -535,13 +469,13 @@ class PosController extends Component
     {
         $this->cart_local = [];
         $selected_client = $sale->client;
-
         $this->telephone = $selected_client->telephone;
         $this->clarifications = $sale->clarifications;
         $this->client = $selected_client->name;
         $this->address = $sale->address;
         $this->deliveryTime = $sale->deliveryTime;
-
+        $this->cash = $sale->cash;
+        $this->change = $sale->change;
         $this->saleSelected = $sale->id;
         foreach ($sale->details as $product) {
             $productDB = Product::find($product->product_id);
@@ -556,13 +490,11 @@ class PosController extends Component
                 'detail' => $product->detail
             ]);
         }
-
         $this->refreshTotal();
     }
 
     public function add_product($barcode)
     {
-        dd('asd');
         $product = Product::where('barcode', $barcode)->firstOrFail();
         if ($product && $product->stock >= $this->quantity) {
             array_push($this->cart, [

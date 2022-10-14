@@ -33,6 +33,7 @@ use App\Http\Livewire\ProcesarPedido;
 use App\Http\Livewire\RafflesController;
 use App\Models\Raffle;
 use App\Http\Livewire\QrCajasController;
+use Illuminate\Http\Client\Request;
 
 /*
 |--------------------------------------------------------------------------
@@ -78,7 +79,6 @@ Route::get('/mesas', TablesController::class)->name('mesas');
 Route::get('/procesar', ProcesarPedido::class)->name('endservice');
 Route::get('/sorteos',RafflesController::class);
 Route::get('/qrcajas', QrCajasController::class);
-
 
 // Route::get('/migrar', function () {
 //     $articulos = Articulos::on('bellas')->get();
@@ -141,35 +141,35 @@ Route::get('/qrcajas', QrCajasController::class);
 //     echo 'completado';
 // });
 
-Route::get('/migrateClients', function () {
-    try {
+// Route::get('/migrateClients', function () {
+//     try {
 
-        $clientes = Cliente::on('bellas')->get();
-        foreach ($clientes as $cliente) {
+//         $clientes = Cliente::on('bellas')->get();
+//         foreach ($clientes as $cliente) {
 
-            $new_client = Client::create([
-                'name' => $cliente->Nombre,
-                'telephone' => $cliente->Telefono,
-            ]);
+//             $new_client = Client::create([
+//                 'name' => $cliente->Nombre,
+//                 'telephone' => $cliente->Telefono,
+//             ]);
 
 
-            if ($new_client && strlen($cliente->Direccion) > 0) {
-                $default_address = Address::create([
-                    'address' => $cliente->Direccion,
-                    'client_id' => $new_client->id,
-                    'default' => 1
-                ]);
+//             if ($new_client && strlen($cliente->Direccion) > 0) {
+//                 $default_address = Address::create([
+//                     'address' => $cliente->Direccion,
+//                     'client_id' => $new_client->id,
+//                     'default' => 1
+//                 ]);
 
-                if ($default_address) {
-                    $new_client->address_id = $default_address->id;
-                    $new_client->save();
-                }
-            }
-        }
+//                 if ($default_address) {
+//                     $new_client->address_id = $default_address->id;
+//                     $new_client->save();
+//                 }
+//             }
+//         }
 
-        echo 'completado';
-    } catch (Exception $e) {
-        DB::rollBack();
-        dd($e);
-    }
-});
+//         echo 'completado';
+//     } catch (Exception $e) {
+//         DB::rollBack();
+//         dd($e);
+//     }
+//});

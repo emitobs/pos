@@ -12,7 +12,7 @@ function use_deliveries()
 
 function use_tables()
 {
-    return true;
+    return false;
 }
 
 function use_units()
