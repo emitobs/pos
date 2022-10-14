@@ -137,12 +137,7 @@ class PosController extends Component
             $this->emit('sale-error', 'No se encuentra planilla abierta.');
         }
 
-        if (strlen($this->searched_client) > 0) {
-            $this->clients = Client::where(function ($query) {
-                $query->where('name', 'LIKE', '%' . $this->searched_client . '%')
-                    ->orWhere('telephone', 'LIKE', '%' . $this->searched_client . '%');
-            })->where('disabled', 0)->get();
-        }
+
         if ($this->discount == '') $this->discount = 0;
         if ($this->cash == '') $this->cash = 0;
         $beepers = Beeper::where('inUse', 0)->get();
@@ -495,6 +490,7 @@ class PosController extends Component
 
     public function add_product($barcode)
     {
+        dd('asd');
         $product = Product::where('barcode', $barcode)->firstOrFail();
         if ($product && $product->stock >= $this->quantity) {
             array_push($this->cart, [

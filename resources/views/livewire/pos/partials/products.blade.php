@@ -8,10 +8,7 @@
                             <div class="col-12">
                                 <div class="form-group mb-2" wire:ignore>
                                     <select id="selected_product" wire:model='select_product' class="form-control">
-                                        <option value="default">Buscar producto</option>
-                                        @foreach ($all_products as $product)
-                                        <option value="{{$product->barcode}}">{{$product->name}}</option>
-                                        @endforeach
+                                        
                                 </div>
                                 <div class="form-group mt-2">
                                     <input type="number" id="quantity" wire:model="quantity" placeholder="Cantidad"

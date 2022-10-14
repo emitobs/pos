@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use App\Models\Client;
 use App\Models\Sale;
+use App\Models\Category;
+use App\Models\Product;
 use App\Models\Orders_Services;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -28,7 +30,7 @@ class PrintController extends Controller
             if ($rafflesActives->count() > 0) {
                 foreach ($rafflesActives as $rafleActive) {
                     $codeActive = $rafleActive->codes->where('printed_at', null);
-                    if($codeActive->count() > 0){
+                    if ($codeActive->count() > 0) {
                         $code = $rafleActive->codes->where('printed_at', null)->random();
                         array_push($codes, ['code' => $code->code, 'raffle' => $rafleActive->name]);
                     }
@@ -99,16 +101,36 @@ class PrintController extends Controller
         return $response;
     }
 
-    public function getClients(Request $request){
+    public function getClients(Request $request)
+    {
         $input = $request->all();
         $clients = Client::where(function ($query) use ($input) {
             $query->where('name', 'LIKE', '%' . $input['term']['term'] . '%')
                 ->orWhere('telephone', 'LIKE', '%' . $input['term']['term'] . '%');
         })->where('disabled', 0)->get();
         $response = [];
-        foreach($clients as $client){
-            array_push($response,['id' => $client->id,'text' => $client->name . ' | ' . $client->telephone . ' | ' . $client->defaultAddress]);
+        foreach ($clients as $client) {
+            array_push($response, ['id' => $client->id, 'text' => $client->name . ' | ' . $client->telephone . ' | ' . $client->defaultAddress]);
         }
         return $response;
+    }
+
+    public function getProducts(Request $request)
+    {
+        $zone = $request->get('zone');
+        $search = $request->get('term');
+        $categoriesProducts = [];
+        if ($zone == 1) {
+            $categoriesProducts = Category::all();
+        }
+
+        if ($zone == 2) {
+            $categoriesProducts = Category::where('processing_area', $zone)->get();
+        }
+        $categories = [];
+        foreach ($categoriesProducts as $categorie) {
+            array_push($categories, $categorie->id);
+        }
+        return Product::where('name', 'LIKE', '%' . $search . '%')->whereIn('category_id', $categories)->where('desactivated', 0)->get();
     }
 }
