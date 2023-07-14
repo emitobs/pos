@@ -5,29 +5,11 @@
             <div class="form-group">
                 <input type="text" class="form-control" placeholder="Ingresar cliente buscado..."
                     wire:model='searched_client'>
-                @if(strlen($searched_client) > 0)
-                <div wire:loading class="rounded-t-none shadow-lg list-group">
-                    <div class="list-item">Buscando...</div>
-                </div>
-
-                <ul class="list-group">
-                    @foreach ($clients as $client)
-                    <li class="list-group-item" style="font-size: 12px"
-                        wire:click.prevent="selectClient({{$client->id}})">
-                        {{$client->name}} | {{$client->telephone}} | {{$client->default_address}}
-                    </li>
-
-                    @endforeach
-                </ul>
-                @if(!empty($client))
-                <div class="fixed top-0 bottom-0 left-0 right-0" wire:click="reset"></div>
-                @endif
-                @error('client') <span class="text-danger er">{{$message}}</span>@enderror
-                @endif
             </div>
             <hr>
             <div class="form-group mb-4">
-                <input type="text" class="form-control" wire:model="client" id="rClientName" placeholder="Cliente *" required>
+                <input type="text" class="form-control" wire:model="client" id="rClientName" placeholder="Cliente *"
+                    required>
                 @error('client') <span class="text-danger er">{{$message}}</span>@enderror
             </div>
         </div>
@@ -135,10 +117,6 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function(){
-            // $('#select-client').on('change', function(e){
-            //     var client_id = $('#select-client').select2("val");
-            //     //@this.set()
-            // });
             window.livewire.on('noty', msg => {
             noty(msg);
             });

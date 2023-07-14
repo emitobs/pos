@@ -41,21 +41,21 @@ var App = function() {
                 get_overlay = document.querySelector('.overlay');
                 get_mainContainer = document.querySelector('.main-container')
                 if (get_CompactSubmenuShow.classList.contains('show') || get_CompactSubmenuShow.classList.contains('hide-sub') ) {
-                    console.log('main1');
+                   
 
                     if (get_CompactSubmenuShow.classList.contains('show')) {
                         get_CompactSubmenuShow.classList.remove("show");
                         get_overlay.classList.remove("show");
                         get_CompactSubmenuShow.classList.add("hide-sub");
                         return;
-                            console.log('1')
+                            
                     }
                     if (get_CompactSubmenuShow.classList.contains('hide-sub')) {
 
                         if (get_mainContainer.classList.contains('sidebar-closed')) {
                             get_mainContainer.classList.remove("sidebar-closed");
                             get_mainContainer.classList.add("sbar-open");
-                            console.log('2')
+                           
                             return;
                         }
                         if (get_mainContainer.classList.contains('sbar-open')) {
@@ -63,14 +63,14 @@ var App = function() {
                             get_CompactSubmenuShow.classList.remove("hide-sub");
                             get_CompactSubmenuShow.classList.add("show");
                             get_overlay.classList.add("show");
-                            console.log('3')
+                           
                             return;
                         }
                         $(Selector.mainContainer).addClass("sidebar-closed");
                     }
 
                 } else  {
-                    console.log('main2');
+                 
                     $(Selector.mainContainer).toggleClass("sidebar-closed");
                     $(Selector.mainContainer).toggleClass("sbar-open");
                     if (window.innerWidth <= 991) {
@@ -160,11 +160,6 @@ var App = function() {
                     }
 
                     getElement.className += " show";
-
-
-                    console.log(this.querySelectorAll('.menu-toggle')[0].getAttribute('href'));
-                    console.log(getHref);
-                    console.log(document.querySelectorAll('#compact_submenuSidebar > ' + getHref)[0])
                 })
                 getMenu[i].addEventListener('click', function(ev) {
                     ev.preventDefault();
@@ -338,7 +333,6 @@ var App = function() {
             var c = ca[i];
             while (c.charAt(0) == ' ') {
               c = c.substring(1);
-              console.log(c)
             }
             if (c.indexOf(name) == 0) {
                 console.log(c.substring(name.length, c.length));

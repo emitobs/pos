@@ -22,7 +22,7 @@ function use_units()
 
 function background_color()
 {
-    return "#000";
+    return "black";
 }
 
 function use_debts()
@@ -31,5 +31,9 @@ function use_debts()
 }
 
 function use_pay_cards(){
+    return true;
+}
+
+function use_discount(){
     return true;
 }

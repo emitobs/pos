@@ -43,7 +43,8 @@ class PrintController extends Controller
                 'Product' => $detail->product->name,
                 'Quantity' => $detail->quantity,
                 'Price' => $detail->product->price,
-                'Unit' => $detail->product->unit_sale
+                'Unit' => $detail->product->unit_sale,
+                'Detail' => $detail->detail
             ];
             array_push($products, $product);
         }
@@ -118,7 +119,7 @@ class PrintController extends Controller
     public function getProducts(Request $request)
     {
         $zone = $request->get('zone');
-        $search = $request->get('term');
+        $search = $request->get('term')['term'];
         $categoriesProducts = [];
         if ($zone == 1) {
             $categoriesProducts = Category::all();
@@ -131,6 +132,12 @@ class PrintController extends Controller
         foreach ($categoriesProducts as $categorie) {
             array_push($categories, $categorie->id);
         }
-        return Product::where('name', 'LIKE', '%' . $search . '%')->whereIn('category_id', $categories)->where('desactivated', 0)->get();
+        $products = Product::where('name', 'LIKE', '%' . $search . '%')->whereIn('category_id', $categories)->where('desactivated', 0)->get();
+        $response = [];
+
+        foreach ($products as $product) {
+            array_push($response, ['id' => $product->barcode, 'text' => $product->name . ' | ' . $product->price . ' | ' . $product->stock]);
+        }
+        return $response;
     }
 }

@@ -11,7 +11,7 @@
 html {
   min-height: 100%; }
 
-body {
+body { 
   color: #888ea8;
   height: 100%;
   font-size: 0.875rem;
@@ -29,10 +29,6 @@ h1, h2, h3, h4, h5, h6 {
 
 ::-moz-selection {
   /* Code for Firefox */
-  color: #1b55e2;
-  background: transparent; }
-
-::selection {
   color: #1b55e2;
   background: transparent; }
 

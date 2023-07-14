@@ -64,7 +64,7 @@ class OrdersController extends Component
                 } else {
                     $orders = $currentPayroll->sales()
                         ->orderBy('deliveryTime', 'asc')
-                        ->paginate(7);
+                        ->paginate(25);
                 }
             } else {
                 if (strlen($this->search) > 0) {
@@ -75,12 +75,12 @@ class OrdersController extends Component
                                 ->orWhere('id', 'like', '%' . $this->search . '%');
                         })->where('status', $this->status_selected)
                         ->orderBy('deliveryTime', 'asc')
-                        ->paginate(7);
+                        ->paginate(25);
                 } else {
                     $orders  = $currentPayroll->sales()
                         ->where('status', $this->status_selected)
                         ->orderBy('deliveryTime', 'asc')
-                        ->paginate(7);
+                        ->paginate(25);
                 }
             }
         }

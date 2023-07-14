@@ -2,25 +2,25 @@
     <nav id="compactSidebar">
         <ul class="menu-categories">
             @if(use_tables())
-                <li class="">
-                    <a href="/mesas" class="menu-toggle" data-active="false">
-                        <div class="base-menu">
-                            <div class="base-icons">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round" class="feather feather-file-plus">
-                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                                    <polyline points="14 2 14 8 20 8"></polyline>
-                                    <line x1="12" y1="18" x2="12" y2="12"></line>
-                                    <line x1="9" y1="15" x2="15" y2="15"></line>
-                                </svg>
-                            </div>
-                            <span>
-                                Mesas
-                            </span>
+            <li class="">
+                <a href="/mesas" class="menu-toggle" data-active="false">
+                    <div class="base-menu">
+                        <div class="base-icons">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" class="feather feather-file-plus">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                <polyline points="14 2 14 8 20 8"></polyline>
+                                <line x1="12" y1="18" x2="12" y2="12"></line>
+                                <line x1="9" y1="15" x2="15" y2="15"></line>
+                            </svg>
                         </div>
-                    </a>
-                </li>
+                        <span>
+                            Mesas
+                        </span>
+                    </div>
+                </a>
+            </li>
             @endif
             <li class="">
                 <a href="/nuevopedido" class="menu-toggle" data-active="false">
@@ -165,6 +165,26 @@
                     </div>
                 </a>
             </li>
+            <li class="menu">
+                <a href="#settings" class="menu-toggle" data-active="false">
+                    <div class="base-menu">
+                        <div class="base-icons">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" class="feather feather-settings">
+                                <circle cx="12" cy="12" r="3"></circle>
+                                <path
+                                    d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z">
+                                </path>
+                            </svg>
+
+                        </div>
+                        <span>
+                            Configuración
+                        </span>
+                    </div>
+                </a>
+            </li>
             @endif
         </ul>
     </nav>
@@ -195,68 +215,21 @@
             </ul>
         </div>
 
-        <div class="submenu" id="menu2">
-            <ul class="submenu-list" data-parent-element="#menu2">
+        <div class="submenu" id="settings">
+            <ul class="submenu-list" data-parent-element="#settings">
                 <li>
-                    <a href="javascript:void(0);"><span class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="24"
-                                height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                stroke-linecap="round" stroke-linejoin="round" class="feather feather-circle">
-                                <circle cx="12" cy="12" r="10"></circle>
-                            </svg></span> Submenu 1 </a>
-                </li>
-                <li>
-                    <a href="javascript:void(0);"><span class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="24"
-                                height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                stroke-linecap="round" stroke-linejoin="round" class="feather feather-circle">
-                                <circle cx="12" cy="12" r="10"></circle>
-                            </svg></span> Submenu 2 </a>
+                    <a href="javascript:void(0);">
+                        <span class="icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" class="feather feather-eye">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                <circle cx="12" cy="12" r="3"></circle>
+                            </svg>
+                        </span> Visualizacion
+                    </a>
                 </li>
             </ul>
         </div>
-
-        <div class="submenu" id="menu3">
-            <ul class="submenu-list" data-parent-element="#menu3">
-                <li>
-                    <a href="table_basic.html"> Submenu 1 </a>
-                </li>
-                <li class="sub-submenu">
-                    <a role="menu" class="collapsed" data-toggle="collapse" data-target="#datatables"
-                        aria-expanded="false"> Submenu 2 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                            stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
-                            <polyline points="9 18 15 12 9 6"></polyline>
-                        </svg> </a>
-                    <ul id="datatables" class="collapse" data-parent="#compact_submenuSidebar">
-                        <li>
-                            <a href="javascript:void(0);"> Sub Submenu 1 </a>
-                        </li>
-                        <li>
-                            <a href="javascript:void(0);"> Sub Submenu 2 </a>
-                        </li>
-                        <li>
-                            <a href="javascript:void(0);"> Sub Submenu 3 </a>
-                        </li>
-                        <li>
-                            <a href="javascript:void(0);"> Sub Submenu 4 </a>
-                        </li>
-                    </ul>
-                </li>
-            </ul>
-        </div>
-
-        <div class="submenu show" id="starterKit">
-            <ul class="submenu-list" data-parent-element="#starterKit">
-                <li class="active">
-                    <a href="starter_kit_blank_page.html"> Blank Page </a>
-                </li>
-                <li>
-                    <a href="starter_kit_breadcrumb.html"> Breadcrumb </a>
-                </li>
-                <li>
-                    <a href="starter_kit_boxed.html"> Boxed </a>
-                </li>
-            </ul>
-        </div>
-
     </div>
 </div>

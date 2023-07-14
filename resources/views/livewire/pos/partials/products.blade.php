@@ -7,8 +7,7 @@
                         <div class="form-row">
                             <div class="col-12">
                                 <div class="form-group mb-2" wire:ignore>
-                                    <select id="selected_product" wire:model='select_product' class="form-control">
-                                        
+                                    <select id="selected_product" wire:model='select_product' class="form-control">                                        
                                 </div>
                                 <div class="form-group mt-2">
                                     <input type="number" id="quantity" wire:model="quantity" placeholder="Cantidad"

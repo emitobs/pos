@@ -4,25 +4,11 @@
             <div class="task-header">
                 <div class="form-row">
                     <div class="col-12">
-                        <div wire:ignore><select id="search_client" class="select-client" wire:model='searched_client' name=""
-                                id=""></select></div>
+                        <div wire:ignore>
+                            <select id="search_client" class="select-client" wire:model='searched_client'
+                                name=""></select>
+                        </div>
                         <div class="form-group">
-                            {{-- <input type="text" id="search_client" class="form-control"
-                                placeholder="Ingresar cliente buscado..." wire:model='searched_client'>
-                            @if(strlen($searched_client) > 0)
-                            <div wire:loading class="rounded-t-none shadow-lg list-group">
-                                <div class="list-item">Buscando...</div>
-                            </div>
-                            <ul class="list-group">
-                                @foreach ($clients as $client)
-                                <li class="list-group-item" style="font-size: 12px"
-                                    wire:click.prevent="selectClient({{$client->id}})">
-                                    {{$client->name}} | {{$client->telephone}} | {{$client->default_address}}
-                                </li>
-                                @endforeach
-                            </ul>
-                            @endif --}}
-
                             <div class="form mt-4">
                                 <div class="form-group mb-4">
                                     <input type="number" class="form-control" wire:model="telephone" id="rtelephone"
@@ -54,6 +40,7 @@
                                     </select>
                                     @error('bipper') <span class="text-danger er">{{$message}}</span>@enderror
                                 </div>
+                                @endif
                                 <div class="input-group mb-4">
                                     <textarea wire:model="clarifications" class="form-control"
                                         placeholder="Aclaraciones" aria-label="Aclaraciones"></textarea>
@@ -63,7 +50,7 @@
                             <div class="fixed top-0 bottom-0 left-0 right-0" wire:click="reset"></div>
                             @endif
                             @error('client') <span class="text-danger er">{{$message}}</span>@enderror
-                            @endif
+
                         </div>
                     </div>
                 </div>
@@ -71,19 +58,18 @@
         </div>
     </div>
 </div>
-</div>
 
 @push('scripts')
 <script>
     $(document).ready(function() {
-    //$('#city').select2();
-    $(".select-client").select2({
-                placeholder: "Select client",
+        $(".select-client").select2({
+            language: "es",
+                placeholder: "Buscar cliente",
                 minimumInputLength: 2,
                 ajax: {
                     url: "{{ route('getClients') }}",
                     dataType: 'json',
-                    type: "POST",
+                    type: "GET",
                     headers: {
                         'X-CSRF-TOKEN': '{{ csrf_token() }}'
                     },
@@ -103,13 +89,14 @@
                         };
                     }
                 }
-            });
-            
-            $("#search_client").on('change',function(){
-            Livewire.emit('selectClient',this.value);
+        });
+        $("#search_client").on('change',function(){
+            let select_val = $("#search_client").val();
+                if( select_val != null){
+                    Livewire.emit('selectClient',this.value);
+                }
         })
-
-            })
+    })
 </script>
 
 @endpush

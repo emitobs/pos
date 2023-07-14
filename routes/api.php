@@ -18,8 +18,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('v1/print/{id}', [App\Http\Controllers\Api\V1\PrintController::class, 'print']);
 Route::get('v1/print_order/{id}', [App\Http\Controllers\Api\V1\PrintController::class, 'print_order']);
-Route::post('v1/getClients', [App\Http\Controllers\Api\V1\PrintController::class, 'getClients'])->name('getClients');
-Route::post('v1/getProducts', [App\Http\Controllers\Api\V1\PrintController::class, 'getProducts'])->name('getProducts');
+Route::GET('v1/getClients', [App\Http\Controllers\Api\V1\PrintController::class, 'getClients'])->name('getClients');
+Route::GET('v1/getProducts', [App\Http\Controllers\Api\V1\PrintController::class, 'getProducts'])->name('getProducts');
 Route::post('login',[App\Http\Controllers\Api\LoginController::class,'login']);
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {

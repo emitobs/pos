@@ -77,7 +77,6 @@
         });
     });
 
-
         function Confirm(id, products){
 
             if(products > 0){

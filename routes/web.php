@@ -57,7 +57,7 @@ Route::get('categories', CategoriesController::class)->middleware('auth');
 
 Route::get('products', ProductsController::class)->middleware('auth');
 Route::get('coins', CoinsController::class)->middleware('auth');
-Route::get('local', LocalController::class)->middleware('auth')->name('PosController');
+//Route::get('local', LocalController::class)->middleware('auth')->name('PosController');
 Route::get('nuevopedido', PosController::class)->middleware('auth')->name('PosController');
 Route::get('pedidos', OrdersController::class)->middleware('auth');
 Route::get('reports', ReportsController::class)->middleware('auth');

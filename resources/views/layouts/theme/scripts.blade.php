@@ -9,7 +9,6 @@
 <script>
     $(document).ready(function() {
             App.init();
-            $('#select-client').select2();
         });
 </script>
 <script src="{{asset('assets/js/custom.js')}}"></script>
