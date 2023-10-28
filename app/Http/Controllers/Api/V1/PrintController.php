@@ -63,7 +63,6 @@ class PrintController extends Controller
             'Clarifications' => $sale->clarifications,
             'SaleDetails' => $products,
             'Rounding' => $sale->rounding,
-            'PayWithHandy' => $sale->paywithhandy,
             'rafflecodes' => $codes,
             'Debt' => $sale->debt
         ];

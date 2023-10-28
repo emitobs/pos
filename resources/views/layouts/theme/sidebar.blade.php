@@ -140,7 +140,7 @@
                 <a href="/deliveries" class="menu-toggle text-white" data-active="false">
                     <div class="base-menu">
                         <div class="base-icons text-white">
-                            <i class="fas fa-motorcycle"></i>
+                            <i class="fas fa-motorcycle" style="font-size: 25px"></i>
                         </div>
                         <span>
                             Deliveries
@@ -165,8 +165,8 @@
                     </div>
                 </a>
             </li>
-            <li class="menu">
-                <a href="#settings" class="menu-toggle" data-active="false">
+            <li class="">
+                <a href="/config" class="menu-toggle" data-active="false">
                     <div class="base-menu">
                         <div class="base-icons">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"

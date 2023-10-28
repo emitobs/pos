@@ -96,7 +96,7 @@ class CartService
         return $cart;
     }
 
-    public function decreaseQty(array $cart, int $position, $product ,int $quantity): array
+    public function decreaseQty(array $cart, int $position, $product, int $quantity): array
     {
         if (!isset($cart[$position])) {
             throw new \OutOfBoundsException('Invalid product position.');
@@ -105,6 +105,15 @@ class CartService
         if ($cart[$position]['product_id'] === $product) {
             $cart = $this->updateQuantity($cart, $position, $quantity);
         }
+        return $cart;
+    }
+
+    public function remove_from_cart(array $cart, int $position): array
+    {
+        if (!isset($cart[$position])) {
+            throw new \OutOfBoundsException('Invalid product position.');
+        }
+        array_splice($cart, $position, 1);
         return $cart;
     }
 }

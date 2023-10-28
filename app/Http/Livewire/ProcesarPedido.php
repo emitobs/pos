@@ -17,7 +17,7 @@ use Symfony\Component\HttpFoundation\ServerBag;
 class ProcesarPedido extends Component
 {
 
-    public $service_to_finish, $searched_client, $products_for_invoicing = [], $total, $itemsQuantity, $products_in_invoice, $products_out_invoice, $cart_local, $payment_method = 'cash', $change = 0.00, $discount = 0.00, $cart_total, $rounding = 0.00, $total_result, $cash, $selected_client, $payWithHandy = 0, $debt = 0, $clients = [];
+    public $service_to_finish, $searched_client, $products_for_invoicing = [], $total, $itemsQuantity, $products_in_invoice, $products_out_invoice, $cart_local, $payment_method = 'cash', $change = 0.00, $discount = 0.00, $cart_total, $rounding = 0.00, $total_result, $cash, $selected_client, $debt = 0, $clients = [];
     protected $listeners = ['select_product', 'ACash', 'unselect_product'];
 
     public function mount(Request $request)
@@ -64,7 +64,6 @@ class ProcesarPedido extends Component
             case 'cash':
                 break;
             case 'card':
-                $this->payWithHandy = 1;
                 if ($this->cash == null) $this->cash = 0;
                 break;
             case 'debt':
@@ -85,7 +84,6 @@ class ProcesarPedido extends Component
             'user_id' => Auth()->user()->id,
             'status' => 'Entregado',
             'client_id' => $client_id,
-            'payWithHandy' => $this->payWithHandy,
             'payroll_id' => $payroll->id,
             'discount' => $this->discount,
             'dayid' => $payroll->sales->count(),

@@ -186,6 +186,7 @@
             </ul>
         </div>
     </div>
+    @include('livewire.orders.selectDelivery')
     <style>
         .context-menu {
             display: none;
@@ -216,6 +217,12 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            window.livewire.on('show-selectDelivery', msg => {
+            $('#theModalSelectDelivery').modal('show');
+        });
+            window.livewire.on('hide-selectDelivery', msg => {
+            $('#theModalSelectDelivery').modal('hide');
+        });
     let contextMenu = document.getElementById('context-menu');
     let transactionsListDivs = document.querySelectorAll('.transactions-list');
 
@@ -258,7 +265,12 @@
             e.preventDefault();
             let saleId = contextMenu.getAttribute('data-item-id');
             let status = e.target.getAttribute('data-status');
-            Livewire.emit('updateOrderStatus',saleId,status);
+            if(status === 'Entregado'){
+                Livewire.emit('selectDeliveryToOrder',saleId);
+            }else{
+                Livewire.emit('updateOrderStatus',saleId,status);
+            }
+
         }
     });
 });

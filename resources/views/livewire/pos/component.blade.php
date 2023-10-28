@@ -9,7 +9,6 @@
     <div class="row">
         <div class="col-3">
             @include('livewire.pos.partials.client')
-
         </div>
         <div class="col-5">
             @include('livewire.pos.partials.products')
@@ -35,7 +34,7 @@
                                 <div class="col mb-3">
                                     @if(count($cart_local) > 0)
                                     <button id="btn-addPayment" data-toggle="modal" data-target="#addPayModal"
-                                        class="btn btn-dark mtmobile">
+                                        class="btn btn-primary mtmobile">
                                         Agregar pago F11
                                     </button>
                                     @endif
@@ -85,12 +84,13 @@
                                     </li>
                                 </ul>
                                 @if(count($payments) > 0)
+                                <span><b>Pagos:</b></span>
                                 <ul class="ul-money-detail">
                                     @foreach ($payments as $key => $xpayment)
                                     <li>
                                         {{$payment_methods->where('id',$xpayment['method_id'])->first()->name}}:
-                                        ${{$xpayment['amount']}} <a wire:click='deletePay({{$key}},@if(isset($xpayment['
-                                            id'])){{$xpayment['id']}}@endif)' href="javascript:void(0)"><i
+                                        ${{$xpayment['amount']}} <a wire:click='deletePay({{$key}},{{$xpayment[' id'] ??
+                                            0}})' href="javascript:void(0)"><i
                                                 class="fas fa-times-circle text-danger"></i></a></li>
                                     @endforeach
                                 </ul>
@@ -105,7 +105,7 @@
                                         </button>
                                         @else
                                         <button id="btnSaveSale" wire:click.prevent="saveSale()"
-                                            class="btn btn-dark btn-md btn-block">
+                                            class="btn btn-primary btn-md btn-block">
                                             GUARDAR F10
                                         </button>
                                         @endif

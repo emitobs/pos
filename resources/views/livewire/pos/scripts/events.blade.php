@@ -24,7 +24,7 @@
         window.livewire.on('confirm-print-ticket', saleId => {
             Swal.fire({
                 title: 'Pedido realizado',
-                text: '¿Desea imprimir ticket #' + saleId.saleId + '?',
+                text: '¿Desea imprimir ticket?',
                 showCancelButton: true,
                 cancelButtonColor: '#fff',
                 confirmButtonColor: '#3b3f5c',

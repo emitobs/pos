@@ -21,8 +21,6 @@ class Sale extends Model
         'clarifications',
         'client_id',
         'address',
-        'payinhouse',
-        'payWithHandy',
         'payroll_id',
         'deliveryTime',
         'deliveredTime',

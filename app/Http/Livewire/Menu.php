@@ -5,17 +5,23 @@ namespace App\Http\Livewire;
 use App\Models\Category;
 use App\Models\Product;
 use Livewire\Component;
+use App\Services\CategoryService;
 
 class Menu extends Component
 {
+
+    protected $categoryService;
+    public function __construct()
+    {
+        parent::__construct();
+        // Laravel automáticamente inyectará el servicio aquí
+        $this->categoryService = app(CategoryService::class);
+    }
     public $title;
     public function render()
     {
-        $category_foods = Category::where('desactivated', 0)->where('processing_area', 1)->get();
-        $category_drinks = Category::where('desactivated', 0)->where('processing_area', 2)->get();
-        $categories = Category::all();
-        $products = Product::where('desactivated', 0)->get();
-        return view('livewire.menu', ['foods' => $category_foods, 'drinks' => $category_drinks])->extends('layouts.theme.app')
+        $categories = $this->categoryService->getCategoriesForTheMenu();
+        return view('livewire.menu', ['categories' => $categories])->extends('layouts.theme.app')
             ->section('content');
     }
 }

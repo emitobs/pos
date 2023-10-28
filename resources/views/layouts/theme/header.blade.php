@@ -1,10 +1,10 @@
 <div class="header-container fixed-top">
-    <header class="header navbar navbar-expand-sm d-flex justify-content-between">
+    <header id='navbar-header' class="header navbar navbar-expand-sm d-flex justify-content-between">
         <ul class="navbar-item flex-row">
             <li class="nav-item theme-logo">
                 <a href="/">
                     <img src="assets/icos/pos_icon.svg" class="navbar-logo" alt="logo">
-                    <b style="margin-left: 5px; color:white;">POS Erizos DevOps</b>
+                    <b style="margin-left: 5px;">POS Erizos DevOps</b>
                 </a>
             </li>
             <li class="nav-item d-flex align-items-center">

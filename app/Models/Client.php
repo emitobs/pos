@@ -21,6 +21,7 @@ class Client extends Model
     {
         return $this->orders()->where('debt', 1)->where('payed', 0)->where('status', "!=", 'Cancelado')->get();
     }
+
     public function defaultAddress()
     {
         return $this->hasOne(Sale::class);
