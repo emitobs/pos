@@ -16,19 +16,19 @@
                 @include('common.searchbox')
                 <div class="widget-content">
                     <div class="table-responsive">
-                        <table class="table table-bordered table-striped  mt-1">
-                            <thead class="text-white" style="background: #3b3f5c;">
+                        <table class="table table-bordered tableBodyColor mt-1">
+                            <thead class="tableHeadColor">
                                 <tr>
-                                    <th class="table-th text-white">Nombre</th>
-                                    <th class="table-th text-white text-center">Teléfono</th>
-                                    <th class="table-th text-white">Acciones</th>
+                                    <th class="table-th tableHeadTextColor text-center">Nombre</th>
+                                    <th class="table-th tableHeadTextColor text-center">Teléfono</th>
+                                    <th class="table-th tableHeadTextColor text-center">Acciones</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach ($deliveries as $delivery )
                                 <tr>
-                                    <td class="text-center">{{$delivery->name}}</td>
-                                    <td class="text-center">{{$delivery->telephone}}</td>
+                                    <td class="text-center"><p class="tableTextColor">{{$delivery->name}}</p></td>
+                                    <td class="text-center"><p class="tableTextColor">{{$delivery->telephone}}</p></td>
                                     <td class="text-center">
                                         <button class="btn btn-primary"
                                             wire:click="assign_orders({{$delivery->id}})">Asignar pedido</button>

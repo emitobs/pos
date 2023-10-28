@@ -80,17 +80,17 @@
                 <li class="orderline">
                     <span class="product-name">{{$item['product_name']}}</span>
                     <span class="price">${{$item['quantity'] * $item['product_price']}}<span><a
-                                href="javascript:void(0)" wire:click.prevent="decreaseQty({{$key}})" class="discount"><i
-                                    class="fas fa-times-circle text-danger"></i></a></span></span>
+                                href="javascript:void(0)" wire:click.prevent="remove_from_cart({{$key}})"
+                                class="discount"><i class="fas fa-times-circle text-danger"></i></a></span></span>
                     <ul class="info-list">
                         <li class="info">
                             <div class="d-flex align-items-center">
                                 <div class="d-flex flex-column">
                                     <button wire:click="increaseQuantity({{$key}},1,{{$item['product_id']}})"
-                                        class="quantity-button quantity-up">+</button>
+                                        class="quantity-button quantity-up mr-2 bg-dark text-white">+</button>
                                     @if($item['quantity'] > 1)
                                     <button wire:click="decreaseQuantity({{$key}},1,{{$item['product_id']}})"
-                                        class="quantity-button quantity-down">-</button>
+                                        class="quantity-button quantity-down mr-2 bg-dark text-white">-</button>
                                     @endif
                                 </div>
                                 <div>

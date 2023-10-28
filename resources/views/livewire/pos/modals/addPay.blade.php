@@ -34,7 +34,7 @@
 });
 
     $("#payment_method_selected").on('change',function(){
-           
+
     });
     </script>
     @endpush

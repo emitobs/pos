@@ -14,7 +14,9 @@ use Illuminate\Support\Collection;
 
 class ReportsController extends Component
 {
-    public $totalSales,
+    public
+        $totals,
+        $totalSales,
         $totalCash,
         $total_handy,
         $total_cash,
@@ -78,7 +80,7 @@ class ReportsController extends Component
                     if (!empty($this->year)) {
                         //obtengo las ventas del año
                         $sales = Sale::whereYear('created_at', $this->year)->where('status', 'Entregado')->get();
-                        $this->totalCash = $sales->where('status', 'Entregado')->where('debt', 0)->where('paywithhandy', 0)->sum('total');
+                        $this->totalCash = $sales->where('status', 'Entregado')->where('debt', 0)->sum('total');
                         $this->totalSales = $sales->where('status', 'Entregado')->count();
                         $this->products = DB::select($this->createQuery($this->year, 0, $category_query));
                         $this->saleByCategory = DB::select($this->createQueryByCategories($this->year));
@@ -112,10 +114,8 @@ class ReportsController extends Component
         }
 
         $resultado_productos = new Collection();
+        $this->getTotales('2023-07-14', '2023-08-14', 'range');
         foreach ($payrolls as $payroll) {
-            $this->total_debts += $payroll->total_debts['total_sum_of_sales'];
-            $this->total_handy += $payroll->PaymentsWithHandy['total_sum_of_sales'];
-            $this->total_cash += $payroll->total_raised;
             foreach ($payroll->sales as $sale) {
                 $this->totalCash += $sale->total;
                 $this->total_sales++;
@@ -260,5 +260,47 @@ class ReportsController extends Component
         $this->day = null;
         $this->month = null;
         $this->year = null;
+    }
+
+    public function getTotales($date_init, $date_end = null, $report_type)
+    {
+        switch ($report_type) {
+            case 'day':
+                $this->totals = DB::table('payment_methods')
+                    ->join('payments_in', 'payments_in.payment_method_id', '=', 'payment_methods.id')
+                    ->select(
+                        'payment_methods.name',
+                        DB::raw('SUM(payments_in.amount) AS Total'),
+                        DB::raw('COUNT(payments_in.id) AS PaymentCount')
+                    )
+                    ->where('payments_in.created_at', $date_init)
+                    ->groupBy('payment_methods.name')
+                    ->get();
+                break;
+            case 'range':
+                $this->totals = DB::table('payment_methods')
+                    ->join('payments_in', 'payments_in.payment_method_id', '=', 'payment_methods.id')
+                    ->select(
+                        'payment_methods.name',
+                        DB::raw('SUM(payments_in.amount) AS Total'),
+                        DB::raw('COUNT(payments_in.id) AS PaymentCount')
+                    )
+                    ->whereBetween('payments_in.created_at', [$date_init, $date_end])
+                    ->groupBy('payment_methods.name')
+                    ->get();
+                break;
+            default:
+                $this->totals = DB::table('payment_methods')
+                    ->join('payments_in', 'payments_in.payment_method_id', '=', 'payment_methods.id')
+                    ->select(
+                        'payment_methods.name',
+                        DB::raw('SUM(payments_in.amount) AS Total'),
+                        DB::raw('COUNT(payments_in.id) AS PaymentCount')
+                    )
+                    ->whereBetween('payments_in.created_at', [$date_init, $date_end])
+                    ->groupBy('payment_methods.name')
+                    ->get();
+                break;
+        }
     }
 }

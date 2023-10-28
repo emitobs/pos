@@ -29,11 +29,9 @@ class LocalController extends Component
         $category_selected,
         $client,
         $address,
-        $payinhouse,
         $discount,
         $deliveryTime,
-        $saleSelected,
-        $payWithHandy;
+        $saleSelected;
 
 
     public function mount(Request $request)
@@ -49,12 +47,10 @@ class LocalController extends Component
             $this->clarifications = $sale->clarifications;
             $this->client = $sale->client;
             $this->address = $sale->address;
-            $this->payinhouse = $sale->payinhouse;
             $this->discount = $sale->discount;
             $this->deliveryTime = $sale->deliveryTime;
             $this->cash = $sale->cash;
             $this->change = $sale->change;
-            $this->payWithHandy = $sale->payWithHandy;
         } else {
             $this->cash = 0;
             $this->discount = 0;
@@ -63,8 +59,6 @@ class LocalController extends Component
             $this->clarifications = "";
             $this->client = "";
             $this->address = "";
-            $this->payinhouse = 0;
-            $this->payWithHandy = 0;
             $this->discount = 0;
             $this->deliveryTime = '';
         }
@@ -274,8 +268,6 @@ class LocalController extends Component
                     'status' => SaleStatus::ENESPERA,
                     'client' => $this->client,
                     'address' => $this->address,
-                    'payinhouse' => $this->payinhouse,
-                    'payWithHandy' => $this->payWithHandy,
                     'payroll_id' => $payroll->id,
                     'discount' => $this->discount,
                     'deliveryTime' => $this->deliveryTime,
@@ -373,10 +365,8 @@ class LocalController extends Component
                 'status' => SaleStatus::ENESPERA,
                 'client' => $this->client,
                 'address' => $this->address,
-                'payinhouse' => $this->payinhouse,
                 'discount' => $this->discount,
-                'deliveryTime' => $this->deliveryTime,
-                'payWithHandy' => $this->payWithHandy
+                'deliveryTime' => $this->deliveryTime
             ]);
 
             $items = Cart::getContent();
@@ -438,9 +428,7 @@ class LocalController extends Component
         $this->category_selected = 2;
         $this->client = "";
         $this->address = "";
-        $this->payinhouse = 0;
         $this->deliveryTime =   "";
         $this->saleSelected = "";
-        $this->payWithHandy = 0;
     }
 }

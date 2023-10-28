@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ConfigController;
 use App\Http\Livewire\AssignPermissionToRoleController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
@@ -77,9 +78,9 @@ Route::get('/generatePDF', [PdfController::class, 'generatePDF'])->name('generat
 Route::get('/mesas', TablesController::class)->name('mesas');
 //Route::get('/procesarServicio/{id}', ProcessServicioController::class)->name('endservice');
 Route::get('/procesar', ProcesarPedido::class)->name('endservice');
-Route::get('/sorteos',RafflesController::class);
+Route::get('/sorteos', RafflesController::class);
 Route::get('/qrcajas', QrCajasController::class);
-
+Route::get('/config', [ConfigController::class,'index']);
 // Route::get('/migrar', function () {
 //     $articulos = Articulos::on('bellas')->get();
 

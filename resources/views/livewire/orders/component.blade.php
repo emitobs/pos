@@ -50,27 +50,27 @@
             <div class="widget-content">
                 @if($orders != null && $orders->count() > 0)
                 <div class="table-responsive">
-                    <table class="table table-bordered table-striped  mt-1">
-                        <thead class="text-white" style="background: #3b3f5c;">
+                    <table class="table table-bordered tableBodyColor mt-1">
+                        <thead class="tableHeadColor">
                             <tr>
-                                <th class="table-th text-white">Nº</th>
-                                <th class="table-th text-white text-center">Cliente</th>
-                                <th class="table-th text-white text-center">Dirección</th>
-                                <th class="table-th text-white text-center">Estado</th>
-                                <th class="table-th text-white text-center">Total</th>
-                                <th class="table-th text-white text-center">Hora de llegada</th>
-                                <th class="table-th text-white text-center">Hora de entrega</th>
-                                <th class="table-th text-white text-center">Delivery</th>
-                                <th class="table-th text-white text-center">Acciones</th>
+                                <th class="table-th tableHeadTextColor">Nº</th>
+                                <th class="table-th tableHeadTextColor text-center">Cliente</th>
+                                <th class="table-th tableHeadTextColor text-center">Dirección</th>
+                                <th class="table-th tableHeadTextColor text-center">Estado</th>
+                                <th class="table-th tableHeadTextColor text-center">Total</th>
+                                <th class="table-th tableHeadTextColor text-center">Hora de llegada</th>
+                                <th class="table-th tableHeadTextColor text-center">Hora de entrega</th>
+                                <th class="table-th tableHeadTextColor text-center">Delivery</th>
+                                <th class="table-th tableHeadTextColor text-center">Acciones</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach ($orders as $order)
 
-                            <tr>
-                                <td>{{$order->id}}</td>
-                                <td class="text-center">{{$order->client->name}}</td>
-                                <td class="text-center">{{$order->address}}</td>
+                            <tr class="">
+                                <td class="text-center"><p class="tableTextColor">{{$order->id}}</p></td>
+                                <td class="text-center tableTextColor"><p class="tableTextColor">{{$order->client->name}}</p></td>
+                                <td class="text-center tableTextColor"><p class="tableTextColor">{{$order->address}}</p></td>
                                 @if($selectedPayroll == null || $selectedPayroll == 0)
                                 <td class="text-center">
 
@@ -85,10 +85,10 @@
                                         text-center text-white">{{$order->status}}</td>
                                 @endif
                                 </td>
-                                <td class="text-center">$ {{$order->total}}</td>
-                                <td class="text-center">{{date('G:i', strtotime($order->created_at))}}</td>
-                                <td class="text-center">{{date('G:i', strtotime($order->deliveryTime))}}</td>
-                                <td class="text-center">@if($order->delivery != null) {{$order->delivery->name}} @else Sin entregar @endif
+                                <td class="text-center"><p class="tableTextColor">$ {{$order->total}}</p></td>
+                                <td class="text-center tableTextColor"><p class="tableTextColor">{{date('G:i', strtotime($order->created_at))}}</p></td>
+                                <td class="text-center tableTextColor"><p class="tableTextColor">{{date('G:i', strtotime($order->deliveryTime))}}</p></td>
+                                <td class="text-center tableTextColor"><p class="tableTextColor">@if($order->delivery != null) {{$order->delivery->name}} @else Sin entregar @endif</p>
                                 </td>
                                 <td class="text-center">
                                     <a href="javascript:void(0)" wire:click.prevent="seeDetail({{$order->id}})"

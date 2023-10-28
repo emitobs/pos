@@ -16,26 +16,26 @@
                 @include('common.searchbox')
                 <div class="widget-content">
                     <div class="table-responsive">
-                        <table class="table table-bordered table striped mt-1">
-                            <thead class="text-white" style="background: #3b3f5c;">
+                        <table class="table table-bordered  tableBodyColor mt-1">
+                            <thead class="tableHeadColor">
                                 <tr>
-                                    <th class="table-th text-white">Nombre</th>
-                                    <th class="table-th text-white">Teléfono</th>
-                                    <th class="table-th text-white">Direcciones</th>
-                                    <th class="table-th text-white">Acciones</th>
+                                    <th class="table-th tableHeadTextColor text-center">Nombre</th>
+                                    <th class="table-th tableHeadTextColor text-center">Teléfono</th>
+                                    <th class="table-th tableHeadTextColor text-center">Direcciones</th>
+                                    <th class="table-th tableHeadTextColor text-center">Acciones</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach ($clients as $client )
                                 <tr>
                                     <td>
-                                        <h6>{{$client->name}}</h6>
+                                        <h6 class="tableTextColor">{{$client->name}}</h6>
                                     </td>
                                     <td class="text-center">
-                                        {{$client->telephone}}
+                                        <p class="tableTextColor">{{$client->telephone}}</p>
                                     </td>
                                     <td class="text-center">
-                                        {{$client->default_address}}
+                                        <p class="tableTextColor">{{$client->default_address}}</p>
                                     </td>
                                     <td class="text-center">
                                         @if($client->debts->count() > 0)

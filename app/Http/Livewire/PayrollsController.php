@@ -121,31 +121,37 @@ class PayrollsController extends Component
             ->where('status', "=", 'Entregado')->distinct()
             ->where('delivery_id', "!=", null)
             ->get();
+
         $reportesDeLosDeliveriesQueTrabajaron = [];
         foreach ($deliveriesQueTrabajaron as $deliveryQueTrabajo) {
             $infoBD_delivery = Delivery::find($deliveryQueTrabajo->delivery_id);
-            $cobrosDelDelivery = $infoBD_delivery->payments_in->where('payroll_id', $payroll->id);
+            $cobrosDelDelivery = $infoBD_delivery->payments_in->where('payroll_id', $this->payroll_selected->id);
             $metodosDePagosUtilizadosEnLosCobros = [];
             foreach ($cobrosDelDelivery as $cobroDelDelivery) {
-                if ($cobroDelDelivery->sale->status == 'Entregado') {
-                    if (isset($metodosDePagosUtilizadosEnLosCobros[$cobroDelDelivery->payment_method_id])) {
-                        $metodosDePagosUtilizadosEnLosCobros[$cobroDelDelivery->payment_method_id]['total'] += $cobroDelDelivery->amount;
-                        $metodosDePagosUtilizadosEnLosCobros[$cobroDelDelivery->payment_method_id]['chargers']++;
-                    } else {
-                        $metodosDePagosUtilizadosEnLosCobros[$cobroDelDelivery->payment_method_id] = ['name' => $cobroDelDelivery->payment_method->name, 'total' => $cobroDelDelivery->amount, 'chargers' => 1];
-                    }
+                if (isset($metodosDePagosUtilizadosEnLosCobros[$cobroDelDelivery->payment_method_id])) {
+                    $metodosDePagosUtilizadosEnLosCobros[$cobroDelDelivery->payment_method_id]['total'] += $cobroDelDelivery->amount;
+                    $metodosDePagosUtilizadosEnLosCobros[$cobroDelDelivery->payment_method_id]['chargers']++;
+                } else {
+                    $metodosDePagosUtilizadosEnLosCobros[$cobroDelDelivery->payment_method_id] = ['name' => $cobroDelDelivery->payment_method->name, 'total' => $cobroDelDelivery->amount, 'chargers' => 1];
                 }
             }
             $reportesDeLosDeliveriesQueTrabajaron[$infoBD_delivery->id] = [
                 'delivery_name' => $infoBD_delivery->name,
                 'reportes' => $metodosDePagosUtilizadosEnLosCobros,
-                'orders_delivered' => $infoBD_delivery->sales->where('payroll_id',$payroll->id)->where('status','Entregado')->count()
+                'orders_delivered' => $infoBD_delivery->sales->where('payroll_id', $payroll->id)->where('status', 'Entregado')->count()
             ];
         }
         $this->reportesDeDeliveries = $reportesDeLosDeliveriesQueTrabajaron;
-        $this->totals = DB::select('SELECT payment_methods.name, SUM(payments_in.amount) AS Total FROM payment_methods JOIN payments_in ON payments_in.payment_method_id = payment_methods.id GROUP BY payment_methods.name');
+        // $this->totals = DB::select('SELECT payment_methods.name, SUM(payments_in.amount) AS Total FROM payment_methods JOIN payments_in ON payments_in.payment_method_id = payment_methods.id GROUP BY payment_methods.name');
+        $this->totals = DB::table('payment_methods')
+            ->join('payments_in', 'payments_in.payment_method_id', '=', 'payment_methods.id')
+            ->select('payment_methods.name', DB::raw('SUM(payments_in.amount) AS Total'))
+            ->where('payments_in.payroll_id', $payroll->id)
+            ->groupBy('payment_methods.name')
+            ->get();
+
         $this->chargers = $payroll->payments_in->count();
-        $this->orders_delivered = $payroll->sales->where('status','Entregado')->count();
+        $this->orders_delivered = $payroll->sales->where('status', 'Entregado')->count();
         $this->emit('see-payroll', 'Show modal');
     }
 

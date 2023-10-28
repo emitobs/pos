@@ -17,19 +17,19 @@
 
             <div class="widget-content">
                 <div class="table-responsive">
-                    <table class="table table-bordered table striped mt-1">
-                        <thead class="text-white" style="background: #3b3f5c;">
+                    <table class="table table-bordered tableBodyColor mt-1">
+                        <thead class="tableHeadColor">
                             <tr>
-                                <th class="table-th text-white">Descripcion</th>
-                                <th class="table-th text-white">Imagen</th>
-                                <th class="table-th text-white">Actions</th>
+                                <th class="table-th tableHeadTextColor">Descripcion</th>
+                                <th class="table-th tableHeadTextColor">Imagen</th>
+                                <th class="table-th tableHeadTextColor">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach ($data as $category)
                             <tr>
                                 <td>
-                                    <h6>{{$category->name}}</h6>
+                                    <h6 class="tableTextColor">{{$category->name}}</h6>
                                 </td>
                                 <td class="text-center">
                                     <span>
@@ -45,7 +45,7 @@
                                     @if($category->products->count() == 0)
                                     <a href="javascript:void(0)" onclick="return Confirm('{{$category->id}}')"
                                         class="btn btn-danger" title="Delete">
-                                        <i class="fas fa-trash"> </i>
+                                        <i class="fas fa-trash"></i>
                                     </a>
                                     @endif
                                     {{$category->imagen}}
