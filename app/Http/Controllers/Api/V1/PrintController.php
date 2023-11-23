@@ -120,13 +120,12 @@ class PrintController extends Controller
         $zone = $request->get('zone');
         $search = $request->get('term')['term'];
         $categoriesProducts = [];
-        if ($zone == 1) {
+        if (!$zone) {
             $categoriesProducts = Category::all();
-        }
-
-        if ($zone == 2) {
+        } else {
             $categoriesProducts = Category::where('processing_area', $zone)->get();
         }
+
         $categories = [];
         foreach ($categoriesProducts as $categorie) {
             array_push($categories, $categorie->id);

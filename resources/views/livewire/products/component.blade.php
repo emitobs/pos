@@ -7,7 +7,8 @@
                 </h4>
                 <ul class="tabs tab-pills">
                     <li>
-                        <a href="javascript:void(0)" wire:click='exportProducts' class="tabmenu bg-dark">Generar excel</a>
+                        <a href="javascript:void(0)" wire:click='exportProducts' class="tabmenu bg-dark">Generar
+                            excel</a>
                         <a href="javascript:void(0)" class="tabmenu bg-dark" data-toggle="modal"
                             data-target="#theModal">Agregar</a>
                     </li>
@@ -57,7 +58,8 @@
                                             alt="{{$product->name}}" height="70" width="80" class="rounded">
                                     </span>
                                 </td>
-                                <td class="text-center tableTextColor"> <input type="checkbox" @if($product->desactivated) checked
+                                <td class="text-center tableTextColor"> <input type="checkbox"
+                                        @if($product->desactivated) checked
                                     @endif
                                     readonly onclick="javascript: return false;"></td>
                                 </td>

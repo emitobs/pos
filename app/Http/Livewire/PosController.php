@@ -128,12 +128,10 @@ class PosController extends Component
             $this->payment_methods = PaymentMethod::where('disabled', 0)->get();
             $units = UnitSale::where('disabled', 0)->get();
             $this->payroll = $payroll;
-            if ($payroll->zone == 1) {
-                $this->categoriesProducts = Category::all();
-            }
-
-            if ($payroll->zone == 2) {
+            if ($payroll->zone != null) {
                 $this->categoriesProducts = Category::where('processing_area', $payroll->zone)->get();
+            } else {
+                $this->categoriesProducts = Category::all();
             }
             $categories = [];
             foreach ($this->categoriesProducts as $categorie) {

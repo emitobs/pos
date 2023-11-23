@@ -12,6 +12,6 @@ class ExportProduct implements FromCollection
     */
     public function collection()
     {
-        return Product::all('name','cost','price','vat_rate_id');
+        return Product::all('name','cost','price');
     }
 }

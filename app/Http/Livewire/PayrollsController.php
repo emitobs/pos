@@ -72,7 +72,7 @@ class PayrollsController extends Component
 
     public function initPayroll()
     {
-        if ($this->cashier > 0 && $this->zone > 0) {
+        if ($this->cashier > 0) {
             $payroll_open = Payroll::where('responsible', $this->cashier)->where('isClosed', 0)->get();
             if ($payroll_open->count() > 0) {
                 $this->emit('payroll-open', 'Existe una planilla sin cerrar, para el usuario seleccionado.');
