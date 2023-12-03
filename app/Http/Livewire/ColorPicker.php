@@ -26,11 +26,23 @@ class ColorPicker extends Component
         $this->emit('color-updated', [$this->color, $this->element]);
     }
 
+    // public function saveColors()
+    // {
+    //     $config = Config::first();
+    //     $config->{$this->element} = $this->color;
+    //     $config->save();
+    //     $this->emit('colors-saved', $this->element);
+    // }
+
     public function saveColors()
     {
         $config = Config::first();
-        $config->{$this->element} = $this->color;
-        $config->save();
-        $this->emit('colors-saved', $this->element);
+        // Verificar si el color ha cambiado realmente
+        if ($config->{$this->element} !== $this->color) {
+            $config->{$this->element} = $this->color;
+            $config->save();
+            // Emitir evento solo si este controlador cambió el color
+            $this->emit('colors-saved', $this->element);
+        }
     }
 }

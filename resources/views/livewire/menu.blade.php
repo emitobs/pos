@@ -30,17 +30,17 @@
                             </div>
                         </div>
                         <div class="row">
-                            @foreach ($category->products->where('desactivated',0)->where('inWebMenu',1)->sortBy('menu_position') as $product)
+                            @foreach($category->products->where('desactivated',0)->where('inWebMenu',1)->sortBy('menu_position')
+                            as $product)
                             @if($product->desactivated == 0)
                             <div class="media col-lg-4">
                                 @if($product->image == null)
                                 <img class="media-object justify-content-center" width="96" height="96"
-                                    src={{asset(getLogo())}} alt=""
-                                    style="object-fit: contain;">
+                                    src={{asset(getLogo())}} alt="" style="object-fit: contain;">
                                 @else
-                                <img class="media-object justify-content-center" width="96" height="96"
-                                    src={{$product->image}} alt=""
-                                    style="object-fit: contain;">
+                                <img class="media-object justify-content-center" width="96" height="96" src={{
+                                    asset('storage/products/' . $product->image) }} alt=""
+                                style="object-fit: contain;">
                                 @endif
                                 <div class="media-body">
                                     <h4 class="media-heading">{{$product->name}}</h4>

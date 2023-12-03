@@ -9,7 +9,7 @@ class Payment_in extends Model
 {
     use HasFactory;
     protected $table = "payments_in";
-    protected $fillable =  ['amount', 'client_id', 'user_id', 'sale_id', 'payment_method_id', 'delivery_id'];
+    protected $fillable =  ['amount', 'client_id', 'user_id', 'sale_id', 'payment_method_id', 'delivery_id','payroll_id'];
 
     public function sale()
     {

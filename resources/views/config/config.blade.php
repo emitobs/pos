@@ -3,7 +3,7 @@
 @section('content')
 <div class="row justify-content-around">
     {{-- CONFIG DASHBOARD STYLES --}}
-    <div class="col-10 shadow-lg p-2 contentConfig rounded mb-4">
+    <div class="col-4 shadow-lg p-2 contentConfig rounded mb-4">
         <div style="margin-top: 10px;">
             <h4>Configuracion de Dashboard</h4>
         </div>
@@ -18,7 +18,7 @@
         </div>
     </div>
     {{-- CONFIG TABLES STYLES --}}
-    <div class="col-10 shadow-lg p-2 contentConfig rounded mb-4">
+    <div class="col-6 shadow-lg p-2 contentConfig rounded mb-4">
         <div style="margin-top: 10px;">
             <h4>Configuracion de Tablas</h4>
         </div>
@@ -80,12 +80,12 @@
         </div>
     </div>
     {{-- EDICION MODAL PAYROLLS --}}
-    <div class="col-10 shadow-lg p-2 contentConfig rounded mb-4">
+    <div class="col-11 shadow-lg p-2 contentConfig rounded mb-4">
         <div style="margin-top: 10px;">
             <h4>Configuracion de Modal</h4>
         </div>
         <div class="row justify-content-center">
-            <div class="col-7">
+            <div class="col-6">
                 @livewire('color-picker', ['element' => 'bgPayrollModalHeaderColor', 'color' =>
                 getBgPayrollModalHeaderColor()])
                 @livewire('color-picker', ['element' => 'textPayrollModalHeaderTextColor', 'color' =>
@@ -103,7 +103,7 @@
                 @livewire('color-picker', ['element' => 'payrollModalInfoContainerbodyColor', 'color' =>
                 getPayrollModalInfoContainerbodyColor()])
             </div>
-            <div class="col-12">
+            <div class="col-6">
                 <div class="modal-content ">
                     <div class="modal-header bgPayrollModalHeaderColor">
                         <h5 class="modal-title textPayrollModalHeaderTextColor">
@@ -200,7 +200,7 @@
     </div>
     {{--COLOR CARD --}}
 
-    <div class="col-10 shadow-lg p-2 contentConfig rounded mb-4">
+    <div class="col-11 shadow-lg p-2 contentConfig rounded mb-4">
         <div style="margin-top: 10px;">
             <h4>Configuracion de Modal</h4>
         </div>
@@ -543,9 +543,9 @@
         $("#save_colors").attr("disabled", true);
         Livewire.emit('saveColors');
     });
-    Livewire.on('colors-saved', (data) => {
-        noty('Colors was saved!')
-    })
+    Livewire.on('colors-saved', (element) => {
+    noty('Color for ' + element + ' was saved!')
+})
 });
 
 

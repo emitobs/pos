@@ -31,58 +31,58 @@ class PosController extends Component
     protected $cartService, $orderService;
 
     public
-        $pageTitle,
-        $total,
-        $itemsQuantity,
-        $cash,
-        $change,
-        $selected_product,
-        $clarifications,
-        $compositions = [],
-        $category_selected,
-        $telephone,
-        $client,
-        $selected_client,
-        $address,
-        $discount = 0,
-        $deliveryTime,
-        $saleSelected,
-        $clients = [],
-        $searched_client,
-        $kg_unit = 'grs',
-        $kgs_quantity,
-        $units_quantity = 1,
-        $quantity = 1,
-        $cart_total,
-        $debt = 0,
-        $payment_method = 1,
-        $rounding = 0.0,
-        $total_result = 0.0,
-        $search,
-        $searched_products = [],
-        $cash_to_gr,
-        $cart_local = [],
-        $beeper,
-        $products,
-        $categoriesProducts,
-        $payroll,
-        $detail,
-        $selected_id,
-        $cart = [],
-        $payrollSales,
-        $select_product,
-        $order_payments = ["Efectivo"],
-        $payment_method_selected = 1,
-        $amount,
-        $payments = [],
-        $payments_to_delete = [],
-        $payments_total = 0,
-        $payment_methods,
-        $details_to_delete = [],
-        $total_items,
-        $sale,
-        $deliveries,
-        $selectedDelivery;
+    $pageTitle,
+    $total,
+    $itemsQuantity,
+    $cash,
+    $change,
+    $selected_product,
+    $clarifications,
+    $compositions = [],
+    $category_selected,
+    $telephone,
+    $client,
+    $selected_client,
+    $address,
+    $discount = 0,
+    $deliveryTime,
+    $saleSelected,
+    $clients = [],
+    $searched_client,
+    $kg_unit = 'grs',
+    $kgs_quantity,
+    $units_quantity = 1,
+    $quantity = 1,
+    $cart_total,
+    $debt = 0,
+    $payment_method = 1,
+    $rounding = 0.0,
+    $total_result = 0.0,
+    $search,
+    $searched_products = [],
+    $cash_to_gr,
+    $cart_local = [],
+    $beeper,
+    $products,
+    $categoriesProducts,
+    $payroll,
+    $detail,
+    $selected_id,
+    $cart = [],
+    $payrollSales,
+    $select_product,
+    $order_payments = ["Efectivo"],
+    $payment_method_selected = 1,
+    $amount,
+    $payments = [],
+    $payments_to_delete = [],
+    $payments_total = 0,
+    $payment_methods,
+    $details_to_delete = [],
+    $total_items,
+    $sale,
+    $deliveries,
+    $selectedDelivery;
 
 
 
@@ -152,8 +152,10 @@ class PosController extends Component
         } else {
             $this->emit('sale-error', 'No se encuentra planilla abierta.');
         }
-        if ($this->discount == '') $this->discount = 0;
-        if ($this->cash == '') $this->cash = 0;
+        if ($this->discount == '')
+            $this->discount = 0;
+        if ($this->cash == '')
+            $this->cash = 0;
         $beepers = Beeper::where('inUse', 0)->get();
         $this->cart_total = $this->cartService->getTotal($this->cart_local);
         $this->total_items = $this->cartService->getItemsQuantity($this->cart_local);
@@ -184,10 +186,11 @@ class PosController extends Component
 
     public function refreshTotal()
     {
-        if ($this->discount == '') $this->discount = 0;
+        if ($this->discount == '')
+            $this->discount = 0;
         //calcula el redondeo
         $this->total_result = $this->cart_total - $this->discount;
-        $this->rounding =  round(round($this->total_result) - $this->total_result, 2);
+        $this->rounding = round(round($this->total_result) - $this->total_result, 2);
         if ($this->rounding != 0.00) {
             $this->total_result = $this->total_result + $this->rounding;
         }
@@ -240,7 +243,8 @@ class PosController extends Component
     }
     public function saveSale()
     {
-        if (!$this->isValidForSaving()) return;
+        if (!$this->isValidForSaving())
+            return;
 
         try {
             DB::beginTransaction();
@@ -406,7 +410,7 @@ class PosController extends Component
                         'amount' => $payment['amount'],
                         'sale_id' => $sale->id,
                         'user_id' => Auth()->user()->id,
-                        'payroll_id' => $this->payroll->id,
+                        'payroll_id' => $this->getOpenPayroll()->id,
                     ]);
                 }
             }
@@ -563,7 +567,7 @@ class PosController extends Component
         $this->client = "";
         $this->telephone = "";
         $this->address = "";
-        $this->deliveryTime =   "";
+        $this->deliveryTime = "";
         $this->saleSelected = "";
         $this->debt = 0;
         $this->cart_total = 0;
@@ -601,7 +605,8 @@ class PosController extends Component
         $this->payments[] = ["amount" => $this->amount, "method_id" => $this->payment_method_selected];
         foreach ($this->payments as $pay) {
             $totalPayments += $pay['amount'];
-        };
+        }
+        ;
 
         if ($totalPayments >= $this->cart_total) {
             $this->getTotalPayments();

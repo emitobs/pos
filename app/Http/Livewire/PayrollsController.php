@@ -20,23 +20,23 @@ class PayrollsController extends Component
         return 'vendor.livewire.bootstrap';
     }
     public $payroll_selected,
-        $totalCashInHouse,
-        $totalCash,
-        $totalSales,
-        $series,
-        $labels,
-        $deliveriesWorked,
-        $totalHandy,
-        $totalDebts,
-        $cashier,
-        $zone,
-        $initialCash,
-        $totals,
-        $cashiers,
-        $zones,
-        $reportesDeDeliveries,
-        $chargers,
-        $orders_delivered;
+    $totalCashInHouse,
+    $totalCash,
+    $totalSales,
+    $series,
+    $labels,
+    $deliveriesWorked,
+    $totalHandy,
+    $totalDebts,
+    $cashier,
+    $zone,
+    $initialCash,
+    $totals,
+    $cashiers,
+    $zones,
+    $reportesDeDeliveries,
+    $chargers,
+    $orders_delivered;
 
     protected $listeners = [
         'confirmClosed' => 'confirmClosed',
@@ -126,6 +126,7 @@ class PayrollsController extends Component
         foreach ($deliveriesQueTrabajaron as $deliveryQueTrabajo) {
             $infoBD_delivery = Delivery::find($deliveryQueTrabajo->delivery_id);
             $cobrosDelDelivery = $infoBD_delivery->payments_in->where('payroll_id', $this->payroll_selected->id);
+
             $metodosDePagosUtilizadosEnLosCobros = [];
             foreach ($cobrosDelDelivery as $cobroDelDelivery) {
                 if (isset($metodosDePagosUtilizadosEnLosCobros[$cobroDelDelivery->payment_method_id])) {
@@ -142,10 +143,9 @@ class PayrollsController extends Component
             ];
         }
         $this->reportesDeDeliveries = $reportesDeLosDeliveriesQueTrabajaron;
-        // $this->totals = DB::select('SELECT payment_methods.name, SUM(payments_in.amount) AS Total FROM payment_methods JOIN payments_in ON payments_in.payment_method_id = payment_methods.id GROUP BY payment_methods.name');
         $this->totals = DB::table('payment_methods')
             ->join('payments_in', 'payments_in.payment_method_id', '=', 'payment_methods.id')
-            ->select('payment_methods.name', DB::raw('SUM(payments_in.amount) AS Total'))
+            ->select('payment_methods.name', DB::raw('SUM(payments_in.amount) AS Total'), DB::raw('COUNT(payments_in.id) AS NumberOfPayments'))
             ->where('payments_in.payroll_id', $payroll->id)
             ->groupBy('payment_methods.name')
             ->get();

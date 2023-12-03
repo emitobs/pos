@@ -23,8 +23,11 @@
                                                         <div class="card">
                                                             <div
                                                                 class="card-body bgPayrollModalInfoContainerColor shadow-lg">
-                                                                <h5 class="card-title mb-3 payrollModalInfoContainerTextColor">Recaudos totales</h5>
-                                                                <table class="table payrollModalInfoContainerTextTableColor">
+                                                                <h5
+                                                                    class="card-title mb-3 payrollModalInfoContainerTextColor">
+                                                                    Recaudos totales</h5>
+                                                                <table
+                                                                    class="table payrollModalInfoContainerTextTableColor">
                                                                     <tr>
                                                                         <th>Metodo de pago</th>
                                                                         <th>Pedidos</th>
@@ -33,7 +36,7 @@
                                                                     @foreach ($this->totals as $total)
                                                                     <tr>
                                                                         <td>{{$total->name}}</td>
-                                                                        <td>3</td>
+                                                                        <td>{{$total->NumberOfPayments}}</td>
                                                                         <td>$ {{$total->Total}}</td>
                                                                     </tr>
                                                                     @endforeach
@@ -53,8 +56,11 @@
                                                         <div class="card">
                                                             <div
                                                                 class="card-body bgPayrollModalInfoContainerColor shadow-lg">
-                                                                <h5 class="card-title mb-3 payrollModalInfoContainerTextColor">Entregas {{$orders_delivered}}</h5>
-                                                                <table class="table payrollModalInfoContainerTextTableColor">
+                                                                <h5
+                                                                    class="card-title mb-3 payrollModalInfoContainerTextColor">
+                                                                    Entregas {{$orders_delivered}}</h5>
+                                                                <table
+                                                                    class="table payrollModalInfoContainerTextTableColor">
                                                                     <tr>
                                                                         <th>Delivery</th>
                                                                         <th>Cantidad</th>
@@ -62,7 +68,8 @@
                                                                     @foreach ($reportesDeDeliveries as $reporteDelivery)
                                                                     <tr>
                                                                         <td>{{$reporteDelivery['delivery_name']}}</td>
-                                                                        <td>{{$reporteDelivery['orders_delivered']}}</td>
+                                                                        <td>{{$reporteDelivery['orders_delivered']}}
+                                                                        </td>
                                                                     </tr>
                                                                     @endforeach
                                                                 </table>
@@ -78,17 +85,21 @@
                                     <div class="col-12">
                                         <div class="card">
                                             <div class="card-body">
-                                                <h5 class="mb-3 payrollModalInfoContainerTextColor">Cobros {{$chargers}}</h5>
+                                                <h5 class="mb-3 payrollModalInfoContainerTextColor">Cobros {{$chargers}}
+                                                </h5>
                                                 <div class="row">
                                                     @foreach ($reportesDeDeliveries as $reporteDelivery)
+
                                                     <div class="col-12 col-md-6">
                                                         <div class="card">
                                                             <div
                                                                 class="card-body bgPayrollModalInfoContainerColor shadow-lg">
-                                                                <h5 class="card-title mb-3 payrollModalInfoContainerTextColor">
+                                                                <h5
+                                                                    class="card-title mb-3 payrollModalInfoContainerTextColor">
                                                                     {{$reporteDelivery['delivery_name']}}
                                                                 </h5>
-                                                                <table class="table payrollModalInfoContainerTextTableColor">
+                                                                <table
+                                                                    class="table payrollModalInfoContainerTextTableColor">
                                                                     <tr>
                                                                         <th>Metodo de pago</th>
                                                                         <th>Pedidos</th>

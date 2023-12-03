@@ -1,9 +1,12 @@
 <div>
+    @push('styles')
     <style>
         title {
             background-color: red;
         }
     </style>
+    @endpush
+
     @if($payroll)
     <!-- Inicio POS-->
     <div class="row">
@@ -39,6 +42,9 @@
                                     </button>
                                     @endif
                                 </div>
+                                {{-- <div class="col mb-3">
+                                    <input id="saveOrder" type="button" class="btn btn-primary" value="Guardar Pedido">
+                                </div> --}}
                             </div>
 
 
@@ -137,6 +143,4 @@
         </div>
     </div>
     @endif
-
-
 </div>
