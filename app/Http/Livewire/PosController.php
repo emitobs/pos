@@ -26,8 +26,7 @@ use App\Services\CartService;
 use App\Services\OrderService;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
-class PosController extends Component
-{
+class PosController extends Component {
     protected $cartService, $orderService;
 
     public
@@ -86,8 +85,7 @@ class PosController extends Component
 
 
 
-    public function __construct()
-    {
+    public function __construct() {
         parent::__construct();
 
         // Laravel automáticamente inyectará el servicio aquí
@@ -95,11 +93,10 @@ class PosController extends Component
         $this->orderService = app(OrderService::class);
     }
 
-    public function mount(Request $request)
-    {
-        if ($request->saleId) {
+    public function mount(Request $request) {
+        if($request->saleId) {
             $sale = Sale::find($request->saleId);
-            if ($sale) {
+            if($sale) {
                 $this->loadSale($sale);
             } else {
                 return redirect('/nuevopedido');
@@ -107,14 +104,13 @@ class PosController extends Component
         }
     }
 
-    public function render()
-    {
+    public function render() {
         getNavbarColor();
         //CONSULTA POR PLANILLA ABIERTA PARA EL USUARIO LOGUEADO
         $payroll = Payroll::with('sales')->where('isClosed', 0)
             ->where('responsible', auth()->user()->id)
             ->first();
-        if ($payroll) {
+        if($payroll) {
             $this->payrollSales = $payroll->sales->where('status', '!=', 'Cancelado')->where('status', '!=', 'Entregado');
         } else {
             $this->emit('no-payroll');
@@ -124,37 +120,37 @@ class PosController extends Component
 
 
         //SI EXISTE LA PLANILLA
-        if ($payroll) {
+        if($payroll) {
             $this->payment_methods = PaymentMethod::where('disabled', 0)->get();
             $units = UnitSale::where('disabled', 0)->get();
             $this->payroll = $payroll;
-            if ($payroll->zone != null) {
+            if($payroll->zone != null) {
                 $this->categoriesProducts = Category::where('processing_area', $payroll->zone)->get();
             } else {
                 $this->categoriesProducts = Category::all();
             }
             $categories = [];
-            foreach ($this->categoriesProducts as $categorie) {
+            foreach($this->categoriesProducts as $categorie) {
                 array_push($categories, $categorie->id);
             }
 
             $products = [];
-            if ($this->category_selected) {
+            if($this->category_selected) {
                 $this->products = Product::where('category_id', '=', $this->category_selected)->where('desactivated', 0)->orderBy('name', 'asc')->get();
             } else {
                 $this->category_selected = $this->categoriesProducts->first()->id;
                 $this->products = Product::where('category_id', '=', $this->categoriesProducts->first()->id)->orderBy('name', 'asc')->get();
             }
 
-            if (strlen($this->search) > 0) {
-                $this->searched_products = Product::where('name', 'LIKE', '%' . $this->search . '%')->whereIn('category_id', $categories)->where('desactivated', 0)->get();
+            if(strlen($this->search) > 0) {
+                $this->searched_products = Product::where('name', 'LIKE', '%'.$this->search.'%')->whereIn('category_id', $categories)->where('desactivated', 0)->get();
             }
         } else {
             $this->emit('sale-error', 'No se encuentra planilla abierta.');
         }
-        if ($this->discount == '')
+        if($this->discount == '')
             $this->discount = 0;
-        if ($this->cash == '')
+        if($this->cash == '')
             $this->cash = 0;
         $beepers = Beeper::where('inUse', 0)->get();
         $this->cart_total = $this->cartService->getTotal($this->cart_local);
@@ -172,9 +168,8 @@ class PosController extends Component
             ->section('content');
     }
 
-    public function selectClient(Client $client)
-    {
-        if (isset($client)) {
+    public function selectClient(Client $client) {
+        if(isset($client)) {
             $this->selected_client = $client;
             $this->client = $client->name;
             $this->address = $client->default_address;
@@ -184,17 +179,16 @@ class PosController extends Component
         }
     }
 
-    public function refreshTotal()
-    {
-        if ($this->discount == '')
+    public function refreshTotal() {
+        if($this->discount == '')
             $this->discount = 0;
         //calcula el redondeo
         $this->total_result = $this->cart_total - $this->discount;
         $this->rounding = round(round($this->total_result) - $this->total_result, 2);
-        if ($this->rounding != 0.00) {
+        if($this->rounding != 0.00) {
             $this->total_result = $this->total_result + $this->rounding;
         }
-        if ($this->cash > 0) {
+        if($this->cash > 0) {
             $this->change = $this->cash - $this->total_result;
         } else {
             $this->change = 0;
@@ -216,8 +210,7 @@ class PosController extends Component
         'selectDeliveryToOrder'
     ];
 
-    public function increaseQuantity($position, $quantity, $product)
-    {
+    public function increaseQuantity($position, $quantity, $product) {
         try {
 
             $this->cart_local = $this->cartService->increaseQty($this->cart_local, $position, $product, $this->cart_local[$position]['quantity'] += $quantity);
@@ -227,8 +220,7 @@ class PosController extends Component
         }
     }
 
-    public function decreaseQuantity($position, $quantity, $product)
-    {
+    public function decreaseQuantity($position, $quantity, $product) {
         try {
             $this->cart_local = $this->cartService->decreaseQty($this->cart_local, $position, $product, $this->cart_local[$position]['quantity'] -= $quantity);
             session()->flash('message', 'Product quantity decreased successfully!');
@@ -237,13 +229,11 @@ class PosController extends Component
         }
     }
 
-    public function remove_from_cart($position)
-    {
+    public function remove_from_cart($position) {
         $this->cart_local = $this->cartService->remove_from_cart($this->cart_local, $position);
     }
-    public function saveSale()
-    {
-        if (!$this->isValidForSaving())
+    public function saveSale() {
+        if(!$this->isValidForSaving())
             return;
 
         try {
@@ -252,7 +242,7 @@ class PosController extends Component
             $sale = $this->createSale();
             $this->handleSaleDetails($sale);
             $this->handlePayments($sale);
-            if ($sale->debt) {
+            if($sale->debt) {
                 $this->handleDebt($sale);
             }
             DB::commit();
@@ -266,8 +256,7 @@ class PosController extends Component
         }
     }
 
-    public function updateSale()
-    {
+    public function updateSale() {
         $payroll = Payroll::where('isClosed', 0)->where('responsible', auth()->user()->id)->first();
         // Comienza la transacción de la base de datos.
         DB::beginTransaction();
@@ -277,15 +266,15 @@ class PosController extends Component
             $sale = Sale::findOrFail($this->saleSelected);
 
             // Verifica que la venta tenga al menos un producto.
-            if ($this->cart_total <= 0) {
+            if($this->cart_total <= 0) {
                 $this->emit('sale-error', 'Agrega productos a la venta.');
                 return;
             }
             //Se eliminan los pagos desdeados
-            if (isset($this->payments_to_delete) && count($this->payments_to_delete) > 0) {
-                foreach ($this->payments_to_delete as $payment_to_delete_id) {
+            if(isset($this->payments_to_delete) && count($this->payments_to_delete) > 0) {
+                foreach($this->payments_to_delete as $payment_to_delete_id) {
                     $payment_to_delete = Payment_in::findOrFail($payment_to_delete_id);
-                    if ($payment_to_delete && $payment_to_delete->sale_id == $this->saleSelected) {
+                    if($payment_to_delete && $payment_to_delete->sale_id == $this->saleSelected) {
                         $payment_to_delete->delete();
                     } else {
                         throw new Exception("Se intentó borar un pago que no existe.");
@@ -294,7 +283,7 @@ class PosController extends Component
             }
 
             // Aquí se revierten las cantidades de los productos en el stock y se borran los detalles de la venta.
-            foreach ($sale->details as $detail) {
+            foreach($sale->details as $detail) {
                 $product = Product::find($detail->product_id);
                 $product->stock += $detail->quantity;
                 $product->save();
@@ -341,12 +330,10 @@ class PosController extends Component
         }
     }
 
-    public function deletePayments()
-    {
+    public function deletePayments() {
     }
 
-    private function createSale()
-    {
+    private function createSale() {
         $saleData = [
             'total' => $this->total_result,
             'subtotal' => $this->cart_total + $this->discount,
@@ -368,10 +355,10 @@ class PosController extends Component
         ];
         $sale = Sale::create($saleData);
 
-        if (!$sale) {
+        if(!$sale) {
             throw new Exception('No se pudo crear la venta.');
         }
-        if (!$this->deliveryTime) {
+        if(!$this->deliveryTime) {
             $deliveryTime = strtotime("+30 minutes", strtotime(date('G:i')));
             $sale->update(['deliveryTime' => date('G:i:s', $deliveryTime)]);
         }
@@ -379,10 +366,9 @@ class PosController extends Component
         return $sale;
     }
 
-    private function handleClientCreation()
-    {
-        if (!$this->selected_client) {
-            if ($this->client == null && $this->telephone == null && $this->address == null) {
+    private function handleClientCreation() {
+        if(!$this->selected_client) {
+            if($this->client == null && $this->telephone == null && $this->address == null) {
                 $this->selected_client = Client::find(1);
                 $this->address = $this->selected_client->default_address;
             } else {
@@ -400,11 +386,44 @@ class PosController extends Component
             }
         }
     }
-    private function handlePayments($sale)
-    {
-        if (count($this->payments) > 0) {
-            foreach ($this->payments as $payment) {
-                if (!isset($array['id'])) {
+    // private function handlePayments($sale)
+    // {
+    //     if (count($this->payments) > 0) {
+    //         foreach ($this->payments as $payment) {
+    //             if (!isset($array['id'])) {
+    //                 Payment_in::create([
+    //                     'payment_method_id' => $payment['method_id'],
+    //                     'amount' => $payment['amount'],
+    //                     'sale_id' => $sale->id,
+    //                     'user_id' => Auth()->user()->id,
+    //                     'payroll_id' => $this->getOpenPayroll()->id,
+    //                 ]);
+    //             }
+    //         }
+    //     }
+
+    //     if (count($this->payments_to_delete) > 0) {
+    //         foreach ($this->payments_to_delete as $payment) {
+    //             Payment_in::destroy($payment);
+    //         }
+    //     }
+    // }
+    private function handlePayments($sale) {
+        if(count($this->payments) > 0) {
+            foreach($this->payments as $payment) {
+                // Asumiendo que 'id' es un identificador único para cada pago.
+                // Si 'id' está establecido, actualizamos el pago existente.
+                if(isset($payment['id'])) {
+                    $existingPayment = Payment_in::find($payment['id']);
+                    if($existingPayment) {
+                        $existingPayment->update([
+                            'payment_method_id' => $payment['method_id'],
+                            'amount' => $payment['amount'],
+                            // Otros campos que necesites actualizar.
+                        ]);
+                    }
+                } else {
+                    // Si 'id' no está establecido, creamos un nuevo pago.
                     Payment_in::create([
                         'payment_method_id' => $payment['method_id'],
                         'amount' => $payment['amount'],
@@ -416,23 +435,21 @@ class PosController extends Component
             }
         }
 
-        if (count($this->payments_to_delete) > 0) {
-            foreach ($this->payments_to_delete as $payment) {
-                Payment_in::destroy($payment);
+        if(count($this->payments_to_delete) > 0) {
+            foreach($this->payments_to_delete as $paymentId) {
+                Payment_in::destroy($paymentId);
             }
         }
     }
 
-    private function handleDebt($sale)
-    {
+    private function handleDebt($sale) {
         $sale->payed = 0;
         $sale->remaining = $sale->total - $sale->payments->sum('amount');
         $sale->save();
     }
 
-    private function handleSaleDetails($sale)
-    {
-        foreach ($this->cart_local as $item) {
+    private function handleSaleDetails($sale) {
+        foreach($this->cart_local as $item) {
             $saledetail = SaleDetails::create([
                 'price' => $item['product_price'] * $item['quantity'],
                 'quantity' => $item['quantity'],
@@ -441,7 +458,7 @@ class PosController extends Component
                 'detail' => $item['detail']
             ]);
 
-            if ($saledetail && $item['quantity'] > 0) {
+            if($saledetail && $item['quantity'] > 0) {
                 $saledetail->price = number_format($item['product_price'] * $item['quantity'], 2);
                 $saledetail->quantity = $item['quantity'];
                 $saledetail->save();
@@ -452,26 +469,24 @@ class PosController extends Component
             $product->save();
         }
     }
-    private function handleBeeper($sale)
-    {
-        if ($sale->beeper) {
+    private function handleBeeper($sale) {
+        if($sale->beeper) {
             Beeper::find($sale->beeper)->update(['inUse' => 1]);
         }
     }
-    private function isValidForSaving(): bool
-    {
-        if (!$this->getOpenPayroll()) {
+    private function isValidForSaving(): bool {
+        if(!$this->getOpenPayroll()) {
             $this->emit('sale-error', 'No se encuentra planilla abierta.');
             return false;
         }
 
-        if ($this->total_result <= 0) {
+        if($this->total_result <= 0) {
             $this->emit('sale-error', 'Agrega productos a la venta.');
             return false;
         }
 
         $this->getTotalPayments();
-        if ($this->total > $this->payments_total && !$this->debt) {
+        if($this->total > $this->payments_total && !$this->debt) {
             $this->emit('sale-error', 'El pago debe ser mayor o igual al total.');
             return false;
         }
@@ -479,21 +494,18 @@ class PosController extends Component
         return true;
     }
 
-    private function getOpenPayroll()
-    {
+    private function getOpenPayroll() {
         return Payroll::with('sales')
             ->where('isClosed', 0)
             ->where('responsible', auth()->user()->id)
             ->first();
     }
 
-    public function select_product()
-    {
+    public function select_product() {
         $this->emit('product_selected');
     }
 
-    public function loadSale(Sale $sale)
-    {
+    public function loadSale(Sale $sale) {
         $this->cartService->resetCart();
         $this->setupSale($sale);
         $this->populateCartWithSaleDetails($sale->details);
@@ -501,8 +513,7 @@ class PosController extends Component
         $this->refreshTotal();
     }
 
-    private function setupSale(Sale $sale)
-    {
+    private function setupSale(Sale $sale) {
         $this->cart_local = [];
         $this->selectClient($sale->client);
         $this->deliveryTime = $sale->deliveryTime;
@@ -512,32 +523,29 @@ class PosController extends Component
         $this->debt = $sale->debt;
     }
 
-    private function populateCartWithSaleDetails($details)
-    {
-        foreach ($details as $productDetail) {
+    private function populateCartWithSaleDetails($details) {
+        foreach($details as $productDetail) {
             $product = Product::find($productDetail->product_id);
             $this->addToCart($product, $productDetail->quantity, $productDetail->detail);
         }
     }
 
-    private function populatePaymentsWithSalePayments($payments)
-    {
+    private function populatePaymentsWithSalePayments($payments) {
         $this->payments = [];
-        if ($payments) {
-            foreach ($payments as $payment) {
+        if($payments) {
+            foreach($payments as $payment) {
                 $this->payments[] = ['id' => $payment->id, 'method_id' => $payment->payment_method_id, 'amount' => $payment->amount];
             }
             $this->getTotalPayments();
         }
     }
 
-    public function ScanCode()
-    {
+    public function ScanCode() {
         try {
             $product = Product::where('barcode', $this->select_product)->firstOrFail();
             $detail = $this->detail;
 
-            if ($detail === null) {
+            if($detail === null) {
                 $detail = ''; // Asignar un valor predeterminado si $detail es null
             }
 
@@ -549,15 +557,13 @@ class PosController extends Component
         }
     }
 
-    private function addToCart(Product $product, int $quantity, ?string $detail)
-    {
+    private function addToCart(Product $product, int $quantity, ?string $detail) {
         $detail = $detail ?? ''; // Asignar un valor predeterminado si $detail es null
 
         $this->cart_local = $this->cartService->addProduct($this->cart_local, $product, $quantity, $detail);
     }
 
-    public function resetUI()
-    {
+    public function resetUI() {
         $this->cash = 0;
         $this->change = 0;
         $this->total = 0;
@@ -581,34 +587,66 @@ class PosController extends Component
         $this->payments_to_delete = [];
     }
 
-    public function resetSelectedProductInfo()
-    {
+    public function resetSelectedProductInfo() {
         $this->selected_product = null;
         $this->select_product = null;
         $this->detail = '';
         $this->quantity = 1;
     }
 
-    public function addPay()
-    {
+    // public function addPay()
+    // {
+    //     $rules = [
+    //         'amount' => 'numeric|min:1',
+
+    //     ];
+    //     $messages = [
+    //         'amount.numeric' => 'Ingrese un valor numerico.',
+    //         'amount.min' => 'Ingrese un valor minimo de 1',
+    //     ];
+    //     $this->validate($rules, $messages);
+    //     $totalPayments = 0;
+
+    //     $this->payments[] = ["amount" => $this->amount, "method_id" => $this->payment_method_selected];
+    //     foreach ($this->payments as $pay) {
+    //         $totalPayments += $pay['amount'];
+    //     }
+    //     ;
+
+    //     if ($totalPayments >= $this->cart_total) {
+    //         $this->getTotalPayments();
+    //         $this->emit('aggregate-total-payment');
+    //     } else {
+    //         $this->emit('aggregate-partial-payment');
+    //     }
+    // }
+
+    public function addPay() {
         $rules = [
             'amount' => 'numeric|min:1',
-
         ];
         $messages = [
             'amount.numeric' => 'Ingrese un valor numerico.',
             'amount.min' => 'Ingrese un valor minimo de 1',
         ];
         $this->validate($rules, $messages);
+        $effectivePayment = null;
         $totalPayments = 0;
-
-        $this->payments[] = ["amount" => $this->amount, "method_id" => $this->payment_method_selected];
-        foreach ($this->payments as $pay) {
+        foreach($this->payments as $pay) {
             $totalPayments += $pay['amount'];
+            if($pay['method_id'] == 1) {
+                $effectivePayment = $pay;
+            }
         }
-        ;
+        // Comprobar si el pago excede el total de la compra
+        if($totalPayments + $this->amount > $this->cart_total) {
+            $this->emit('error-payment-exceeds-total', 'Solo se permite efectivo para pagos que exceden el total');
+            return;
+        }
+        $this->payments[] = ["amount" => $this->amount, "method_id" => $this->payment_method_selected];
+        $totalPayments += $this->amount;
 
-        if ($totalPayments >= $this->cart_total) {
+        if($totalPayments >= $this->cart_total) {
             $this->getTotalPayments();
             $this->emit('aggregate-total-payment');
         } else {
@@ -616,50 +654,50 @@ class PosController extends Component
         }
     }
 
-    public function deletePay($payment_index, $payment_id = null)
-    {
-        if ($payment_id && !in_array($payment_id, $this->payments_to_delete)) {
+
+    public function deletePay($payment_index, $payment_id = null) {
+        if($payment_id && !in_array($payment_id, $this->payments_to_delete)) {
             $this->payments_to_delete[] = $payment_id;
         }
         unset($this->payments[$payment_index]);
         $this->getTotalPayments();
     }
 
-    public function getTotalPayments()
-    {
+    public function getTotalPayments() {
         $total = 0;
-        foreach ($this->payments as $payment) {
+        foreach($this->payments as $payment) {
             $total += $payment['amount'];
         }
         $this->payments_total = $total;
         return $total;
     }
 
-    public function updateOrderStatus(Sale $order, string $status)
-    {
-        if ($this->orderService->change_status($order->id, $status)) {
+    public function updateOrderStatus(Sale $order, string $status) {
+        if($this->orderService->change_status($order->id, $status)) {
             $this->emit('order-status-updated');
         } else {
             $this->emit('error', 'No se puedo actualizar el estado');
         }
     }
 
-    public function selectDeliveryToOrder(Sale $order)
-    {
+    public function selectDeliveryToOrder(Sale $order) {
         $this->deliveries = Delivery::where('disabled', 0)->get();
         $this->sale = $order;
         $this->emit('show-selectDelivery');
     }
 
-    public function delivered()
-    {
+    public function delivered() {
         $payroll = Payroll::where('isClosed', 0)->first();
         $sale = Sale::find($this->sale->id);
 
-        if ($sale) {
+        if($sale) {
             $sale->status = SaleStatus::ENTREGADO;
             $sale->deliveredTime = date("G:i");
             $sale->delivery_id = $this->selectedDelivery;
+            foreach($sale->payments as $payment) {
+                $payment->delivery_id = $sale->delivery_id;
+                $payment->save();
+            }
             $sale->save();
         }
         $this->emit('hide-selectDelivery');

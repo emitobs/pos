@@ -30,13 +30,12 @@
                                                                     class="table payrollModalInfoContainerTextTableColor">
                                                                     <tr>
                                                                         <th>Metodo de pago</th>
-                                                                        <th>Pedidos</th>
                                                                         <th>Recaudo</th>
                                                                     </tr>
+
                                                                     @foreach ($this->totals as $total)
                                                                     <tr>
                                                                         <td>{{$total->name}}</td>
-                                                                        <td>{{$total->NumberOfPayments}}</td>
                                                                         <td>$ {{$total->Total}}</td>
                                                                     </tr>
                                                                     @endforeach
@@ -85,11 +84,10 @@
                                     <div class="col-12">
                                         <div class="card">
                                             <div class="card-body">
-                                                <h5 class="mb-3 payrollModalInfoContainerTextColor">Cobros {{$chargers}}
+                                                <h5 class="mb-3 payrollModalInfoContainerTextColor">Cobros
                                                 </h5>
                                                 <div class="row">
                                                     @foreach ($reportesDeDeliveries as $reporteDelivery)
-
                                                     <div class="col-12 col-md-6">
                                                         <div class="card">
                                                             <div
@@ -102,13 +100,11 @@
                                                                     class="table payrollModalInfoContainerTextTableColor">
                                                                     <tr>
                                                                         <th>Metodo de pago</th>
-                                                                        <th>Pedidos</th>
                                                                         <th>Recaudo</th>
                                                                     </tr>
                                                                     @foreach ($reporteDelivery['reportes'] as $item)
                                                                     <tr>
                                                                         <td>{{$item['name']}}</td>
-                                                                        <td>{{$item['chargers']}}</td>
                                                                         <td>${{$item['total']}}</td>
                                                                     </tr>
                                                                     @endforeach

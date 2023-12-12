@@ -145,8 +145,9 @@ class PayrollsController extends Component
         $this->reportesDeDeliveries = $reportesDeLosDeliveriesQueTrabajaron;
         $this->totals = DB::table('payment_methods')
             ->join('payments_in', 'payments_in.payment_method_id', '=', 'payment_methods.id')
-            ->select('payment_methods.name', DB::raw('SUM(payments_in.amount) AS Total'), DB::raw('COUNT(payments_in.id) AS NumberOfPayments'))
+            ->select('payment_methods.name', DB::raw('SUM(payments_in.amount) AS Total'), DB::raw('COUNT(DISTINCT payments_in.sale_id) AS DistinctSales'))
             ->where('payments_in.payroll_id', $payroll->id)
+            ->where('payments_in.delivery_id', '!=', null)
             ->groupBy('payment_methods.name')
             ->get();
 

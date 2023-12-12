@@ -35,12 +35,12 @@
                             @endif
                             <div class="row">
                                 <div class="col mb-3">
-                                    @if(count($cart_local) > 0)
-                                    <button id="btn-addPayment" data-toggle="modal" data-target="#addPayModal"
+                                    @if(count($cart_local) > 0 && $this->getTotalPayments() < $cart_total) <button
+                                        id="btn-addPayment" data-toggle="modal" data-target="#addPayModal"
                                         class="btn btn-primary mtmobile">
                                         Agregar pago F11
-                                    </button>
-                                    @endif
+                                        </button>
+                                        @endif
                                 </div>
                                 {{-- <div class="col mb-3">
                                     <input id="saveOrder" type="button" class="btn btn-primary" value="Guardar Pedido">
@@ -104,10 +104,11 @@
                             </div>
                             <div class="row justify-content-between mt-3">
                                 <div class="col-sm-12 col-md-12 col-lg-6">
-                                    @if($cart_total <= $payments_total && $client && $address || $debt)
+                                    @if($cart_total <= $payments_total && $client && $address && $total_items> 0 ||
+                                        $debt && $client && $address && $total_items > 0 )
                                         @if($saleSelected) <button id="btnSaveSale" wire:click.prevent="updateSale()"
-                                        class="btn btn-dark btn-md btn-block">
-                                        ACTUALIZAR F10
+                                            class="btn btn-dark btn-md btn-block">
+                                            ACTUALIZAR F10
                                         </button>
                                         @else
                                         <button id="btnSaveSale" wire:click.prevent="saveSale()"

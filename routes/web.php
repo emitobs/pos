@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ConfigController;
 use App\Http\Livewire\AssignPermissionToRoleController;
+use App\Http\Livewire\PaymentsMethodsController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Livewire\CategoriesController;
@@ -80,7 +81,8 @@ Route::get('/mesas', TablesController::class)->name('mesas');
 Route::get('/procesar', ProcesarPedido::class)->name('endservice');
 Route::get('/sorteos', RafflesController::class);
 Route::get('/qrcajas', QrCajasController::class);
-Route::get('/config', [ConfigController::class,'index']);
+Route::get('/config', [ConfigController::class, 'index']);
+Route::get('/payments_methods', PaymentsMethodsController::class);
 // Route::get('/migrar', function () {
 //     $articulos = Articulos::on('bellas')->get();
 
