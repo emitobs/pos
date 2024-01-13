@@ -119,17 +119,17 @@ function use_beepers()
 
 function use_deliveries()
 {
-    return true;
+    return env('USE_DELIVERIES', true);
 }
 
 function use_tables()
 {
-    return false;
+    return env('USE_TABLES', true);
 }
 
 function use_units()
 {
-    return true;
+    return env('USE_UNITS', true);
 }
 
 function background_color()
@@ -139,15 +139,21 @@ function background_color()
 
 function use_debts()
 {
-    return true;
+    return env('USE_DEBTS', true);
 }
 
 function use_pay_cards()
 {
-    return true;
+    return env('USE_PAY_CARDS', true);
 }
 
 function use_discount()
 {
-    return true;
+    return env('USE_DISCOUNT', true);
 }
+
+function use_order_id_daily()
+{
+    return env('USE_ORDER_ID_DAILY', true);
+}
+

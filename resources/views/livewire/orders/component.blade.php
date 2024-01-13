@@ -68,7 +68,7 @@
                             @foreach ($orders as $order)
 
                             <tr class="">
-                                <td class="text-center"><p class="tableTextColor">{{$order->id}}</p></td>
+                                <td class="text-center"><p class="tableTextColor">{{use_order_id_daily() ? $order->dayid : $order->id}}</p></td>
                                 <td class="text-center tableTextColor"><p class="tableTextColor">{{$order->client->name}}</p></td>
                                 <td class="text-center tableTextColor"><p class="tableTextColor">{{$order->address}}</p></td>
                                 @if($selectedPayroll == null || $selectedPayroll == 0)
