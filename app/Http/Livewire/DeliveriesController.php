@@ -83,6 +83,8 @@ class DeliveriesController extends Component
                 'telephone' => $this->telephone,
                 'disabled' => $this->disabled,
             ]);
+            if ($delivery->disabled)
+                $delivery->delete();
             $this->emit('delivery_updated', 'Delivery actualizado.');
             $this->resetUI();
         }
@@ -113,7 +115,7 @@ class DeliveriesController extends Component
             $sale->save();
             $this->order_to_assign = '';
             $this->delivery_daily_orders = $this->selected_delivery->daily_orders;
-            $this->emit('refresh_daily_deliveries',$this->selected_delivery->daily_orders);
+            $this->emit('refresh_daily_deliveries', $this->selected_delivery->daily_orders);
             $this->emit('order_assigned', 'Delivery asignado');
         } else {
             $this->emit('order_not_found', 'No se encontró pedido');
