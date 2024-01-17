@@ -20,17 +20,23 @@ class PayrollsController extends Component
         return 'vendor.livewire.bootstrap';
     }
     public $payroll_selected,
-        $totalCashInHouse,
-        $totalCash,
-        $totalSales,
-        $series,
-        $labels,
-        $deliveriesWorked,
-        $totalHandy,
-        $totalDebts,
-        $cashier,
-        $zone,
-        $initialCash;
+    $totalCashInHouse,
+    $totalCash,
+    $totalSales,
+    $series,
+    $labels,
+    $deliveriesWorked,
+    $totalHandy,
+    $totalDebts,
+    $cashier,
+    $zone,
+    $initialCash,
+    $totals,
+    $cashiers,
+    $zones,
+    $reportesDeDeliveries,
+    $chargers,
+    $orders_delivered;
 
     protected $listeners = [
         'confirmClosed' => 'confirmClosed',
@@ -66,7 +72,7 @@ class PayrollsController extends Component
 
     public function initPayroll()
     {
-        if ($this->cashier > 0 && $this->zone > 0) {
+        if ($this->cashier > 0) {
             $payroll_open = Payroll::where('responsible', $this->cashier)->where('isClosed', 0)->get();
             if ($payroll_open->count() > 0) {
                 $this->emit('payroll-open', 'Existe una planilla sin cerrar, para el usuario seleccionado.');
@@ -104,41 +110,49 @@ class PayrollsController extends Component
         $this->emit('see-payroll', 'Show modal');
     }
 
-    public function seepay(Payroll $payroll)
+    public function viewPayroll(Payroll $payroll)
     {
-        $xdeliveries = collect([]);
-        $deliveriesWorked = DB::table('payrolls')
+        $this->payroll_selected = $payroll;
+
+        $deliveriesQueTrabajaron = DB::table('payrolls')
             ->join('sales', 'payrolls.id', '=', 'sales.payroll_id')
             ->select('sales.delivery_id')
             ->where('payrolls.id', $payroll->id)
             ->where('status', "=", 'Entregado')->distinct()
             ->where('delivery_id', "!=", null)
-            ->where('delivery_id', '>', 1)
             ->get();
-        foreach ($deliveriesWorked as $delivery) {
-            $xDeliery = new DeliveryData();
-            $xDeliery->deliveryId = $delivery->delivery_id;
-            $xDeliery->deliveryName = Delivery::find($delivery->delivery_id)->name;
-            $xDeliery->totalDeliveries = Sale::where('delivery_id', $delivery->delivery_id)
-                ->where('payroll_id', $payroll->id)
-                ->where('status', 'Entregado')
-                ->count();
-            $xDeliery->totalRaised = Sale::where('delivery_id', $delivery->delivery_id)
-                ->where('payroll_id', $payroll->id)
-                ->where('payinhouse', 0)
-                ->where('paywithhandy', 0)
-                ->where('status', 'Entregado')
-                ->where('debt', 0)
-                ->sum('total');
-            $xdeliveries->push($xDeliery);
+
+        $reportesDeLosDeliveriesQueTrabajaron = [];
+        foreach ($deliveriesQueTrabajaron as $deliveryQueTrabajo) {
+            $infoBD_delivery = Delivery::find($deliveryQueTrabajo->delivery_id);
+            $cobrosDelDelivery = $infoBD_delivery->payments_in->where('payroll_id', $this->payroll_selected->id);
+
+            $metodosDePagosUtilizadosEnLosCobros = [];
+            foreach ($cobrosDelDelivery as $cobroDelDelivery) {
+                if (isset($metodosDePagosUtilizadosEnLosCobros[$cobroDelDelivery->payment_method_id])) {
+                    $metodosDePagosUtilizadosEnLosCobros[$cobroDelDelivery->payment_method_id]['total'] += $cobroDelDelivery->amount;
+                    $metodosDePagosUtilizadosEnLosCobros[$cobroDelDelivery->payment_method_id]['chargers']++;
+                } else {
+                    $metodosDePagosUtilizadosEnLosCobros[$cobroDelDelivery->payment_method_id] = ['name' => $cobroDelDelivery->payment_method->name, 'total' => $cobroDelDelivery->amount, 'chargers' => 1];
+                }
+            }
+            $reportesDeLosDeliveriesQueTrabajaron[$infoBD_delivery->id] = [
+                'delivery_name' => $infoBD_delivery->name,
+                'reportes' => $metodosDePagosUtilizadosEnLosCobros,
+                'orders_delivered' => $infoBD_delivery->sales->where('payroll_id', $payroll->id)->where('status', 'Entregado')->count()
+            ];
         }
-        $this->deliveriesWorked = $xdeliveries;
-        $this->totalSales = Sale::where('payroll_id', $payroll->id)->where('status', "!=", 'Cancelado')->count();
-        $this->payroll_selected = $payroll;
-        $this->totalDebts = Sale::where('debt', 1)->where('payroll_id', '=', $payroll->id)->where('paywithhandy', 0)->where('status', 'Entregado')->sum('total');
-        $this->totalCashInHouse = Sale::where('payinhouse', 1)->where('payroll_id', '=', $payroll->id)->where('paywithhandy', 0)->where('status', 'Entregado')->sum('total');
-        $this->totalCash = Sale::where('payinhouse', 0)->where('payroll_id', '=', $payroll->id)->where('status', 'Entregado')->sum('total');
-        $this->totalHandy = Sale::where('paywithhandy', 1)->where('payroll_id', '=', $payroll->id)->where('status', 'Entregado')->sum('total');
+        $this->reportesDeDeliveries = $reportesDeLosDeliveriesQueTrabajaron;
+        $this->totals = DB::table('payment_methods')
+            ->join('payments_in', 'payments_in.payment_method_id', '=', 'payment_methods.id')
+            ->select('payment_methods.name', DB::raw('SUM(payments_in.amount) AS Total'), DB::raw('COUNT(DISTINCT payments_in.sale_id) AS DistinctSales'))
+            ->where('payments_in.payroll_id', $payroll->id)
+            ->where('payments_in.delivery_id', '!=', null)
+            ->groupBy('payment_methods.name')
+            ->get();
+
+        $this->chargers = $payroll->payments_in->count();
+        $this->orders_delivered = $payroll->sales->where('status', 'Entregado')->count();
         $this->emit('see-payroll', 'Show modal');
     }
 
@@ -146,24 +160,19 @@ class PayrollsController extends Component
     {
         $payroll = Payroll::where('id', $id)->first();
         if ($payroll) {
-            $payroll->dateClosed = date('Y-m-d H:i:s', time());
-            $payroll->isClosed = 1;
-            $payroll->save();
-            $this->payroll_selected = null;
-            $this->emit('payroll-closed', 'Planilla cerrada');
+            if ($payroll->sales->where('status', '!=', 'Cancelado')->where('status', '!=', 'Entregado')->count() > 0) {
+                $this->emit('error', 'Aun hay pedidos sin finalizar.');
+            } else {
+                $payroll->dateClosed = date('Y-m-d H:i:s', time());
+                $payroll->isClosed = 1;
+                $payroll->save();
+                $this->payroll_selected = null;
+                $this->emit('payroll-closed', 'Planilla cerrada');
+            }
         }
     }
-
 
     public function resetUI()
     {
     }
-}
-
-class DeliveryData
-{
-    public $deliveryId;
-    public $deliveryName;
-    public $totalDeliveries;
-    public $totalRaised;
 }

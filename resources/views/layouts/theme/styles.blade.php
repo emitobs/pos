@@ -1,6 +1,7 @@
 <link type="text/css" rel="stylesheet" href="{{ mix('css/app.css') }}">
-<link href="{{asset('bootstrap/css/bootstrap.min.css')}}" rel="stylesheet" type="text/css" />
+
 <link href="{{asset('assets/css/loader.css')}}" rel="stylesheet" type="text/css" />
+<link rel="stylesheet" type="text/css" href="plugins/select2/select2.min.css">
 <script src="{{asset('assets/js/loader.js')}}"></script>
 
 
@@ -11,7 +12,7 @@
 <!-- END GLOBAL MANDATORY STYLES -->
 
 <!-- BEGIN PAGE LEVEL PLUGINS/CUSTOM STYLES -->
-<link href="{{asset('plugins/apex/apexcharts.css')}}" rel="stylesheet" type="text/css">
+
 <link href="{{asset('assets/css/dashboard/dash_2.css')}}" rel="stylesheet" type="text/css" class="dashboard-sales" />
 <!-- END PAGE LEVEL PLUGINS/CUSTOM STYLES -->
 
@@ -40,8 +41,8 @@
         background-color: #e21b3c;
     }
 
-    .list-group-item {
-        cursor: pointer;
+    .pointer {
+        cursor: pointer !important;
     }
 
     input[type=number]::-webkit-inner-spin-button,
@@ -87,7 +88,6 @@
         width: 80%;
         overflow: hidden;
         text-overflow: ellipsis;
-        color: #555555;
     }
 
     .info-list {
@@ -160,7 +160,6 @@
         width: 80%;
         overflow: hidden;
         text-overflow: ellipsis;
-        color: #555555;
     }
 
     .info-list {
@@ -233,7 +232,6 @@
         width: 80%;
         overflow: hidden;
         text-overflow: ellipsis;
-        color: #555555;
     }
 
     .info-list {
@@ -289,7 +287,7 @@
         }
     }
 
-    .list-group-item {
+    .pointer {
         cursor: pointer;
     }
 
@@ -355,7 +353,7 @@
         }
     }
 
-    .list-group-item {
+    .pointer {
         cursor: pointer;
     }
 
@@ -413,5 +411,140 @@
     }
 </style>
 
+{{-- Opciones para configurar --}}
+<style>
+    body {
+        background-color: {{getBodyBackground()}};
+    }
+    .contentConfig{
+        background-color: {{getContentConfig()}};
+    }
+    h1 {
+        color: white;
+    }
+
+    h2 {
+        color: white;
+    }
+
+    h3 {
+        color: white;
+    }
+
+    h4 {
+        color: white;
+    }
+
+    h5 {
+        color: white;
+    }
+
+    h6 {
+        color: white;
+    }
+
+    .navbar {
+        background: {{getNavbarBackground()}};
+    }
+
+    #navbar-header p {
+        color: {{getNavbarColor()}};
+    }
+
+    .modal-content {
+        background: rgb(68, 70, 84);
+    }
+
+    .sidebar-theme #compactSidebar {
+        background-color: {{getSidebarBackground()}};
+    }
+
+    /* Color iconos sidebar */
+
+    .sidebar-wrapper #compactSidebar .menu-categories a.menu-toggle .base-icons svg {
+        color: {{getSidebarIconsColor()}}
+    }
+
+
+    /* Color de la fuente del menu sidebar */
+    .sidebar-wrapper #compactSidebar .menu-categories a.menu-toggle .base-menu span {
+        color: {{getSidebarColor()}}
+    }
+
+    .card{
+       background-color: rgb(32, 33, 35);
+    }
+    .card .payrollModalInfoContainerbodyColor{
+       background-color: {{getPayrollModalInfoContainerbodyColor()}};
+    }
+
+    .form-control {
+        background-color: rgb(68, 70, 84);
+        color: white;
+    }
+
+    .select2-container .select2-selection--single .select2-selection__rendered {
+        background-color: rgb(68, 70, 84);
+        color: white;
+    }
+
+    .select2-dropdown {
+        background-color: rgb(68, 70, 84);
+        color: white;
+    }
+
+    .select2-container--default .select2-results__option--highlighted[aria-selected] {
+        color: white;
+    }
+
+    .btn-primary {
+        background-color: #4361ee;
+    }
+
+    .tableHeadTextColor {
+        color:{{getTableHeadTextColor()}}
+    }
+
+    .tableHeadColor{
+        background-color:{{getTableHeadColor()}}
+    }
+
+    .tableTextColor{
+        color:{{getTableTextColor()}}
+    }
+
+    .tableBodyColor{
+        background-color:{{getTableBodyColor()}}
+    }
+
+    .bgPayrollModalHeaderColor{
+        background-color:{{getBgPayrollModalHeaderColor()}}
+    }
+
+    .textPayrollModalHeaderTextColor{
+        color:{{getTextPayrollModalHeaderTextColor()}}
+    }
+
+    .bgPayrollModalBodyColor{
+        background-color:{{getBgPayrollModalBodyColor()}}
+    }
+
+    .bgPayrollModalContainerColor{
+        background-color:{{getBgPayrollModalContainerColor()}}
+    }
+
+    .widget .widget-account-invoice-one .bgPayrollModalInfoContainerColor{
+        background-color:{{getBgPayrollModalInfoContainerColor()}};
+    }
+
+    .payrollModalInfoContainerTextColor{
+        color:{{getPayrollModalInfoContainerTextColor()}};
+    }
+
+    .payrollModalInfoContainerTextTableColor, .payrollModalInfoContainerTextTableColor tr td {
+        color: {{getPayrollModalInfoContainerTextTableColor()}};
+    }
+
+</style>
 
 @livewireStyles

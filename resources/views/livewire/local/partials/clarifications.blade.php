@@ -20,7 +20,6 @@
     <div class="input-group mb-4">
         <div class="n-chk">
             <label class="new-control new-checkbox checkbox-primary">
-                <input type="checkbox" wire:model="payWithHandy" class="new-control-input">
                 <span class="new-control-indicator"></span>Con tarjeta
             </label>
         </div>

@@ -24,4 +24,8 @@ class Delivery extends Model
             return Sale::where('payroll_id', '=', $daily_payroll->id)->where('delivery_id', $this->id)->get();
         }
     }
+
+    public function payments_in(){
+        return $this->hasMany(Payment_in::class);
+    }
 }

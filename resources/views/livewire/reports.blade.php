@@ -1,4 +1,5 @@
 <div>
+    <link href="{{asset('plugins/apex/apexcharts.css')}}" rel="stylesheet" type="text/css">
     <div class="row sales layout-top-spacing">
         <div class="col-sm-12">
             <div class="widget widget-chart-one">
@@ -20,6 +21,11 @@
                                     <span class="new-control-indicator"></span>Mes
                                 </label>
                                 <label class="new-control new-checkbox new-checkbox-rounded">
+                                    <input wire:model='groupBy' type="radio" class="new-control-input" value="range"
+                                        name="reportBy" wire:change='resetUI'>
+                                    <span class="new-control-indicator"></span>Rango de fechas
+                                </label>
+                                <label class="new-control new-checkbox new-checkbox-rounded">
                                     <input wire:model='groupBy' type="radio" class="new-control-input" value="year"
                                         name="reportBy" wire:change='resetUI'>
                                     <span class="new-control-indicator"></span>Año
@@ -30,7 +36,6 @@
                 </div>
 
                 <div class="widget-content">
-
                     @if($groupBy == 'day')
                     <div class="input-group mb-5" id="dayGroup">
                         <input wire:model='day' type="date" class="form-control" aria-describedby="basic-addon2">
@@ -39,6 +44,16 @@
                     @if($groupBy == 'month')
                     <div class="input-group mb-5" id="monthGroup">
                         <input wire:model='month' type="month" class="form-control" aria-describedby="basic-addon2">
+                    </div>
+                    @endif
+                    @if($groupBy == 'range')
+                    <div class="row">
+                        <div class="input-group mb-5 col-6" id="monthGroup">
+                            <input wire:model='month' type="date" class="form-control" aria-describedby="basic-addon2">
+                        </div>
+                        <div class="input-group mb-5 col-6" id="monthGroup">
+                            <input wire:model='month' type="date" class="form-control" aria-describedby="basic-addon2">
+                        </div>
                     </div>
                     @endif
                     @if($groupBy == 'year')
@@ -52,82 +67,108 @@
                     </div>
                     @endif
                     @if($year != '' || $month != '' || $day != '')
-                    <div class="row">
-                        <div class="col-6">
-                            <div class="card component-card_1">
-                                <div class="card-body">
-                                    <div class="widget widget-account-invoice-one">
-
-                                        <div class="widget-heading">
-                                            <h5 class="">Recaudo</h5>
-                                        </div>
-
-                                        <div class="widget-content">
-                                            <div class="invoice-box">
-                                                <div class="inv-detail">
-                                                    <div class="info-detail-1">
-                                                        <p>Total en efectivo:</p>
-                                                        <p>$ {{$total_cash}}</p>
-                                                    </div>
-                                                    <div class="info-detail-1">
-
-                                                        <p>Total a cuenta:</p>
-                                                        <p>${{$total_debts}}</p>
-                                                    </div>
-                                                    <div class="info-detail-3 info-sub">
-                                                        <div class="info-detail">
-                                                            <p>Total pago con Handy</p>
-                                                            <p>$ {{$total_handy}}</p>
-                                                        </div>
-                                                    </div>
-
+                    <div class="row justify-space-between">
+                        {{-- TABLA GENERICA INICIO // RECAUDOS TOTALES --}}
+                        <div class="col-12">
+                            <div class="card ">
+                                <div class="card-body bgPayrollModalInfoContainerColor shadow-lg">
+                                    <h5 class="mb-3 payrollModalInfoContainerTextColor">Recaudos totales</h5>
+                                    <div class="row ">
+                                        <div class="col-12">
+                                            <div class="card payrollModalInfoContainerbodyColor">
+                                                <div class="card-body">
+                                                    <h5 class="card-title mb-3 payrollModalInfoContainerTextColor"></h5>
+                                                    <table class="table payrollModalInfoContainerTextTableColor">
+                                                        <tr>
+                                                            <th>Metodo de pago</th>
+                                                            <th>Pedidos</th>
+                                                            <th>Recaudo</th>
+                                                        </tr>
+                                                        <tbody>
+                                                            @foreach ($this->totals as $total)
+                                                            <tr>
+                                                                <td>{{$total->name}}</td>
+                                                                <td>{{$total->PaymentCount}}</td>
+                                                                <td>$ {{$total->Total}}</td>
+                                                            </tr>
+                                                            @endforeach
+                                                        </tbody>
+                                                    </table>
                                                 </div>
                                             </div>
                                         </div>
-
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-6">
-                            <div class="card component-card_1">
-                                <div class="card-body">
-                                    <h5 class="card-title mb-3">Información</h5>
-                                    <p class="card-text">Total de ventas: {{$total_sales}}</p>
-                                    <p class="card-text">Total recaudado: {{$total_cash}}</p>
-                                    </p>
-                                </div>
-                            </div>
-                            <div class="card component-card_1 mt-2">
-                                <div class="card-body">
-                                    <h5 class="card-title mb-3">¿Qué se vendio?</h5>
-                                    <table class="table">
-                                        <thead>
-                                            <tr>
-                                                <th>Producto</th>
-                                                <th>Cantidad</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @foreach ($resultado_productos as $producto)
-                                            <tr>
-                                                <td>{{$producto['product_name']}}</td>
-                                                <td>{{$producto['quantity']}} {{$producto['product_unit']}}</td>
-                                            </tr>
-                                            @endforeach
+                        {{-- TABLA GENERICA FIN --}}
 
-                                        </tbody>
-                                    </table>
-                                    </p>
+                        {{-- TABLA GENERICA INICIO  // Que se vendió?--}}
+                        <div class="col-6">
+                            <div class="card ">
+                                <div class="card-body bgPayrollModalInfoContainerColor shadow-lg">
+                                    <h5 class="mb-3 payrollModalInfoContainerTextColor">Que se vendió?</h5>
+                                    <div class="row ">
+                                        <div class="col-12">
+                                            <div class="card payrollModalInfoContainerbodyColor">
+                                                <div class="card-body">
+                                                    <h5 class="card-title mb-3 payrollModalInfoContainerTextColor"></h5>
+                                                    <table class="table payrollModalInfoContainerTextTableColor">
+                                                        <tr>
+                                                            <th>Metodo de pago</th>
+                                                            <th>Pedidos</th>
+                                                            <th>Recaudo</th>
+                                                        </tr>
+                                                        <tbody>
+                                                            @foreach ($this->totals as $total)
+                                                            <tr>
+                                                                <td>{{$total->name}}</td>
+                                                                <td>{{$total->PaymentCount}}</td>
+                                                                <td>$ {{$total->Total}}</td>
+                                                            </tr>
+                                                            @endforeach
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
+                        {{-- TABLA GENERICA FIN --}}
+
+                        {{-- TABLA GENERICA INICIO // INFORMACION --}}
+                        <div class="col-6">
+                            <div class="card ">
+                                <div class="card-body bgPayrollModalInfoContainerColor shadow-lg">
+                                    <h5 class="mb-3 payrollModalInfoContainerTextColor">Información</h5>
+                                    <div class="row ">
+                                        <div class="col-12">
+                                            <div class="card payrollModalInfoContainerbodyColor">
+                                                <div class="card-body">
+                                                    <h5 class="card-title mb-3 payrollModalInfoContainerTextColor"></h5>
+                                                    <table class="table payrollModalInfoContainerTextTableColor">
+                                                            <tr>
+                                                            <td>Total de ventas: {{$total_sales}}</td>
+                                                                <td>Total recaudado: {{$total_cash}}</td>
+                                                            </tr>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {{-- TABLA GENERICA FIN --}}
                     </div>
                     @endif
                 </div>
             </div>
         </div>
     </div>
+    <script src="{{asset('plugins/apex/apexcharts.min.js')}}"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             window.livewire.on('loadCharts', data => {

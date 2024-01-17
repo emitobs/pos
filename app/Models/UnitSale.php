@@ -9,5 +9,5 @@ class UnitSale extends Model
 {
     use HasFactory;
     protected $table = "unit_sales";
-    protected $filable = ['unit','disabled'];
+    protected $filable = ['unit','disabled','isCountable'];
 }

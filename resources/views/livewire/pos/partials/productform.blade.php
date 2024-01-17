@@ -3,8 +3,8 @@
         <div class="modal-content">
             <div class="modal-header bg-dark">
                 <h5 class="modal-title text-white">
-                    @if($selected_Product)
-                    <b>{{$selected_Product->name}} | </b>
+                    @if($selected_product)
+                    <b>{{$selected_product->name}} | </b>
                     @endif
                 </h5>
                 <h6 class="text-center text-warning" wire:loading>POR FAVOR ESPERE</h6>
@@ -16,11 +16,11 @@
                         </div>
                         <div class="col-6">
                             <div class="card-body">
-                                <h5 class="card-title">{{$selected_Product ? $selected_Product->name : ''}}</h5>
-                                <p class="card-text">{{$selected_Product ? $selected_Product->description : ''}}</p>
+                                <h5 class="card-title">{{$selected_product ? $selected_product->name : ''}}</h5>
+                                <p class="card-text">{{$selected_product ? $selected_product->description : ''}}</p>
                                 <div class="form-inline">
                                     <button type="submit"
-                                        wire:click.prevent="$emit('scan-code', {{$selected_Product ? $selected_Product->barcode : ''}})"
+                                        wire:click.prevent="$emit('scan-code', {{$selected_product ? $selected_product->barcode : ''}})"
                                         class="btn btn-dark mb-2">Agregar</button>
                                 </div>
                             </div>

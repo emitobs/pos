@@ -1,133 +1,118 @@
-@if($payroll_selected)
-<div class="modal fade" id="theModal" tabindex="-1" role="dialog">
+<div wire:ignore.self class="modal fade" id="theModal" tabindex="-1" role="dialog">
     <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header bg-dark">
-                <h5 class="modal-title text-white">
-                    <b>Planilla Nº {{$payroll_selected->id}}</b> | Detalles
+        <div class="modal-content ">
+            <div class="modal-header bgPayrollModalHeaderColor">
+                <h5 class="modal-title textPayrollModalHeaderTextColor">
+                    Planilla Nº {{$payroll_selected->id}} | Detalles
                 </h5>
                 <h6 class="text-center text-warning" wire:loading>POR FAVOR ESPERE</h6>
             </div>
-            <div class="modal-body">
-
+            <div class="modal-body bgPayrollModalBodyColor">
                 <div class="row mb-3">
-                    <div class="col-12">
-                        <div class="widget widget-account-invoice-one">
-                            <div class="widget-content">
-                                <div class="invoice-box">
-                                    <div class="acc-total-info">
-                                        <h5>Fecha</h5>
-                                        <p class="acc-amount">{{date_format($payroll_selected->created_at, 'd-m-Y')}}
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="widget widget-account-invoice-one">
+                    <div class="col-12 ">
+                        <div class="card bgPayrollModalContainerColor">
+                            <div class="card-body bgPayrollModalInfoContainerColor">
+                                <h5 class="card-title">Fecha: {{date_format($payroll_selected->created_at,
+                                    'd-m-Y')}}</h5>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <div class="row">
+                                                    <div class="col-12">
+                                                        <div class="card">
+                                                            <div
+                                                                class="card-body bgPayrollModalInfoContainerColor shadow-lg">
+                                                                <h5
+                                                                    class="card-title mb-3 payrollModalInfoContainerTextColor">
+                                                                    Recaudos totales</h5>
+                                                                <table
+                                                                    class="table payrollModalInfoContainerTextTableColor">
+                                                                    <tr>
+                                                                        <th>Metodo de pago</th>
+                                                                        <th>Recaudo</th>
+                                                                    </tr>
 
-                                        <div class="widget-heading">
-                                            <h5 class="">Recaudo</h5>
-                                        </div>
-
-                                        <div class="widget-content">
-                                            <div class="invoice-box">
-                                                <div class="inv-detail">
-                                                    <div class="info-detail-1">
-                                                        <p>Total en efectivo:</p>
-                                                        <p>$ {{$payroll_selected->total}}</p>
-                                                    </div>
-                                                    <div class="info-detail-1">
-
-                                                        <p>Total a cuenta:</p>
-                                                        <p>$ {{$payroll_selected->total_debts['total_sum_of_sales']}}</p>
-                                                    </div>
-                                                    <div class="info-detail-3 info-sub">
-                                                        <div class="info-detail">
-                                                            <p>Total pago con Handy</p>
-                                                            <p>$ {{$payroll_selected->payments_with_handy['total_sum_of_sales']}}</p>
+                                                                    @foreach ($this->totals as $total)
+                                                                    <tr>
+                                                                        <td>{{$total->name}}</td>
+                                                                        <td>$ {{$total->Total}}</td>
+                                                                    </tr>
+                                                                    @endforeach
+                                                                </table>
+                                                            </div>
                                                         </div>
                                                     </div>
-
                                                 </div>
                                             </div>
                                         </div>
-
                                     </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="widget widget-account-invoice-one">
-                                        <div class="widget-content">
-                                            <div class="invoice-box">
-                                                <div class="acc-total-info">
-                                                    <h5>PEDIDOS</h5>
-                                                    <p class="acc-amount">{{$totalSales}}</p>
-                                                </div>
-                                                <div class="inv-detail">
-                                                    <div class="info-detail-1">
-                                                        <p>Sin entregar:</p>
-                                                        <p>{{$payroll_selected->undelivered_orders['total_orders']}}
-                                                        </p>
-                                                    </div>
-                                                    <div class="info-detail-1">
-                                                        <p>A cuenta:</p>
-                                                        <p>{{$payroll_selected->total_debts['total_orders']}}
-                                                        </p>
-                                                    </div>
-                                                    <div class="info-detail-3 info-sub">
-                                                        <div class="info-detail">
-                                                            <p>Con Handy:</p>
-                                                            <p>{{$payroll_selected->payments_with_handy['total_orders']}}</p>
+                                    <div class="col-md-6">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <div class="row">
+                                                    <div class="col-12">
+                                                        <div class="card">
+                                                            <div
+                                                                class="card-body bgPayrollModalInfoContainerColor shadow-lg">
+                                                                <h5
+                                                                    class="card-title mb-3 payrollModalInfoContainerTextColor">
+                                                                    Entregas {{$orders_delivered}}</h5>
+                                                                <table
+                                                                    class="table payrollModalInfoContainerTextTableColor">
+                                                                    <tr>
+                                                                        <th>Delivery</th>
+                                                                        <th>Cantidad</th>
+                                                                    </tr>
+                                                                    @foreach ($reportesDeDeliveries as $reporteDelivery)
+                                                                    <tr>
+                                                                        <td>{{$reporteDelivery['delivery_name']}}</td>
+                                                                        <td>{{$reporteDelivery['orders_delivered']}}
+                                                                        </td>
+                                                                    </tr>
+                                                                    @endforeach
+                                                                </table>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
-
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-12">
-                                    <div class="widget widget-account-invoice-one mt-3">
-                                        <div class="widget-content">
-                                            <div class="invoice-box">
-                                                <div class="acc-total-info">
-                                                    <h5>Deliverys</h5>
-                                                    <p class="acc-amount">{{$payroll_selected->total_orders_delivered}}
-                                                    </p>
-                                                    <div class="table-responsive">
-                                                        <table class="table table-bordered mb-4">
-                                                            <thead>
-                                                                <tr>
-                                                                    <th>Delivery</th>
-                                                                    <th>Pedidos</th>
-                                                                    <th>Entregó</th>
-                                                                    <th>Debe</th>
-                                                                    <th>Total</th>
-                                                                </tr>
-                                                            </thead>
-                                                            <tbody>
-                                                                @foreach ($deliveriesWorked as $delivery)
-                                                                <tr>
-                                                                    <td>{{$delivery->deliveryName}}</td>
-                                                                    <td>{{$delivery->totalDeliveries}}</td>
-                                                                    <td></td>
-                                                                    <td></td>
-                                                                    <td>{{$delivery->totalRaised}}</td>
-                                                                </tr>
-                                                                @endforeach
-                                                                <tr>
-                                                                    <th>Total</th>
-                                                                    <th>{{$deliveriesWorked->sum('totalDeliveries')}}
-                                                                    </th>
-                                                                    <td></td>
-                                                                    <td></td>
-                                                                    <th>${{$deliveriesWorked->sum('totalRaised')}}</th>
-                                                                </tr>
-                                                            </tbody>
-                                                        </table>
+                                <div class="row mt-3">
+                                    <div class="col-12">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <h5 class="mb-3 payrollModalInfoContainerTextColor">Cobros
+                                                </h5>
+                                                <div class="row">
+                                                    @foreach ($reportesDeDeliveries as $reporteDelivery)
+                                                    <div class="col-12 col-md-6">
+                                                        <div class="card">
+                                                            <div
+                                                                class="card-body bgPayrollModalInfoContainerColor shadow-lg">
+                                                                <h5
+                                                                    class="card-title mb-3 payrollModalInfoContainerTextColor">
+                                                                    {{$reporteDelivery['delivery_name']}}
+                                                                </h5>
+                                                                <table
+                                                                    class="table payrollModalInfoContainerTextTableColor">
+                                                                    <tr>
+                                                                        <th>Metodo de pago</th>
+                                                                        <th>Recaudo</th>
+                                                                    </tr>
+                                                                    @foreach ($reporteDelivery['reportes'] as $item)
+                                                                    <tr>
+                                                                        <td>{{$item['name']}}</td>
+                                                                        <td>${{$item['total']}}</td>
+                                                                    </tr>
+                                                                    @endforeach
+                                                                </table>
+                                                            </div>
+                                                        </div>
                                                     </div>
+                                                    @endforeach
                                                 </div>
                                             </div>
                                         </div>
@@ -136,7 +121,6 @@
                             </div>
                         </div>
                     </div>
-
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-dark close-btn text-info" data-dismiss="modal">Cerrar</button>
@@ -144,4 +128,4 @@
             </div>
         </div>
     </div>
-    @endif
+</div>

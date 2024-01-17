@@ -32,10 +32,6 @@ h1, h2, h3, h4, h5, h6 {
   color: #1b55e2;
   background: transparent; }
 
-::selection {
-  color: #1b55e2;
-  background: transparent; }
-
 p {
   margin-top: 0;
   margin-bottom: 0.625rem;
@@ -634,8 +630,8 @@ select.form-control.form-custom {
 
 /*      Default Buttons       */
 .btn-primary {
-  color: #fff !important;
-  background-color: #1b55e2 !important;
+  color: #fff;
+  background-color: #1b55e2;
   border-color: #1b55e2; }
   .btn-primary:hover, .btn-primary:focus {
     color: #fff !important;
@@ -1561,12 +1557,10 @@ input[disabled], select[disabled], textarea[disabled], input[readonly], select[r
 
 .table > tbody > tr > td {
   vertical-align: middle;
-  color: #515365;
   font-size: 13px;
   letter-spacing: 1px; }
 
 .table > thead > tr > th {
-  color: #1b55e2;
   font-weight: 700;
   font-size: 13px;
   letter-spacing: 1px;
@@ -1725,13 +1719,13 @@ table .badge-success, table .badge-primary, table .badge-warning, table .badge-d
   padding: 16px 12px;
   color: #fff; }
 
-/*  
+/*
     ==========================
-        Background Colors  
+        Background Colors
     ==========================
 */
-/*  
-    Default  
+/*
+    Default
 */
 .bg-primary {
   background-color: #1b55e2 !important;
@@ -1768,8 +1762,8 @@ table .badge-success, table .badge-primary, table .badge-warning, table .badge-d
   border-color: #3b3f5c;
   color: #fff; }
 
-/*  
-    Light Background  
+/*
+    Light Background
 */
 .bg-light-primary {
   background-color: #c2d5ff !important;
@@ -1806,7 +1800,7 @@ table .badge-success, table .badge-primary, table .badge-warning, table .badge-d
   border-color: #acb0c3;
   color: #fff; }
 
-/*  
+/*
     Progress Bar
 */
 .progress {

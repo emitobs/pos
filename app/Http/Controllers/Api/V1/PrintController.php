@@ -3,13 +3,18 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Models\Client;
 use App\Models\Sale;
+use App\Models\Category;
+use App\Models\Product;
 use App\Models\Orders_Services;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 
 class PrintController extends Controller
 {
+    public $data;
     /**
      * Display a listing of the resource.
      *
@@ -25,7 +30,7 @@ class PrintController extends Controller
             if ($rafflesActives->count() > 0) {
                 foreach ($rafflesActives as $rafleActive) {
                     $codeActive = $rafleActive->codes->where('printed_at', null);
-                    if($codeActive->count() > 0){
+                    if ($codeActive->count() > 0) {
                         $code = $rafleActive->codes->where('printed_at', null)->random();
                         array_push($codes, ['code' => $code->code, 'raffle' => $rafleActive->name]);
                     }
@@ -38,7 +43,8 @@ class PrintController extends Controller
                 'Product' => $detail->product->name,
                 'Quantity' => $detail->quantity,
                 'Price' => $detail->product->price,
-                'Unit' => $detail->product->unit_sale
+                'Unit' => $detail->product->unit_sale,
+                'Detail' => $detail->detail
             ];
             array_push($products, $product);
         }
@@ -57,7 +63,6 @@ class PrintController extends Controller
             'Clarifications' => $sale->clarifications,
             'SaleDetails' => $products,
             'Rounding' => $sale->rounding,
-            'PayWithHandy' => $sale->paywithhandy,
             'rafflecodes' => $codes,
             'Debt' => $sale->debt
         ];
@@ -93,6 +98,44 @@ class PrintController extends Controller
             'Products' => $xproducts,
             'DeliveryTime' => $order->delivery_time
         ];
+        return $response;
+    }
+
+    public function getClients(Request $request)
+    {
+        $input = $request->all();
+        $clients = Client::where(function ($query) use ($input) {
+            $query->where('name', 'LIKE', '%' . $input['term']['term'] . '%')
+                ->orWhere('telephone', 'LIKE', '%' . $input['term']['term'] . '%');
+        })->where('disabled', 0)->get();
+        $response = [];
+        foreach ($clients as $client) {
+            array_push($response, ['id' => $client->id, 'text' => $client->name . ' | ' . $client->telephone . ' | ' . $client->defaultAddress]);
+        }
+        return $response;
+    }
+
+    public function getProducts(Request $request)
+    {
+        $zone = $request->get('zone');
+        $search = $request->get('term')['term'];
+        $categoriesProducts = [];
+        if (!$zone) {
+            $categoriesProducts = Category::all();
+        } else {
+            $categoriesProducts = Category::where('processing_area', $zone)->get();
+        }
+
+        $categories = [];
+        foreach ($categoriesProducts as $categorie) {
+            array_push($categories, $categorie->id);
+        }
+        $products = Product::where('name', 'LIKE', '%' . $search . '%')->whereIn('category_id', $categories)->where('desactivated', 0)->get();
+        $response = [];
+
+        foreach ($products as $product) {
+            array_push($response, ['id' => $product->barcode, 'text' => $product->name . ' | ' . $product->price . ' | ' . $product->stock]);
+        }
         return $response;
     }
 }

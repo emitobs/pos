@@ -79,7 +79,7 @@ class ReportsdaysController extends Component
                     if (!empty($this->year)) {
                         //obtengo las ventas del año
                         $sales = Sale::whereYear('created_at', $this->year)->where('status', 'Entregado')->get();
-                        $this->totalCash = $sales->where('status', 'Entregado')->where('debt', 0)->where('paywithhandy', 0)->sum('total');
+                        $this->totalCash = $sales->where('status', 'Entregado')->where('debt', 0)->sum('total');
                         $this->totalSales = $sales->where('status', 'Entregado')->count();
                         $this->products = DB::select($this->createQuery($this->year, 0, $category_query));
                         $this->saleByCategory = DB::select($this->createQueryByCategories($this->year));
@@ -112,9 +112,9 @@ class ReportsdaysController extends Component
                 break;
         }
         $this->total = $sales->where('status', '!=', 'Cancelado')->sum('total');
-        $this->total_cash = $sales->where('status', '!=', 'Cancelado')->where('debt', 0)->where('paywithhandy', 0)->sum('total');
+        $this->total_cash = $sales->where('status', '!=', 'Cancelado')->where('debt', 0)->sum('total');
         $this->total_debts = $sales->where('status', '!=', 'Cancelado')->where('debt', 1)->where('payed', 0)->sum('total');
-        $this->total_handy = $sales->where('status', '!=', 'Cancelado')->where('paywithhandy', 1)->sum('total');
+        $this->total_handy = $sales->where('status', '!=', 'Cancelado')->sum('total');
         $this->total_sales = $sales->where('status', '!=', 'Cancelado')->count();
         $resultado_productos = new Collection();
         foreach ($sales as $sale) {

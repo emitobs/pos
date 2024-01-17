@@ -17,21 +17,21 @@ class OrdersController extends Component
     use WithPagination;
 
     public
-        $componentName,
-        $pageTitle,
-        $orderStatus,
-        $status_selected,
-        $saleDetails,
-        $sale,
-        $deliveries = [],
-        $selectedDelivery,
-        $selectedPayroll,
-        $search;
+    $componentName,
+    $pageTitle,
+    $orderStatus,
+    $status_selected,
+    $saleDetails,
+    $sale,
+    $deliveries = [],
+    $selectedDelivery,
+    $selectedPayroll,
+    $search;
 
     protected $listeners = ['deliverySelected' => 'deliverySelected'];
 
 
-    public function  mount(Request $request)
+    public function mount(Request $request)
     {
         $this->selectedPayroll = $request->payroll;
         $this->componentName = 'Pedidos';
@@ -64,30 +64,31 @@ class OrdersController extends Component
                 } else {
                     $orders = $currentPayroll->sales()
                         ->orderBy('deliveryTime', 'asc')
-                        ->paginate(7);
+                        ->paginate(25);
                 }
             } else {
                 if (strlen($this->search) > 0) {
-                    $orders  = $currentPayroll->sales()
+                    $orders = $currentPayroll->sales()
                         ->where(function ($query) {
                             $query->where('client', 'like', '%' . $this->search . '%')
                                 ->orWhere('address', 'like', '%' . $this->search . '%')
                                 ->orWhere('id', 'like', '%' . $this->search . '%');
                         })->where('status', $this->status_selected)
                         ->orderBy('deliveryTime', 'asc')
-                        ->paginate(7);
+                        ->paginate(25);
                 } else {
-                    $orders  = $currentPayroll->sales()
+                    $orders = $currentPayroll->sales()
                         ->where('status', $this->status_selected)
                         ->orderBy('deliveryTime', 'asc')
-                        ->paginate(7);
+                        ->paginate(25);
                 }
             }
         }
         return view('livewire.orders.component', [
             'orders' => $orders,
         ])->extends('layouts.theme.app')
-            ->section('content');;
+            ->section('content');
+        ;
     }
 
     public function Edit(Sale $order)
@@ -152,6 +153,10 @@ class OrdersController extends Component
             $sale->status = SaleStatus::ENTREGADO;
             $sale->deliveredTime = date("G:i");
             $sale->delivery_id = $this->selectedDelivery;
+            foreach ($sale->payments as $payment) {
+                $payment->delivery_id = $sale->delivery_id;
+                $payment->save();
+            }
             $sale->save();
         }
         $payroll->calculateTotal();

@@ -104,7 +104,6 @@
           cancelButtonText: 'Cerrar',
           cancelButtonColor: '#ADADB0',
         }).then((result) => {
-            console.log(result);
           if (result.value) {
                 window.livewire.emit('DesyncAll');
                 $("#theModal").modal('hide');

@@ -545,7 +545,6 @@ try {
 
 } catch(e) {
   // statements
-  console.log(e);
 }
 
 
@@ -1082,5 +1081,5 @@ $('.mt-container').each(function(){ const ps = new PerfectScrollbar($(this)[0]);
 
 
 } catch(e) {
-    console.log(e);
+
 }

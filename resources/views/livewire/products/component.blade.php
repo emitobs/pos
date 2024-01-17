@@ -7,6 +7,8 @@
                 </h4>
                 <ul class="tabs tab-pills">
                     <li>
+                        <a href="javascript:void(0)" wire:click='exportProducts' class="tabmenu bg-dark">Generar
+                            excel</a>
                         <a href="javascript:void(0)" class="tabmenu bg-dark" data-toggle="modal"
                             data-target="#theModal">Agregar</a>
                     </li>
@@ -15,52 +17,53 @@
             @include('common.searchbox')
             <div class="widget-content">
                 <div class="table-responsive">
-                    <table class="table table-bordered table-striped  mt-1">
-                        <thead class="text-white" style="background: #3b3f5c;">
+                    <table class="table table-bordered tableBodyColor mt-1">
+                        <thead class="tableHeadColor">
                             <tr>
-                                <th class="table-th text-white">Descripcion</th>
-                                <th class="table-th text-white text-center">Cod Barras</th>
-                                <th class="table-th text-white text-center">Categoría</th>
-                                <th class="table-th text-white text-center">Precio</th>
-                                <th class="table-th text-white text-center">Stock</th>
-                                <th class="table-th text-white text-center">Inv. min</th>
-                                <th class="table-th text-white text-center">Imagen</th>
-                                <th class="table-th text-white text-center">Desactivado</th>
-                                <th class="table-th text-white text-center">Actions</th>
+                                <th class="table-th tableHeadTextColor">Descripcion</th>
+                                <th class="table-th tableHeadTextColor text-center">Cod Barras</th>
+                                <th class="table-th tableHeadTextColor text-center">Categoría</th>
+                                <th class="table-th tableHeadTextColor text-center">Precio</th>
+                                <th class="table-th tableHeadTextColor text-center">Stock</th>
+                                <th class="table-th tableHeadTextColor text-center">Inv. min</th>
+                                <th class="table-th tableHeadTextColor text-center">Imagen</th>
+                                <th class="table-th tableHeadTextColor text-center">Desactivado</th>
+                                <th class="table-th tableHeadTextColor text-center">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach ($data as $product)
                             <tr>
                                 <td>
-                                    <h6>{{$product->name}}</h6>
+                                    <h6 class="text-center tableTextColor">{{$product->name}}</h6>
                                 </td>
                                 <td>
-                                    <h6 class="text-center">{{$product->barcode}}</h6>
+                                    <h6 class="text-center tableTextColor">{{$product->barcode}}</h6>
                                 </td>
                                 <td>
-                                    <h6 class="text-center">{{$product->category}}</h6>
+                                    <h6 class="text-center tableTextColor">{{$product->category}}</h6>
                                 </td>
                                 <td>
-                                    <h6 class="text-center">{{$product->price}}</h6>
+                                    <h6 class="text-center tableTextColor">{{$product->price}}</h6>
                                 </td>
                                 <td>
-                                    <h6 class="text-center">{{$product->stock}}</h6>
+                                    <h6 class="text-center tableTextColor">{{$product->stock}}</h6>
                                 </td>
                                 <td>
-                                    <h6 class="text-center">{{$product->alerts}}</h6>
+                                    <h6 class="text-center tableTextColor">{{$product->alerts}}</h6>
                                 </td>
-                                <td class="text-center">
+                                <td class="text-center tableTextColor">
                                     <span>
                                         <img src="{{asset('storage/products/' . $product->imagen)}}"
                                             alt="{{$product->name}}" height="70" width="80" class="rounded">
                                     </span>
                                 </td>
-                                <td class="text-center"> <input type="checkbox" @if($product->desactivated) checked
+                                <td class="text-center tableTextColor"> <input type="checkbox"
+                                        @if($product->desactivated) checked
                                     @endif
                                     readonly onclick="javascript: return false;"></td>
                                 </td>
-                                <td class="text-center">
+                                <td class="text-center tableTextColor">
                                     <a href="javascript:void(0)" wire:click.prevent="Edit({{$product->id}})"
                                         class="btn btn-dark mtmobile" title="Edit">
                                         <i class="fas fa-edit"></i>

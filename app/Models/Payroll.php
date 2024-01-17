@@ -35,12 +35,13 @@ class Payroll extends Model
 
     public function getTotalAttribute()
     {
-        return Sale::where('payroll_id', $this->id)->where('status', SaleStatus::ENTREGADO)->where('debt', 0)->where('paywithhandy', 0)->sum('total');
+        $payments = Payment_in::where('payroll_id',$this->id)->get();
+        return Sale::where('payroll_id', $this->id)->where('status', SaleStatus::ENTREGADO)->where('debt', 0)->sum('total');
     }
 
     public function getTotalRaisedAttribute()
     {
-        return Sale::where('payroll_id', $this->id)->where('status', SaleStatus::ENTREGADO)->where('debt', 0)->where('paywithhandy', 0)->sum('total');
+        return Sale::where('payroll_id', $this->id)->where('status', SaleStatus::ENTREGADO)->where('debt', 0)->sum('total');
     }
 
     public function getTotalOrdersDeliveredAttribute()
@@ -59,10 +60,9 @@ class Payroll extends Model
 
     public function getPaymentsWithHandyAttribute()
     {
-        //return Sale::where('payroll_id', $this->id)->where('paywithhandy', 1)->count();
         return collect([
-            'total_orders' => Sale::where('payroll_id', $this->id)->where('paywithhandy', 1)->where('status', 'Entregado')->count(),
-            'total_sum_of_sales' => Sale::where('payroll_id', $this->id)->where('paywithhandy', 1)->where('status', 'Entregado')->sum('total')
+            'total_orders' => Sale::where('payroll_id', $this->id)->where('status', 'Entregado')->count(),
+            'total_sum_of_sales' => Sale::where('payroll_id', $this->id)->where('status', 'Entregado')->sum('total')
         ]);
     }
 
@@ -77,5 +77,9 @@ class Payroll extends Model
     public function getTotalOrdersAttribute()
     {
         return Sale::where('payroll_id', $this->id)->where('status', 'Entregado')->count();
+    }
+
+    public function payments_in(){
+        return $this->hasMany(Payment_in::class);
     }
 }

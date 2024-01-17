@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\ConfigController;
 use App\Http\Livewire\AssignPermissionToRoleController;
+use App\Http\Livewire\PaymentsMethodsController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Livewire\CategoriesController;
@@ -33,6 +35,7 @@ use App\Http\Livewire\ProcesarPedido;
 use App\Http\Livewire\RafflesController;
 use App\Models\Raffle;
 use App\Http\Livewire\QrCajasController;
+use Illuminate\Http\Client\Request;
 
 /*
 |--------------------------------------------------------------------------
@@ -56,7 +59,7 @@ Route::get('categories', CategoriesController::class)->middleware('auth');
 
 Route::get('products', ProductsController::class)->middleware('auth');
 Route::get('coins', CoinsController::class)->middleware('auth');
-Route::get('local', LocalController::class)->middleware('auth')->name('PosController');
+//Route::get('local', LocalController::class)->middleware('auth')->name('PosController');
 Route::get('nuevopedido', PosController::class)->middleware('auth')->name('PosController');
 Route::get('pedidos', OrdersController::class)->middleware('auth');
 Route::get('reports', ReportsController::class)->middleware('auth');
@@ -76,10 +79,10 @@ Route::get('/generatePDF', [PdfController::class, 'generatePDF'])->name('generat
 Route::get('/mesas', TablesController::class)->name('mesas');
 //Route::get('/procesarServicio/{id}', ProcessServicioController::class)->name('endservice');
 Route::get('/procesar', ProcesarPedido::class)->name('endservice');
-Route::get('/sorteos',RafflesController::class);
+Route::get('/sorteos', RafflesController::class);
 Route::get('/qrcajas', QrCajasController::class);
-
-
+Route::get('/config', [ConfigController::class, 'index']);
+Route::get('/payments_methods', PaymentsMethodsController::class);
 // Route::get('/migrar', function () {
 //     $articulos = Articulos::on('bellas')->get();
 
@@ -141,35 +144,35 @@ Route::get('/qrcajas', QrCajasController::class);
 //     echo 'completado';
 // });
 
-Route::get('/migrateClients', function () {
-    try {
+// Route::get('/migrateClients', function () {
+//     try {
 
-        $clientes = Cliente::on('bellas')->get();
-        foreach ($clientes as $cliente) {
+//         $clientes = Cliente::on('bellas')->get();
+//         foreach ($clientes as $cliente) {
 
-            $new_client = Client::create([
-                'name' => $cliente->Nombre,
-                'telephone' => $cliente->Telefono,
-            ]);
+//             $new_client = Client::create([
+//                 'name' => $cliente->Nombre,
+//                 'telephone' => $cliente->Telefono,
+//             ]);
 
 
-            if ($new_client && strlen($cliente->Direccion) > 0) {
-                $default_address = Address::create([
-                    'address' => $cliente->Direccion,
-                    'client_id' => $new_client->id,
-                    'default' => 1
-                ]);
+//             if ($new_client && strlen($cliente->Direccion) > 0) {
+//                 $default_address = Address::create([
+//                     'address' => $cliente->Direccion,
+//                     'client_id' => $new_client->id,
+//                     'default' => 1
+//                 ]);
 
-                if ($default_address) {
-                    $new_client->address_id = $default_address->id;
-                    $new_client->save();
-                }
-            }
-        }
+//                 if ($default_address) {
+//                     $new_client->address_id = $default_address->id;
+//                     $new_client->save();
+//                 }
+//             }
+//         }
 
-        echo 'completado';
-    } catch (Exception $e) {
-        DB::rollBack();
-        dd($e);
-    }
-});
+//         echo 'completado';
+//     } catch (Exception $e) {
+//         DB::rollBack();
+//         dd($e);
+//     }
+//});

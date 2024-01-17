@@ -21,8 +21,6 @@ class Sale extends Model
         'clarifications',
         'client_id',
         'address',
-        'payinhouse',
-        'payWithHandy',
         'payroll_id',
         'deliveryTime',
         'deliveredTime',
@@ -53,4 +51,9 @@ class Sale extends Model
     {
         return $this->belongsTo(Client::class);
     }
+
+    public function payments(){
+        return $this->hasMany(Payment_in::class);
+    }
+
 }

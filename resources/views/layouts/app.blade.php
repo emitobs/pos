@@ -12,7 +12,9 @@
 
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}" defer></script>
-
+    @if(app()->environment('production'))
+    <script src="{{ asset('js/disable.js') }}" defer></script>
+    @endif
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
@@ -21,6 +23,13 @@
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     <!-- Pusher -->
     <script src="https://js.pusher.com/7.0/pusher.min.js"></script>
+    <style>
+        body {
+            background-color: rgb(32, 33, 35) !important;
+        }
+
+        .header .navbar .navbar-expand-sm .d-flex .justify-content-between {}
+    </style>
 </head>
 
 <body>
@@ -81,7 +90,7 @@
             </div>
         </nav>
 
-        <main class="py-4">
+        <main class="py-4 bg-dark">
             @yield('content')
         </main>
     </div>

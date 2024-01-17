@@ -31,7 +31,7 @@ class TablesController extends Component
             ->section('content');;
     }
 
-    protected $listeners = ['create_table', 'select_product' => 'select_product', 'add_product_to_cart', 'end_service', 'confirm_end_of_service'];
+    protected $listeners = ['create_table', 'select_product' => 'select_product', 'add_product_to_cart', 'end_service', 'confirm_end_of_service', 'clearCart', 'cancel_service'];
 
     public function create_table()
     {
@@ -55,6 +55,7 @@ class TablesController extends Component
             'attendant' => $this->attendant,
             'table_id' => $this->table_selected->id,
         ]);
+        $this->attendant = null;
         $this->render();
         $this->emit('noty', 'Servicio iniciado');
     }
@@ -135,7 +136,7 @@ class TablesController extends Component
     public function generate_order()
     {
 
-        if($this->table_selected->current_service->products->where('order_id', null)->count() > 0){
+        if ($this->table_selected->current_service->products->where('order_id', null)->count() > 0) {
             $new_order = Orders_Services::create([
                 'service_id' => $this->table_selected->current_service->id,
                 'delivery_time' => date('G:i', strtotime("+30 minutes", strtotime(date('G:i'))))
@@ -145,10 +146,9 @@ class TablesController extends Component
                 $ordered_product->save();
             }
             $this->emit('print-order', $new_order->id);
-        }else{
+        } else {
             $this->emit('empty-cart');
         }
-
     }
 
 
@@ -185,6 +185,25 @@ class TablesController extends Component
         } else {
             dd('error');
         }
+    }
+
+    public function clearCart()
+    {
+
+        Products_Service::where('service_id', $this->table_selected->CurrentService->id)->where('order_id', null)->delete();
+
+        $this->cart_local = [];
+    }
+
+    public function cancel_service(Service $service)
+    {
+        $service->finished_at = Carbon::now();
+        $service->save();
+        $table = Table::find($service->table_id);
+        $table->status = 'available';
+        $this->table_selected = null;
+        $table->save();
+        return Redirect('/mesas');
     }
 
     public function ScanCode($barcode, $cant = 1)
