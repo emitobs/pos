@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Delivery extends Model
 {
@@ -11,7 +12,7 @@ class Delivery extends Model
 
     protected $fillable = ['name', 'telephone', 'disabled'];
 
-
+    use SoftDeletes;
     public function sales()
     {
         return $this->hasMany(Sale::class);
