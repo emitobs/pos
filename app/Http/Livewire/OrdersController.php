@@ -3,6 +3,7 @@
 namespace App\Http\Livewire;
 
 use App\Models\Delivery;
+use App\Models\Payment_in;
 use Livewire\Component;
 use App\Models\Sale;
 use App\Models\SaleDetails;
@@ -175,6 +176,8 @@ class OrdersController extends Component
                 $product->stock = $product->stock + $detail->quantity;
                 $product->save();
             }
+
+            $payments_in = Payment_in::where('payroll_id', $sale->payroll_id)->where('sale_id', $sale->id)->delete();
             $currentPayroll = Payroll::Where('isClosed', 0)->first();
             $currentPayroll->calculateTotal();
             $this->emit('notify', 'Pedido fue cancelado.');
