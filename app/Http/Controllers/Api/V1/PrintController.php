@@ -34,7 +34,8 @@ class PrintController extends Controller
                         $code = $rafleActive->codes->where('printed_at', null)->random();
                         array_push($codes, ['code' => $code->code, 'raffle' => $rafleActive->name]);
                     }
-                };
+                }
+                ;
                 $code->printed_at = Carbon::now();
                 $code->save();
             }
@@ -50,7 +51,7 @@ class PrintController extends Controller
         }
 
         $response = [
-            'Id' => $sale->id,
+            'Id' => use_order_id_daily() ? $sale->dayid : $sale->id,
             'Date' => $sale->created_at,
             'Address' => $sale->address,
             'DeliveryTime' => $sale->deliveryTime,
