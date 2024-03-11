@@ -12,6 +12,7 @@ use App\Models\Product;
 use Livewire\WithPagination;
 use App\Models\Payroll;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 
 class OrdersController extends Component
 {
@@ -147,22 +148,37 @@ class OrdersController extends Component
 
     public function delivered()
     {
-        $payroll = Payroll::where('isClosed', 0)->first();
-        $sale = Sale::find($this->sale->id);
 
-        if ($sale) {
-            $sale->status = SaleStatus::ENTREGADO;
-            $sale->deliveredTime = date("G:i");
-            $sale->delivery_id = $this->selectedDelivery;
-            foreach ($sale->payments as $payment) {
-                $payment->delivery_id = $sale->delivery_id;
-                $payment->save();
+        $rules = [
+            'selectedDelivery' => 'required|exists:deliveries,id'
+        ];
+
+        $messages = [
+            'selectedDelivery.required' => 'Debes seleccionar un delivery.',
+            'selectedDelivery.exists' => 'No existe delivery seleccionado.'
+        ];
+        try {
+            $this->validate($rules, $messages);
+            $payroll = Payroll::where('isClosed', 0)->first();
+            $sale = Sale::find($this->sale->id);
+
+            if ($sale) {
+                $sale->status = SaleStatus::ENTREGADO;
+                $sale->deliveredTime = date("G:i");
+                $sale->delivery_id = $this->selectedDelivery;
+                foreach ($sale->payments as $payment) {
+                    $payment->delivery_id = $sale->delivery_id;
+                    $payment->save();
+                }
+                $sale->save();
             }
-            $sale->save();
+            $payroll->calculateTotal();
+            $this->emit('hide-selectDelivery');
+            $this->emit('notify', 'Pedido entregado.');
+        } catch (ValidationException $exception) {
+            $this->emit('error', $exception->validator->errors()->first());
+            return;
         }
-        $payroll->calculateTotal();
-        $this->emit('hide-selectDelivery');
-        $this->emit('notify', 'Pedido entregado.');
     }
 
     public function cancel($order)
@@ -176,8 +192,7 @@ class OrdersController extends Component
                 $product->stock = $product->stock + $detail->quantity;
                 $product->save();
             }
-
-            $payments_in = Payment_in::where('payroll_id', $sale->payroll_id)->where('sale_id', $sale->id)->delete();
+            Payment_in::where('payroll_id', $sale->payroll_id)->where('sale_id', $sale->id)->delete();
             $currentPayroll = Payroll::Where('isClosed', 0)->first();
             $currentPayroll->calculateTotal();
             $this->emit('notify', 'Pedido fue cancelado.');
