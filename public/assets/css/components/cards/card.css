@@ -14,9 +14,9 @@
 .component-card_1 {
   border: 1px solid #e0e6ed;
   border-radius: 6px;
-  width: 19rem;
-  margin: 0 auto;
-  box-shadow: 4px 6px 10px -3px #bfc9d4; }
+  margin: 0;
+  width: 360px;
+ }
   .component-card_1 .card-body {
     padding: 28px 25px; }
   .component-card_1 .icon-svg {
