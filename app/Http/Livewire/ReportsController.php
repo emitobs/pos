@@ -11,32 +11,49 @@ use App\Models\SaleDetails;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
+use App\Services\ReportService;
 
 class ReportsController extends Component
 {
     public
-        $totals,
-        $totalSales,
-        $totalCash,
-        $total_handy,
-        $total_cash,
-        $total_debts = 0,
-        $groupBy,
-        $day,
-        $month,
-        $year = "",
-        $yearsWithActivity = [],
-        $products = [],
-        $labels = [],
-        $series = [],
-        $labelsByCategories = [],
-        $seriesByCategories = [],
-        $categories = [],
-        $category_selected,
-        $msgNoSales,
-        $total_sales = 0,
-        $salesByCategory = [],
-        $resultado_productos;
+    $totals,
+    $totalSales,
+    $totalCash,
+    $total_handy,
+    $total_cash,
+    $total_debts = 0,
+    $debts,
+    $groupBy,
+    $day,
+    $month,
+    $year = "",
+    $yearsWithActivity = [],
+    $range = [],
+    $start_date,
+    $end_date,
+    $products = [],
+    $labels = [],
+    $series = [],
+    $labelsByCategories = [],
+    $seriesByCategories = [],
+    $categories = [],
+    $category_selected,
+    $msgNoSales,
+    $total_sales = 0,
+    $salesByCategory = [],
+    $resultado_productos,
+    $delivery_totals = [],
+    $products_sold = [],
+    $totalDebt,
+    $countDebt;
+
+
+    protected $reportService;
+
+    public function __construct()
+    {
+        $this->reportService = new ReportService();
+    }
 
     public function mount()
     {
@@ -57,14 +74,14 @@ class ReportsController extends Component
                 case 'day':
                     if (!empty($this->day)) {
                         $this->generate_report('day', $this->day);
-                        $this->grafica();
+                        //$this->grafica();
                     }
                     break;
                 case 'month':
                     $this->year = '';
                     if (!empty($this->month)) {
                         $this->generate_report('month', $this->month);
-                        $this->grafica();
+                        //$this->grafica();
                     }
                     break;
                 case 'year':
@@ -83,64 +100,54 @@ class ReportsController extends Component
                         $this->totalCash = $sales->where('status', 'Entregado')->where('debt', 0)->sum('total');
                         $this->totalSales = $sales->where('status', 'Entregado')->count();
                         $this->products = DB::select($this->createQuery($this->year, 0, $category_query));
-                        $this->saleByCategory = DB::select($this->createQueryByCategories($this->year));
+                        //$this->saleByCategory = DB::select($this->createQueryByCategories($this->year));
                         //por cada venta guardo los detalles en detailsCollection
-                        $this->createLabelsAndSeriesToApexCharts();
+                        //$this->createLabelsAndSeriesToApexCharts();
+
+                        $this->generate_report('year', $this->year);
                     }
                     break;
+                case 'range':
+                    if (!empty($this->start_date) && !empty($this->end_date)) {
+                        $this->range = array($this->start_date, $this->end_date);
+                        $this->generate_report('range', $this->range);
+                    }
+                    break;
+
             }
         }
 
         return view('livewire.reports')->extends('layouts.theme.app')
-            ->section('content');;
+            ->section('content');
+        ;
     }
 
     public function generate_report($date_option = null, $date)
     {
-        $payrolls = [];
         $this->total_sales = 0;
         $this->totalCash = 0;
+        $start_date = null;
+        $end_date = null;
         switch ($date_option) {
             case 'day':
-                $payrolls = Payroll::whereDate('created_at', '=', $date)->get();
+                $start_date = $this->day;
                 break;
             case 'month':
                 $month = explode('-', $this->month);
-                $payrolls = Payroll::whereMonth('created_at', '=', $month[1])->whereYear('created_at', $month[0])->get();
+                $start_date = $month;
                 break;
             case 'year':
-                $payrolls = Payroll::whereYear('created_at', '=', $date)->get();
+                $start_date = $this->year;
                 break;
+            case 'range':
+                $start_date = $this->range[0];
+                $end_date = $this->range[1];
         }
 
-        $resultado_productos = new Collection();
-        $this->getTotales('2023-07-14', '2023-08-14', 'range');
-        foreach ($payrolls as $payroll) {
-            foreach ($payroll->sales as $sale) {
-                $this->totalCash += $sale->total;
-                $this->total_sales++;
-                foreach ($sale->details as $detail) {
-                    if ($resultado_productos->contains('id', $detail->product_id)) {
-                        $product_in_collection = $resultado_productos->firstWhere('id', $detail->product_id);
-                        $product_in_collection['amount'] += $detail->price;
-                        $product_in_collection['quantity'] += $detail->quantity;
-                    } else {
-                        $product = Product::find($detail->product_id);
-                        if ($product) {
-                            $product_to_push = new Collection([
-                                'id' => $detail->product_id,
-                                'product_name' => $product->name,
-                                'quantity' => $detail->quantity,
-                                'amount' => $detail->price,
-                                'product_unit' => $product->unitSale->unit,
-                            ]);
-                            $resultado_productos->push($product_to_push);
-                        }
-                    }
-                }
-            }
-        }
-        $this->resultado_productos = $resultado_productos->sortBy('quantity');
+        $this->delivery_totals = $this->reportService->deliveryTotals($date_option, $start_date, $end_date);
+        $this->totals = $this->reportService->totals($date_option, $start_date, $end_date);
+        $this->products_sold = $this->reportService->productsSolds($date_option, $start_date, $end_date);
+        $this->salesDue($this->reportService->getTotalAdeudadoAndCantidadVentas($date_option, $start_date, $end_date));
     }
 
     public function createQuery($year, $month = 0, $day = 0, $category = null)
@@ -226,40 +233,44 @@ class ReportsController extends Component
         }
     }
 
-    public function grafica()
-    {
-        $this->labels = [];
-        $this->series = [];
-        $this->labelsByCategories = [];
-        $this->seriesByCategories = [];
-        //$this->total_sales = 0;
-        if (count($this->resultado_productos) > 0) {
-            foreach ($this->resultado_productos as $product) {
-                array_push($this->labels, $product['product_name'] . ' ' . $product['quantity'] . ' ' .  $product['product_unit']);
-                array_push($this->series, floatval($product['amount']));
-                //$this->total_sales += intval($product['amount']);
-            }
+    // public function grafica()
+    // {
+    //     $this->labels = [];
+    //     $this->series = [];
+    //     $this->labelsByCategories = [];
+    //     $this->seriesByCategories = [];
+    //     //$this->total_sales = 0;
+    //     if (count($this->resultado_productos) > 0) {
+    //         foreach ($this->resultado_productos as $product) {
+    //             array_push($this->labels, $product['product_name'] . ' ' . $product['quantity'] . ' ' . $product['product_unit']);
+    //             array_push($this->series, floatval($product['amount']));
+    //             //$this->total_sales += intval($product['amount']);
+    //         }
 
-            if ($this->total_sales < 1) {
-                $this->msgNoSales = 'No hay ventas de esta categoria.';
-            }
+    //         if ($this->total_sales < 1) {
+    //             $this->msgNoSales = 'No hay ventas de esta categoria.';
+    //         }
 
-            $this->emit('loadCharts', [$this->labels, $this->series, $this->labelsByCategories, $this->seriesByCategories]);
-        }
+    //         $this->emit('loadCharts', [$this->labels, $this->series, $this->labelsByCategories, $this->seriesByCategories]);
+    //     }
 
-        // if (count($this->salesByCategory) > 0) {
-        //     foreach ($this->salesByCategory as $saleByCategory) {
-        //         array_push($this->labelsByCategories, $saleByCategory->productcategory);
-        //         array_push($this->seriesByCategories, intval($saleByCategory->total_quantity));
-        //     }
-        // }
-    }
+    //     // if (count($this->salesByCategory) > 0) {
+    //     //     foreach ($this->salesByCategory as $saleByCategory) {
+    //     //         array_push($this->labelsByCategories, $saleByCategory->productcategory);
+    //     //         array_push($this->seriesByCategories, intval($saleByCategory->total_quantity));
+    //     //     }
+    //     // }
+    // }
+
 
     public function resetUI()
     {
         $this->day = null;
         $this->month = null;
         $this->year = null;
+        $this->delivery_totals = null;
+        $this->totals = null;
+        $this->products_sold = null;
     }
 
     public function getTotales($date_init, $date_end = null, $report_type)
@@ -302,5 +313,77 @@ class ReportsController extends Component
                     ->get();
                 break;
         }
+    }
+
+    public function deliveryTotals()
+    {
+        $query = DB::table('payments_in')
+            ->join('payrolls', 'payments_in.payroll_id', '=', 'payrolls.id')
+            ->join('deliveries', 'payments_in.delivery_id', '=', 'deliveries.id')
+            ->join('payment_methods', 'payments_in.payment_method_id', '=', 'payment_methods.id')
+            ->selectRaw('SUM(payments_in.amount) AS total_amount,
+         payments_in.delivery_id,
+         deliveries.name AS delivery_name,
+         payments_in.payment_method_id,
+         payment_methods.name AS payment_method_name,
+         COUNT(*) AS total_count');
+
+        if ($this->groupBy == 'day') {
+            $query->whereDate('payrolls.created_at', $this->day);
+        } elseif ($this->groupBy == 'month') {
+            $query->whereMonth('payrolls.created_at', $this->month);
+        } elseif ($this->groupBy == 'year') {
+            $query->whereYear('payrolls.created_at', $this->year);
+        } elseif ($this->groupBy == 'range') {
+            $query->whereBetween('payrolls.created_at', [$startDate, $endDate]);
+        }
+
+        $this->delivery_totals = $query->groupBy('payments_in.delivery_id', 'payments_in.payment_method_id')
+            ->get();
+    }
+
+    public function totals()
+    {
+        $query = DB::table('payments_in')
+            ->join('payrolls', 'payments_in.payroll_id', '=', 'payrolls.id')
+            ->join('payment_methods', 'payments_in.payment_method_id', '=', 'payment_methods.id')
+            ->selectRaw('CAST (SUM(payments_in.amount) AS DECIMAL(10,2)) AS total_amount,
+         payments_in.payment_method_id,
+         payment_methods.name AS payment_method_name,
+         COUNT(*) AS total_count');
+
+        if ($this->groupBy == 'day') {
+            $query->whereDate('payrolls.created_at', $this->day);
+        } elseif ($this->groupBy == 'month') {
+            $query->whereMonth('payrolls.created_at', $this->month);
+        } elseif ($this->groupBy == 'year') {
+            $query->whereYear('payrolls.created_at', $this->year);
+        } elseif ($this->groupBy == 'range') {
+            $query->whereBetween('payrolls.created_at', [$startDate, $endDate]);
+        }
+
+        $this->totals = $query->groupBy('payments_in.payment_method_id')
+            ->get();
+    }
+
+    public function prodcutsSold()
+    {
+
+        $this->products_sold = DB::table('payrolls')
+            ->join('sales', 'payrolls.id', '=', 'sales.payroll_id')
+            ->join('sale_details as sd', 'sales.id', '=', 'sd.sale_id')
+            ->join('products as p', 'sd.product_id', '=', 'p.id')
+            ->select('sd.product_id', 'p.name as product_name', DB::raw('SUM(sd.quantity) as total_quantity'))
+            ->whereBetween('payrolls.created_at', ['2024-02-11 00:00:00', '2024-02-11 23:59:59'])
+            ->groupBy('sd.product_id', 'p.name')
+            ->orderByDesc('total_quantity')
+            ->get();
+    }
+
+    public function salesDue($debts)
+    {
+        $this->totalDebt = $debts->totalDebt;
+        $this->countDebt = $debts->countDebt;
+
     }
 }
