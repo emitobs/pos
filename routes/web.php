@@ -88,7 +88,7 @@ Route::get('/qrcajas', QrCajasController::class);
 Route::get('/config', [ConfigController::class, 'index']);
 Route::get('/payments_methods', PaymentsMethodsController::class);
 Route::get('/gastos', PaymentsOutController::class);
-Route::get('/processCart', ProcessCartController::class)->name('processCart');
+//Route::get('/processCart', ProcessCartController::class)->name('processCart');
 // Route::get('/migrar', function () {
 //     $articulos = Articulos::on('bellas')->get();
 
