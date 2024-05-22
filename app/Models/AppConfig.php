@@ -157,3 +157,8 @@ function use_order_id_daily()
     return env('USE_ORDER_ID_DAILY', true);
 }
 
+function use_quickpos()
+{
+    return env('USE_QUICKPOS', true);
+}
+

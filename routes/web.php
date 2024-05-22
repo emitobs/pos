@@ -29,6 +29,7 @@ use App\Models\Cliente;
 use App\Models\Client;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\PdfController;
+use App\Http\Livewire\PaymentsOutController;
 use App\Http\Livewire\TablesController;
 use App\Http\Livewire\ProcessServicioController;
 use App\Http\Livewire\ProcesarPedido;
@@ -36,6 +37,8 @@ use App\Http\Livewire\RafflesController;
 use App\Models\Raffle;
 use App\Http\Livewire\QrCajasController;
 use Illuminate\Http\Client\Request;
+use App\Http\Livewire\ProcessCartController;
+use App\Http\Livewire\QuickPosController;
 
 /*
 |--------------------------------------------------------------------------
@@ -48,7 +51,7 @@ use Illuminate\Http\Client\Request;
 |
 */
 
-Route::get('/', Menu::class);
+Route::get('/', Menu::class)->name('shop');
 Route::get('/menu', Menu::class);
 
 Auth::routes();
@@ -61,6 +64,7 @@ Route::get('products', ProductsController::class)->middleware('auth');
 Route::get('coins', CoinsController::class)->middleware('auth');
 //Route::get('local', LocalController::class)->middleware('auth')->name('PosController');
 Route::get('nuevopedido', PosController::class)->middleware('auth')->name('PosController');
+Route::get('nueva-venta', QuickPosController::class)->middleware('auth')->name('QuickPosController');
 Route::get('pedidos', OrdersController::class)->middleware('auth');
 Route::get('reports', ReportsController::class)->middleware('auth');
 Route::get('reportsdays', ReportsdaysController::class)->middleware('auth');
@@ -83,6 +87,8 @@ Route::get('/sorteos', RafflesController::class);
 Route::get('/qrcajas', QrCajasController::class);
 Route::get('/config', [ConfigController::class, 'index']);
 Route::get('/payments_methods', PaymentsMethodsController::class);
+Route::get('/gastos', PaymentsOutController::class);
+Route::get('/processCart', ProcessCartController::class)->name('processCart');
 // Route::get('/migrar', function () {
 //     $articulos = Articulos::on('bellas')->get();
 
