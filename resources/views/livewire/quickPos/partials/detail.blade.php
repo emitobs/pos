@@ -72,7 +72,7 @@
 </style>
 <div style="min-height: 30vh; max-height: 30vh; overflow-y:auto;">
     <div class="">
-        <div class="card-body">
+        <div class="card-body" style="background-color: white">
             Articulos: {{$total_items}}
             @if($cart_local && $total_items > 0)
             <table class="table">
@@ -87,7 +87,7 @@
                 </tr>
                 @foreach ($cart_local as $key => $item)
                 <tr>
-                    <td>{{ $key }}</td>
+                    <td>{{ $item['product_barcode'] }}</td>
                     <td>{{$item['product_name']}}</td>
                     <td>{{$item['product_price']}}</td>
                     <td class="text-center">

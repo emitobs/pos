@@ -1,4 +1,4 @@
-
+<div>
     <div class="row sales layout-top-spacing">
         <div class="col-sm-12">
             <div class="widget widget-chart-one">
@@ -39,14 +39,17 @@
                                     </td>
                                     <td class="text-center">
                                         @if($client->debts->count() > 0)
-                                            <a href="javascript:void(0)" wire:click.prevent='see_debts({{$client->id}})' class="btn btn-warning mtmobile" title="Ver deudas">
-                                                <i class="fas fa-eye"></i>
-                                            </a>
+                                        <a href="javascript:void(0)" wire:click.prevent='see_debts({{$client->id}})'
+                                            class="btn btn-warning mtmobile" title="Ver deudas">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
                                         @endif
-                                        <a href="javascript:void(0)" wire:click.prevent="Edit({{$client->id}})" class="btn btn-dark mtmobile" title="Edit">
+                                        <a href="javascript:void(0)" wire:click.prevent="Edit({{$client->id}})"
+                                            class="btn btn-dark mtmobile" title="Edit">
                                             <i class="fas fa-edit"></i>
                                         </a>
-                                        <a href="javascript:void(0)" wire:click.prevent="Edit({{$client->id}})" class="btn btn-dark" title="Delete">
+                                        <a href="javascript:void(0)" wire:click.prevent="Edit({{$client->id}})"
+                                            class="btn btn-dark" title="Delete">
                                             <i class="fas fa-trash"></i>
                                         </a>
                                     </td>
@@ -62,16 +65,21 @@
         @include('livewire.clients.form')
     </div>
 
+    @push('scripts')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            window.livewire.on('stored_client', msg => {
+            Livewire.on('stored_client', msg => {
                 $('#theModal').modal('hide');
                 noty('Cliente registrado.');
             })
-            window.livewire.on('edit_client', msg => {
+           Livewire.on('edit_client', msg => {
                 $('#theModal').modal('show');
             })
+            $('#theModal').on('hidden.bs.modal', function (e) {
+            Livewire.emit('resetUI');
+        });
         });
     </script>
+    @endpush
 
-
+</div>

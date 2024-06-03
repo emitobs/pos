@@ -9,7 +9,7 @@ class Client extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'telephone', 'address_id', 'discount', 'allowed_debts'];
+    protected $fillable = ['name', 'telephone', 'address_id', 'discount', 'allowed_debts', 'ci', 'rut', 'socialReasoning', 'creditLimit', 'clientType'];
 
 
     public function orders()
@@ -34,9 +34,13 @@ class Client extends Model
 
     public function getDefaultAddressAttribute()
     {
+
         $return_value = '';
-        $return_value = Address::where('client_id', $this->id)->where('default', 1)->first()->address;
-        return $return_value;
+        $return_value = Address::where('client_id', $this->id)->where('default', 1)->first();
+        if ($return_value)
+            return $return_value->address;
+
+        return '';
     }
 
     public function scopeName($query, $name)

@@ -16,9 +16,9 @@ class ClientsController extends Component
     {
         return 'vendor.livewire.bootstrap';
     }
-    public $componentName = 'Clientes', $selected_id, $name, $telephone, $address, $search;
+    public $componentName = 'Clientes', $selected_id, $name, $telephone, $address, $search, $ci, $rut, $socialReasoning, $location, $mail, $allowCredit, $creditLimit, $clientType;
 
-
+    public $listeners = ['resetUI'];
     public function render()
     {
         $clients = [];
@@ -45,7 +45,16 @@ class ClientsController extends Component
         $this->validate($rules, $messages);
         $client = Client::create([
             'name' => $this->name,
-            'telephone' => $this->telephone
+            'telephone' => $this->telephone,
+            'ci' => $this->ci,
+            'rut' => $this->rut,
+            'socialReasoning' => $this->socialReasoning,
+            'location' => $this->location,
+            'mail' => $this->mail,
+            'allowed_debts' => $this->allowCredit ?? 0,
+            'creditLimit' => $this->creditLimit,
+            'clientType' => $this->clientType,
+            'disabled' => 0
         ]);
         if ($client) {
             if ($this->address) {
@@ -62,19 +71,61 @@ class ClientsController extends Component
 
     public function Edit(Client $client)
     {
+        $this->clientType = $client->ClientType;
         $this->selected_id = $client->id;
         $this->name = $client->name;
         $this->telephone = $client->telephone;
         $this->address = $client->default_address;
+        $this->ci = $client->ci;
+        $this->rut = $client->rut;
+        $this->socialReasoning = $client->socialReasoning;
+        $this->location = $client->location;
+        $this->mail = $client->mail;
+        $this->allowCredit = $client->allowed_debts;
+        $this->creditLimit = $client->creditLimit;
         $this->emit('edit_client');
+    }
+
+    public function Update()
+    {
+        $rules = [
+            'name' => 'required'
+        ];
+        $messages = [
+            'name.required' => 'Nombre obligatorio'
+        ];
+        $this->validate($rules, $messages);
+
+        $client = Client::findOrFail($this->selected_id);
+        $client->update([
+            'name' => $this->name,
+            'telephone' => $this->telephone,
+            'ci' => $this->ci,
+            'rut' => $this->rut,
+            'socialReasoning' => $this->socialReasoning,
+            'location' => $this->location,
+            'mail' => $this->mail,
+            'allowed_debts' => $this->allowCredit ?? 0,
+            'creditLimit' => $this->creditLimit,
+            'clientType' => $this->clientType,
+            'disabled' => $this->disabled ?? 0
+        ]);
+
+        if ($client) {
+            if ($this->address) {
+                $address = Address::updateOrCreate(
+                    ['client_id' => $client->id, 'default' => 1],
+                    ['address' => $this->address]
+                );
+            }
+            $this->emit('stored_client');
+            $this->resetUI();
+        }
     }
 
     public function resetUI()
     {
-        $this->selected_id = 0;
-        $this->name = '';
-        $this->telephone = '';
-        $this->address = '';
+        $this->reset();
     }
 
     public function see_debts($client)

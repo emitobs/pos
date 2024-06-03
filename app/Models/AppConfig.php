@@ -124,7 +124,7 @@ function use_deliveries()
 
 function use_tables()
 {
-    return env('USE_TABLES', true);
+    return env('USE_TABLE', true);
 }
 
 function use_units()
