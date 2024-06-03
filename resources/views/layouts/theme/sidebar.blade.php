@@ -43,6 +43,7 @@
                 </a>
             </li>
             @endif
+            @if(use_deliveries())
             <li class="">
                 <a href="/nuevopedido" class="menu-toggle" data-active="false">
                     <div class="base-menu">
@@ -82,6 +83,19 @@
                     </div>
                 </a>
             </li>
+            <li class="">
+                <a href="/deliveries" class="menu-toggle text-white" data-active="false">
+                    <div class="base-menu">
+                        <div class="base-icons text-white">
+                            <i class="fas fa-motorcycle" style="font-size: 25px"></i>
+                        </div>
+                        <span>
+                            Deliveries
+                        </span>
+                    </div>
+                </a>
+            </li>
+            @endif
             @if(auth()->user()->roles()->first()->name == 'Admin')
             <li class="">
                 <a href="/products" class="menu-toggle" data-active="false">
@@ -174,18 +188,7 @@
                     </div>
                 </a>
             </li>
-            <li class="">
-                <a href="/deliveries" class="menu-toggle text-white" data-active="false">
-                    <div class="base-menu">
-                        <div class="base-icons text-white">
-                            <i class="fas fa-motorcycle" style="font-size: 25px"></i>
-                        </div>
-                        <span>
-                            Deliveries
-                        </span>
-                    </div>
-                </a>
-            </li>
+
             <li class="">
                 <a href="/clients" class="menu-toggle" data-active="false">
                     <div class="base-menu">
@@ -199,6 +202,23 @@
                         </div>
                         <span>
                             Clientes
+                        </span>
+                    </div>
+                </a>
+            </li>
+            <li class="">
+                <a href="/usuarios" class="menu-toggle" data-active="false">
+                    <div class="base-menu">
+                        <div class="base-icons">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" class="feather feather-user">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="12" cy="7" r="4"></circle>
+                            </svg>
+                        </div>
+                        <span>
+                            Usuarios
                         </span>
                     </div>
                 </a>

@@ -31,14 +31,17 @@ use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\PdfController;
 use App\Http\Livewire\PaymentsOutController;
 use App\Http\Livewire\TablesController;
-use App\Http\Livewire\ProcessServicioController;
+
 use App\Http\Livewire\ProcesarPedido;
 use App\Http\Livewire\RafflesController;
-use App\Models\Raffle;
+
 use App\Http\Livewire\QrCajasController;
-use Illuminate\Http\Client\Request;
-use App\Http\Livewire\ProcessCartController;
+
 use App\Http\Livewire\QuickPosController;
+use App\Models\Articulos;
+use App\Models\Product;
+use App\Models\Supplier;
+use App\Http\Livewire\Suppliers;
 
 /*
 |--------------------------------------------------------------------------
@@ -87,27 +90,67 @@ Route::get('/sorteos', RafflesController::class);
 Route::get('/qrcajas', QrCajasController::class);
 Route::get('/config', [ConfigController::class, 'index']);
 Route::get('/payments_methods', PaymentsMethodsController::class);
+Route::get('/proveedores', Suppliers::class);
 Route::get('/gastos', PaymentsOutController::class);
 //Route::get('/processCart', ProcessCartController::class)->name('processCart');
-// Route::get('/migrar', function () {
-//     $articulos = Articulos::on('bellas')->get();
+Route::get('/migrar', function () {
+    $articulos = Articulos::on('bellas')->get();
 
-//     foreach ($articulos as $articulo) {
-//         dd($articulo);
-//         Product::create([
-//             'id' => $articulo->Id,
-//             'name' => $articulo->articulo,
-//             'barcode' => $articulo->codbarra,
-//             'stock' => $articulo->StockActual,
-//             'alerts' => $articulo->StockMin,
-//             'category_id' => $articulo->IdFamilia,
-//             'unit_sale' => $articulo->UnidadId,
-//             'gain' => $articulo->Ganancia
-//         ]);
-//     }
-//     echo 'COMPLETADO';
-// });
+    foreach ($articulos as $proveedor) {
+        try {
+            if (!$proveedor->IdFamilia || $proveedor->IdFamilia == "")
+                $proveedor->IdFamilia = "0";
 
+            if (!$proveedor->Ganancia)
+                $proveedor->Ganancia = 0;
+
+            if (!$proveedor->StockActual)
+                $proveedor->StockActual = 0;
+            if (!$proveedor->PrecioCompra)
+                $proveedor->PrecioCompra = 0;
+
+            Product::create([
+                'id' => $proveedor->codbarra,
+                'name' => $proveedor->proveedor,
+                'barcode' => $proveedor->codbarra,
+                'stock' => $proveedor->StockActual,
+                'alerts' => $proveedor->StockMin,
+                'category_id' => $proveedor->IdFamilia,
+                'unit_sale' => $proveedor->UnidadId,
+                'price' => $proveedor->PrecioVenta,
+                'cost' => $proveedor->PrecioCompra,
+                'gain' => $proveedor->Ganancia
+            ]);
+
+        } catch (Exception $e) {
+            dd($e, $proveedor);
+        }
+
+    }
+    echo 'COMPLETADO';
+});
+
+Route::get('/migrate-suppliers', function () {
+    $proveedores = DB::connection('bellas')->table('proveedor')->get();
+    foreach ($proveedores as $proveedor) {
+        try {
+            Supplier::create([
+                'name' => $proveedor->nombre,
+                'contactPerson' => $proveedor->contacto,
+                'phone' => $proveedor->telefono,
+                'email' => $proveedor->mail,
+                'address' => $proveedor->direccion,
+                'location' => $proveedor->Localidad,
+                'rut' => $proveedor->rut
+            ]);
+
+        } catch (Exception $e) {
+            dd($e, $proveedor);
+        }
+
+    }
+    echo 'COMPLETADO';
+});
 // Route::get('/generarCodebar', function () {
 //     foreach (Product::where('barcode', '')->get() as $product) {
 //         $barcode = mt_rand(100000000, 999999999999);
@@ -125,11 +168,11 @@ Route::get('/gastos', PaymentsOutController::class);
 // Route::get('/actualizarPrecios', function () {
 //     $articulos = Articulos::on('bellas')->get();
 
-//     foreach ($articulos as $articulo) {
-//         $product = Product::where('name', $articulo->articulo)->get()->first();
+//     foreach ($articulos as $proveedor) {
+//         $product = Product::where('name', $proveedor->proveedor)->get()->first();
 //         if ($product) {
-//             $product->price = $articulo->PrecioVenta;
-//             $product->cost = $articulo->PrecioCompra;
+//             $product->price = $proveedor->PrecioVenta;
+//             $product->cost = $proveedor->PrecioCompra;
 //             $product->save();
 //         }
 //     }
@@ -140,45 +183,49 @@ Route::get('/gastos', PaymentsOutController::class);
 // Route::get('/actualizarGanancia', function () {
 //     $articulos = Articulos::on('bellas')->get();
 
-//     foreach ($articulos as $articulo) {
-//         $product = Product::where('name', $articulo->articulo)->get()->first();
+//     foreach ($articulos as $proveedor) {
+//         $product = Product::where('name', $proveedor->proveedor)->get()->first();
 //         if ($product) {
-//             $product->gain = $articulo->Ganancia;
+//             $product->gain = $proveedor->Ganancia;
 //             $product->save();
 //         }
 //     }
 //     echo 'completado';
 // });
 
-// Route::get('/migrateClients', function () {
-//     try {
+Route::get('/migrateClients', function () {
+    try {
 
-//         $clientes = Cliente::on('bellas')->get();
-//         foreach ($clientes as $cliente) {
+        $clientes = Cliente::on('bellas')->get();
+        foreach ($clientes as $cliente) {
+            $new_client = Client::create([
+                'name' => $cliente->Nombre,
+                'telephone' => $cliente->Telefono,
+                'email' => $cliente->Mail,
+                'rut' => $cliente->Rut,
+                'ci' => $cliente->Ci,
+                'creditLimit' => $cliente->Limite,
+                'allowed_debts' => $cliente->Credito,
 
-//             $new_client = Client::create([
-//                 'name' => $cliente->Nombre,
-//                 'telephone' => $cliente->Telefono,
-//             ]);
+            ]);
 
+            if ($new_client && strlen($cliente->Direccion) > 0) {
+                $default_address = Address::create([
+                    'address' => $cliente->Direccion,
+                    'client_id' => $new_client->id,
+                    'default' => 1
+                ]);
 
-//             if ($new_client && strlen($cliente->Direccion) > 0) {
-//                 $default_address = Address::create([
-//                     'address' => $cliente->Direccion,
-//                     'client_id' => $new_client->id,
-//                     'default' => 1
-//                 ]);
+                if ($default_address) {
+                    $new_client->address_id = $default_address->id;
+                    $new_client->save();
+                }
+            }
+        }
 
-//                 if ($default_address) {
-//                     $new_client->address_id = $default_address->id;
-//                     $new_client->save();
-//                 }
-//             }
-//         }
-
-//         echo 'completado';
-//     } catch (Exception $e) {
-//         DB::rollBack();
-//         dd($e);
-//     }
-//});
+        echo 'completado';
+    } catch (Exception $e) {
+        DB::rollBack();
+        dd($e);
+    }
+});

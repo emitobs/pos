@@ -17,19 +17,19 @@ class UserController extends Component
 
 
     public
-        $name,
-        $phone,
-        $email,
-        $status,
-        $image,
-        $password,
-        $password_confirmation,
-        $selected_id,
-        $fileLoaded,
-        $role,
-        $pageTitle,
-        $componentName,
-        $search;
+    $name,
+    $phone,
+    $email,
+    $status,
+    $image,
+    $password,
+    $password_confirmation,
+    $selected_id,
+    $fileLoaded,
+    $role,
+    $pageTitle,
+    $componentName,
+    $search;
 
 
     private $pagination = 8;
@@ -40,7 +40,9 @@ class UserController extends Component
     }
 
     protected $listeners = [
-        'createUser' => 'createUser',
+        'createUser',
+        'editUser',
+        'resetUI'
     ];
 
     public function mount()
@@ -74,24 +76,25 @@ class UserController extends Component
         $this->search = '';
         $this->status = '';
         $this->selected_id = 0;
+        $this->password_confirmation = '';
+        $this->role = 'default';
     }
 
-    public function edit(User $user)
+    public function editUser(User $user)
     {
         $this->selected_id = $user->id;
         $this->name = $user->name;
         $this->phone = $user->phone;
-        $this->profile = $this->profile;
-        $this->status = $this->status;
+        $this->status = $user->status;
         $this->email = $user->email;
         $this->password = '';
-
-        $this->emit('show-modal', 'open!');
+        $this->role = $user->roles->first()->id;
+        $this->emit('show-modal');
     }
 
     public function createUser()
     {
-        $this->emit('showForm');
+        $this->emit('show-modal');
     }
 
     public function saveUser()

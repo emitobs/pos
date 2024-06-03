@@ -33,7 +33,8 @@
                                     <td>{{$user->email}}</td>
                                     <td class="text-center">{{$user->roles->first()->name}}</td>
                                     <td class="text-center">
-                                        <button class="btn btn-primary" wire:click.prevent="editUser()">Editar</button>
+                                        <button class="btn btn-primary"
+                                            wire:click.prevent="editUser({{$user->id}})">Editar</button>
                                         <button class="btn btn-danger"
                                             wire:click.prevent="deactivateUser()">Desactivar</button>
                                     </td>
@@ -49,16 +50,21 @@
 
     </div>
     @include('livewire.users.form')
-</div>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        window.livewire.on('showForm', Msg=>{
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+        window.livewire.on('show-modal', Msg=>{
             $('#userForm').modal('show');
         });
         window.livewire.on('user_added', Msg=>{
             $('#userForm').modal('hide');
             noty('Usuario registrado');
         });
+
+        $('#userForm').on('hidden.bs.modal', function (e) {
+            window.livewire.emit('resetUI');
+        });
     });
-</script>
+    </script>
+</div>

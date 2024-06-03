@@ -92,7 +92,6 @@ class QuickPosController extends Component
     {
         parent::__construct();
 
-        // Laravel automáticamente inyectará el servicio aquí
         $this->cartService = app(CartService::class);
         $this->orderService = app(OrderService::class);
     }
@@ -122,9 +121,6 @@ class QuickPosController extends Component
         } else {
             $this->emit('no-payroll');
         }
-
-        //DEVUELVE TODOS LOS PEDIDOS DEL DIA ORDENADOS DEL ULTIMO AL PRIMERO
-
 
         //SI EXISTE LA PLANILLA
         if ($payroll) {
@@ -225,7 +221,6 @@ class QuickPosController extends Component
     public function increaseQuantity($position, $quantity, $product)
     {
         try {
-
             $this->cart_local = $this->cartService->increaseQty($this->cart_local, $position, $product, $this->cart_local[$position]['quantity'] += $quantity);
             session()->flash('message', 'Product quantity increased successfully!');
         } catch (\Exception $e) {
@@ -366,7 +361,7 @@ class QuickPosController extends Component
             'change' => $this->change,
             'user_id' => Auth()->user()->id,
             'clarifications' => $this->clarifications,
-            'status' => SaleStatus::ENESPERA,
+            'status' => SaleStatus::ENTREGADO,
             'client_id' => $this->selected_client->id,
             'address' => $this->address,
             'payroll_id' => $this->getOpenPayroll()->id,
@@ -411,28 +406,7 @@ class QuickPosController extends Component
             }
         }
     }
-    // private function handlePayments($sale)
-    // {
-    //     if (count($this->payments) > 0) {
-    //         foreach ($this->payments as $payment) {
-    //             if (!isset($array['id'])) {
-    //                 Payment_in::create([
-    //                     'payment_method_id' => $payment['method_id'],
-    //                     'amount' => $payment['amount'],
-    //                     'sale_id' => $sale->id,
-    //                     'user_id' => Auth()->user()->id,
-    //                     'payroll_id' => $this->getOpenPayroll()->id,
-    //                 ]);
-    //             }
-    //         }
-    //     }
 
-    //     if (count($this->payments_to_delete) > 0) {
-    //         foreach ($this->payments_to_delete as $payment) {
-    //             Payment_in::destroy($payment);
-    //         }
-    //     }
-    // }
     private function handlePayments($sale)
     {
 
@@ -592,7 +566,10 @@ class QuickPosController extends Component
             if ($detail === null) {
                 $detail = ''; // Asignar un valor predeterminado si $detail es null
             }
-
+            if ($product->stock < $this->quantity) {
+                $this->emit('scan-notfound', 'No hay stock suficiente');
+                return;
+            }
             $this->addToCart($product, $this->quantity, $detail);
             $this->emit('scan-ok', 'Producto agregado');
             $this->resetSelectedProductInfo();
